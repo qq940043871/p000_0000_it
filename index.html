@@ -24,7 +24,6 @@
             height: 100%;
             margin: 0;
             padding: 0;
-            overflow: hidden;
         }
         .portal-container {
             height: calc(100vh - 64px);
@@ -74,10 +73,47 @@
         aside::-webkit-scrollbar-thumb:hover {
             background-color: #94A3B8;
         }
+        /* 响应式样式 */
+        @media (max-width: 768px) {
+            aside {
+                position: fixed;
+                top: 64px;
+                left: 0;
+                width: 80%;
+                max-width: 300px;
+                height: calc(100vh - 64px);
+                z-index: 1000;
+                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+                background-color: white;
+            }
+            .portal-container {
+                padding: 0;
+            }
+            iframe {
+                border-radius: 0 !important;
+            }
+        }
+        /* 背景遮罩 */
+        .sidebar-overlay {
+            position: fixed;
+            top: 64px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+        .sidebar-overlay.active {
+            display: block;
+        }
     </style>
 </head>
 <body class="bg-gray-50">
     <header class="bg-white shadow-sm h-16 flex items-center px-6">
+        <button id="menu-toggle" class="md:hidden mr-4 text-gray-600 hover:text-primary">
+            <i class="fas fa-bars text-xl"></i>
+        </button>
         <div class="flex items-center">
             <i class="fas fa-graduation-cap text-primary text-2xl mr-3"></i>
             <h1 class="text-xl font-bold text-gray-800">架构师学习笔记</h1>
@@ -96,7 +132,8 @@
     </header>
 
     <div class="flex">
-        <aside class="w-64 bg-white shadow-md h-screen sticky top-16 overflow-y-auto">
+        <div id="sidebar-overlay" class="sidebar-overlay"></div>
+        <aside id="sidebar" class="w-64 bg-white shadow-md h-screen sticky top-16 overflow-y-auto md:block hidden">
             <nav class="py-4">
                 <div class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">计算机原理</div>
                 
@@ -391,6 +428,36 @@
         }
         
         document.addEventListener('DOMContentLoaded', function() {
+            // 汉堡菜单切换
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+            
+            function toggleSidebar() {
+                sidebar.classList.toggle('hidden');
+                sidebarOverlay.classList.toggle('active');
+            }
+            
+            if (menuToggle && sidebar && sidebarOverlay) {
+                menuToggle.addEventListener('click', toggleSidebar);
+                
+                // 点击背景遮罩关闭侧边栏
+                sidebarOverlay.addEventListener('click', function() {
+                    if (!sidebar.classList.contains('hidden')) {
+                        toggleSidebar();
+                    }
+                });
+                
+                // 在小屏幕上点击菜单项后关闭菜单
+                const navLinks = document.querySelectorAll('aside a');
+                navLinks.forEach(link => {
+                    link.addEventListener('click', function() {
+                        if (window.innerWidth < 768 && !sidebar.classList.contains('hidden')) {
+                            toggleSidebar();
+                        }
+                    });
+                });
+            }
         });
     </script>
 </body>
