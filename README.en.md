@@ -1,22 +1,24 @@
 # p000_0000_it
 
 #### Description
-{**When you're done, you can delete the content in this README and update the file with details for others getting started with your repository**}
+This is a sample project repository for demonstrating project structure and documentation standards.
 
 #### Software Architecture
-Software architecture description
+- Frontend: To be defined
+- Backend: To be defined
+- Database: To be defined
 
 #### Installation
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+1.  Clone the repository: `git clone https://gitee.com/your-username/p000_0000_it.git`
+2.  Install dependencies: Install relevant dependencies according to project requirements
+3.  Run the project: Execute the corresponding startup command based on the project type
 
 #### Instructions
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+1.  Development environment configuration
+2.  Production environment deployment
+3.  Feature usage guide
 
 #### Contribution
 
@@ -25,6 +27,8 @@ Software architecture description
 3.  Commit your code
 4.  Create Pull Request
 
+#### Update Time
+- Last updated: 2026-04-05
 
 #### Gitee Feature
 
