@@ -1,0 +1,460 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>小型计算机完整电路连接图</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&family=Noto+Sans+SC:wght@300;400;500;600&display=swap');
+:root{
+  --bg:#0a0c12;--s1:#0f1118;--s2:#141720;--bd:#1e2235;
+  --cpu:#ff6b35;--mem:#00d4ff;--disk:#4ade80;--io:#a78bfa;
+  --clk:#fbbf24;--bus:#f472b6;--pwr:#34d399;
+  --tx:#e2e8f0;--d1:#94a3b8;--d2:#64748b;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--tx);font-family:'Noto Sans SC',sans-serif;font-weight:300;line-height:1.8;}
+.wrap{max-width:960px;margin:0 auto;padding:30px 16px 80px;}
+
+/* Header */
+.hd{text-align:center;padding:40px 0 30px;}
+.hd-tag{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--cpu);margin-bottom:14px;}
+.hd h1{font-size:clamp(22px,4vw,36px);font-weight:600;margin-bottom:10px;}
+.hd-sub{font-size:13px;color:var(--d1);}
+
+/* Section */
+.sec{margin:30px 0;}
+.sec-hd{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
+.sec-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.sec h2{font-size:16px;font-weight:500;}
+.sec-line{flex:1;height:1px;background:linear-gradient(90deg,var(--bd),transparent);}
+
+/* Card */
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:10px;padding:20px;margin-bottom:16px;}
+.card-title{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.card-title::before{content:'';width:3px;height:14px;border-radius:2px;display:block;}
+
+/* Code block */
+.code{background:#050608;border:1px solid var(--bd);border-radius:8px;overflow:hidden;margin:14px 0;}
+.code-hd{display:flex;align-items:center;justify-content:space-between;padding:7px 14px;border-bottom:1px solid var(--bd);}
+.code-dots{display:flex;gap:5px;}
+.code-dots span{width:8px;height:8px;border-radius:50%;}
+.code-dots span:nth-child(1){background:#ff5f57}
+.code-dots span:nth-child(2){background:#febc2e}
+.code-dots span:nth-child(3){background:#28c840}
+.code-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--d2);letter-spacing:1px;}
+.code-bd{padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:11.5px;line-height:1.9;overflow-x:auto;white-space:pre;}
+
+/* Pin table */
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px;margin:10px 0;}
+.tbl th{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--d2);padding:7px 10px;text-align:left;border-bottom:1px solid var(--bd);background:var(--s2);}
+.tbl td{padding:8px 10px;border-bottom:1px solid rgba(30,34,53,.5);color:var(--d1);vertical-align:top;font-size:12px;}
+.tbl tr:last-child td{border-bottom:none;}
+.pin{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;}
+.cpu{color:var(--cpu);}.mem{color:var(--mem);}.disk{color:var(--disk);}
+.io{color:var(--io);}.clk{color:var(--clk);}.bus{color:var(--bus);}.pwr{color:var(--pwr);}
+
+/* Diagram */
+.diag{background:#050608;border:1px solid var(--bd);border-radius:8px;padding:16px;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.8;overflow-x:auto;white-space:pre;}
+
+/* Note */
+.note{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.2);border-radius:8px;padding:14px 16px;font-size:12.5px;color:var(--d1);margin:14px 0;}
+.note strong{color:var(--clk);}
+
+/* Grid */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:600px){.grid2{grid-template-columns:1fr;}}
+
+/* Divider */
+.div{height:1px;background:linear-gradient(90deg,transparent,var(--bd),transparent);margin:36px 0;}
+
+/* Step */
+.step{display:flex;gap:14px;margin-bottom:16px;}
+.step-num{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.step-body{flex:1;}
+.step-title{font-size:14px;font-weight:500;color:#fff;margin-bottom:4px;}
+.step-desc{font-size:12.5px;color:var(--d1);line-height:1.7;}
+
+.foot{text-align:center;padding:40px 0 10px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--d2);letter-spacing:2px;border-top:1px solid var(--bd);margin-top:50px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hd">
+  <div class="hd-tag">HARDWARE CIRCUIT GUIDE</div>
+  <h1>小型计算机完整电路连接图</h1>
+  <p class="hd-sub">CPU · 内存 · 硬盘 · 键盘鼠标 · 时钟 · 总线 — 从零搭建一台完整的计算机</p>
+</div>
+
+<!-- 总体架构图 -->
+<div class="sec">
+  <div class="sec-hd"><div class="sec-dot" style="background:var(--bus)"></div><h2>总体架构图</h2><div class="sec-line"></div></div>
+  <div class="diag"><span style="color:var(--clk)">                    ┌─────────────┐
+                    │  晶振 XTAL  │  ← 时钟源（如 25MHz）
+                    └──────┬──────┘
+                           │ CLK
+</span><span style="color:var(--pwr)">  ┌──────────┐            │            ┌──────────────┐
+  │  电源    │            │            │  BIOS/UEFI   │
+  │  ATX PSU │            │            │  ROM 芯片    │
+  │  +5V +12V│            │            └──────┬───────┘
+  └────┬─────┘            │                   │
+       │ VCC              │                   │ 地址总线
+</span><span style="color:var(--cpu)">       │         ┌────────┴────────┐          │
+       └────────►│                 │◄─────────┘
+                 │   CPU (核心)    │
+                 │  ┌───────────┐  │
+                 │  │ ALU 运算  │  │
+                 │  │ 寄存器组  │  │
+                 │  │ 控制单元  │  │
+                 │  └───────────┘  │
+                 └────────┬────────┘
+                          │
+</span><span style="color:var(--bus)">         ┌────────────────┼────────────────┐
+         │                │                │
+    地址总线(AB)      数据总线(DB)      控制总线(CB)
+    Address Bus       Data Bus          Control Bus
+    (单向→)           (双向↔)           (双向↔)
+         │                │                │
+         └────────────────┼────────────────┘
+                          │
+         ┌────────────────┼────────────────┐
+         │                │                │
+</span><span style="color:var(--mem)">  ┌──────┴──────┐          │         ┌──────┴──────┐
+  │  RAM 内存   │          │         │  ROM/Flash  │
+  │  DIMM 插槽  │          │         │  固件存储   │
+  └─────────────┘          │         └─────────────┘
+</span>                          │
+         <span style="color:var(--bus)">┌────────────────┼────────────────┐</span>
+         │                │                │
+<span style="color:var(--disk)">  ┌──────┴──────┐  </span><span style="color:var(--io)">┌──────┴──────┐  ┌──────┴──────┐</span>
+<span style="color:var(--disk)">  │  硬盘/SSD   │  </span><span style="color:var(--io)">│  键盘控制器 │  │  鼠标控制器 │</span>
+<span style="color:var(--disk)">  │  SATA/NVMe  │  </span><span style="color:var(--io)">│  PS/2 或USB │  │  PS/2 或USB │</span>
+<span style="color:var(--disk)">  └─────────────┘  </span><span style="color:var(--io)">└─────────────┘  └─────────────┘</span></div>
+</div>
+
+<div class="div"></div>
+
+<!-- CPU 电路 -->
+<div class="sec">
+  <div class="sec-hd"><div class="sec-dot" style="background:var(--cpu)"></div><h2 class="cpu">CPU 核心电路</h2><div class="sec-line"></div></div>
+
+  <div class="card">
+    <div class="card-title" style="color:var(--cpu)"><span style="background:var(--cpu)" class="card-title::before"></span>CPU 关键引脚说明</div>
+    <table class="tbl">
+      <thead><tr><th>引脚组</th><th>名称</th><th>方向</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td><span class="pin cpu">CLK</span></td><td>时钟输入</td><td>← 输入</td><td>接晶振，决定 CPU 运行速度</td></tr>
+        <tr><td><span class="pin cpu">RESET</span></td><td>复位</td><td>← 输入</td><td>低电平触发，CPU 重新启动</td></tr>
+        <tr><td><span class="pin bus">A[0:31]</span></td><td>地址总线</td><td>→ 输出</td><td>32根线，寻址 4GB 内存空间</td></tr>
+        <tr><td><span class="pin bus">D[0:63]</span></td><td>数据总线</td><td>↔ 双向</td><td>64根线，读写数据</td></tr>
+        <tr><td><span class="pin bus">RD/WR</span></td><td>读写控制</td><td>→ 输出</td><td>高=读，低=写</td></tr>
+        <tr><td><span class="pin cpu">INT</span></td><td>中断请求</td><td>← 输入</td><td>硬件设备发出中断信号</td></tr>
+        <tr><td><span class="pin cpu">INTA</span></td><td>中断应答</td><td>→ 输出</td><td>CPU 确认收到中断</td></tr>
+        <tr><td><span class="pin pwr">VCC/GND</span></td><td>电源/地</td><td>← 输入</td><td>+3.3V 或 +1.2V 核心电压</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="code">
+    <div class="code-hd"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-lbl">CPU 时钟电路连接</div></div>
+    <div class="code-bd"><span style="color:var(--clk)">晶振 (25MHz)
+    ├── 引脚1 → CPU.CLK        ← 时钟信号
+    ├── 引脚2 → GND            ← 接地
+    └── 旁路电容 22pF → GND    ← 滤波稳定</span>
+
+<span style="color:var(--cpu)">复位电路 (RC复位)
+    VCC ──┬── 10kΩ ──┬── CPU.RESET
+          │          │
+         100nF       └── 按钮 ── GND
+          │
+         GND</span>
+
+<span style="color:var(--d1)">说明：上电时电容充电，RESET 先低后高，CPU 完成复位</span></div>
+  </div>
+</div>
+
+<div class="div"></div>
+
+<!-- 内存电路 -->
+<div class="sec">
+  <div class="sec-hd"><div class="sec-dot" style="background:var(--mem)"></div><h2 class="mem">内存 (RAM) 电路</h2><div class="sec-line"></div></div>
+
+  <div class="card">
+    <div class="card-title" style="color:var(--mem)">SRAM 静态内存引脚（简单版，适合学习）</div>
+    <table class="tbl">
+      <thead><tr><th>引脚</th><th>名称</th><th>连接到</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td><span class="pin mem">A[0:14]</span></td><td>地址线</td><td>CPU 地址总线</td><td>15根，寻址 32KB</td></tr>
+        <tr><td><span class="pin mem">D[0:7]</span></td><td>数据线</td><td>CPU 数据总线</td><td>8根，8位数据</td></tr>
+        <tr><td><span class="pin mem">CS̄</span></td><td>片选（低有效）</td><td>地址译码器输出</td><td>选中该内存芯片</td></tr>
+        <tr><td><span class="pin mem">OE̅</span></td><td>输出使能</td><td>CPU.RD</td><td>读操作时拉低</td></tr>
+        <tr><td><span class="pin mem">WE̅</span></td><td>写使能</td><td>CPU.WR</td><td>写操作时拉低</td></tr>
+        <tr><td><span class="pin pwr">VCC/GND</span></td><td>电源</td><td>+5V / GND</td><td>SRAM 用 5V</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="code">
+    <div class="code-hd"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-lbl">内存连接电路</div></div>
+    <div class="code-bd"><span style="color:var(--mem)">CPU                    SRAM (如 62256)
+────                   ──────────────
+A[0:14]  ──────────►  A[0:14]     (地址线直连)
+D[0:7]   ◄──────────► D[0:7]      (数据线双向)
+RD       ──────────►  OE̅          (读使能)
+WR       ──────────►  WE̅          (写使能)
+</span>
+<span style="color:var(--clk)">地址译码器 (74HC138)
+────────────────────
+CPU.A[15:17] → 译码器输入
+译码器输出0  → SRAM.CS̄    (选中内存)
+译码器输出1  → ROM.CS̄     (选中ROM)
+译码器输出2  → IO.CS̄      (选中IO设备)</span>
+
+<span style="color:var(--d1)">说明：地址译码器决定哪个设备被选中，避免冲突</span></div>
+  </div>
+
+  <div class="note"><strong>💡 现代 DDR 内存</strong>：原理相同，但引脚更多（240+），有时钟同步、差分信号等，通常直接用主板 DIMM 插槽，不需要手动连线。</div>
+</div>
+
+<div class="div"></div>
+
+<!-- 硬盘电路 -->
+<div class="sec">
+  <div class="sec-hd"><div class="sec-dot" style="background:var(--disk)"></div><h2 class="disk">硬盘/存储 电路</h2><div class="sec-line"></div></div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title" style="color:var(--disk)">SATA 硬盘接口</div>
+      <table class="tbl">
+        <thead><tr><th>引脚</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td><span class="pin disk">TX+/TX-</span></td><td>发送差分信号</td></tr>
+          <tr><td><span class="pin disk">RX+/RX-</span></td><td>接收差分信号</td></tr>
+          <tr><td><span class="pin pwr">+5V</span></td><td>逻辑电路供电</td></tr>
+          <tr><td><span class="pin pwr">+12V</span></td><td>马达供电（机械盘）</td></tr>
+          <tr><td><span class="pin pwr">GND</span></td><td>接地（多个）</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color:var(--disk)">NVMe SSD (M.2 接口)</div>
+      <table class="tbl">
+        <thead><tr><th>信号</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td><span class="pin disk">PCIe x4</span></td><td>4条高速通道</td></tr>
+          <tr><td><span class="pin disk">PERST#</span></td><td>复位信号</td></tr>
+          <tr><td><span class="pin pwr">+3.3V</span></td><td>供电</td></tr>
+          <tr><td><span class="pin disk">CLKREQ#</span></td><td>时钟请求</td></tr>
+          <tr><td><span class="pin disk">PEWAKE#</span></td><td>唤醒信号</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="code">
+    <div class="code-hd"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-lbl">SATA 连接示意</div></div>
+    <div class="code-bd"><span style="color:var(--disk)">主板 SATA 控制器          硬盘
+──────────────           ────
+TX+ ──────────────────► RX+
+TX- ──────────────────► RX-
+RX+ ◄────────────────── TX+
+RX- ◄────────────────── TX-</span>
+
+<span style="color:var(--pwr)">电源接口 (SATA 电源线)
++3.3V ─── 引脚 1-3
++5V   ─── 引脚 4-6
++12V  ─── 引脚 10-12
+GND   ─── 引脚 7-9</span>
+
+<span style="color:var(--d1)">注：SATA 用差分信号，抗干扰强，速度可达 6Gbps</span></div>
+  </div>
+</div>
+
+<div class="div"></div>
+
+<!-- 键盘鼠标 -->
+<div class="sec">
+  <div class="sec-hd"><div class="sec-dot" style="background:var(--io)"></div><h2 class="io">键盘 & 鼠标 电路</h2><div class="sec-line"></div></div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title" style="color:var(--io)">PS/2 接口（经典）</div>
+      <table class="tbl">
+        <thead><tr><th>引脚</th><th>颜色</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td><span class="pin io">1</span></td><td>DATA</td><td>数据线（双向）</td></tr>
+          <tr><td><span class="pin io">3</span></td><td>GND</td><td>接地</td></tr>
+          <tr><td><span class="pin io">4</span></td><td>VCC</td><td>+5V 供电</td></tr>
+          <tr><td><span class="pin io">5</span></td><td>CLK</td><td>时钟线（键盘产生）</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color:var(--io)">USB 接口（现代）</div>
+      <table class="tbl">
+        <thead><tr><th>引脚</th><th>颜色</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td><span class="pin io">1</span></td><td>红</td><td>VBUS +5V 供电</td></tr>
+          <tr><td><span class="pin io">2</span></td><td>白</td><td>D- 数据负</td></tr>
+          <tr><td><span class="pin io">3</span></td><td>绿</td><td>D+ 数据正</td></tr>
+          <tr><td><span class="pin io">4</span></td><td>黑</td><td>GND 接地</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="code">
+    <div class="code-hd"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-lbl">键盘中断连接</div></div>
+    <div class="code-bd"><span style="color:var(--io)">键盘控制器 (8042)
+    ├── PS/2.DATA  ← 键盘数据
+    ├── PS/2.CLK   ← 键盘时钟
+    ├── IRQ1       → 中断控制器 (APIC)
+    └── I/O 端口 0x60/0x64 ← CPU 读取扫描码</span>
+
+<span style="color:var(--cpu)">中断流程：
+按键 → 键盘产生扫描码 → 发给8042 → 8042拉高IRQ1
+→ APIC通知CPU → CPU执行中断处理程序
+→ 从0x60端口读取扫描码 → 翻译成ASCII</span></div>
+  </div>
+</div>
+
+<div class="div"></div>
+
+<!-- 时钟系统 -->
+<div class="sec">
+  <div class="sec-hd"><div class="sec-dot" style="background:var(--clk)"></div><h2 class="clk">时钟系统（最关键！）</h2><div class="sec-line"></div></div>
+
+  <div class="note"><strong>⚡ 为什么时钟最重要？</strong> 计算机里所有操作都要"踩点"进行，时钟就是那个节拍器。没有时钟，CPU 不知道什么时候执行下一条指令，内存不知道什么时候锁存数据。</div>
+
+  <div class="code">
+    <div class="code-hd"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-lbl">完整时钟分配系统</div></div>
+    <div class="code-bd"><span style="color:var(--clk)">晶振 (25MHz 基准)
+    │
+    ▼
+PLL 锁相环 (倍频/分频)
+    ├── ×100 → 2500MHz → CPU 核心时钟
+    ├── ×4  → 100MHz  → 内存总线时钟
+    ├── ÷1  → 25MHz   → PCIe 参考时钟
+    └── ÷25 → 1MHz    → 定时器/RTC</span>
+
+<span style="color:var(--mem)">内存时钟 (DDR4 示例)
+    CLK+/CLK- → 差分时钟，直连内存条
+    频率: 3200MHz (实际传输速率)</span>
+
+<span style="color:var(--disk)">PCIe 时钟
+    REFCLK+/REFCLK- → 差分，100MHz
+    → 硬盘/显卡/网卡 共用</span>
+
+<span style="color:var(--io)">RTC 实时时钟
+    32.768kHz 晶振 → RTC 芯片
+    纽扣电池供电，断电也走时</span></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="color:var(--clk)">时钟信号连接规则</div>
+    <table class="tbl">
+      <thead><tr><th>规则</th><th>原因</th></tr></thead>
+      <tbody>
+        <tr><td>走线要短且等长</td><td>避免时序偏差（skew）</td></tr>
+        <tr><td>加旁路电容（100nF）</td><td>滤除高频噪声</td></tr>
+        <tr><td>高速时钟用差分信号</td><td>抗干扰，传输更远</td></tr>
+        <tr><td>时钟线不能打折</td><td>阻抗不连续会反射</td></tr>
+        <tr><td>时钟线旁边铺地</td><td>屏蔽干扰</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="div"></div>
+
+<!-- 完整连接步骤 -->
+<div class="sec">
+  <div class="sec-hd"><div class="sec-dot" style="background:var(--pwr)"></div><h2 class="pwr">完整连接步骤（从零开始）</h2><div class="sec-line"></div></div>
+
+  <div class="step">
+    <div class="step-num" style="background:rgba(52,211,153,.15);color:var(--pwr);border:1px solid rgba(52,211,153,.3)">1</div>
+    <div class="step-body">
+      <div class="step-title">先连电源</div>
+      <div class="step-desc">ATX 电源 → 主板 24pin 接口。CPU 单独 8pin 供电。硬盘 SATA 电源线。所有 GND 必须共地！</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num" style="background:rgba(251,191,36,.15);color:var(--clk);border:1px solid rgba(251,191,36,.3)">2</div>
+    <div class="step-body">
+      <div class="step-title">连时钟</div>
+      <div class="step-desc">晶振 → PLL → CPU CLK 引脚。这是最先要确认的，没有时钟 CPU 不工作。</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num" style="background:rgba(255,107,53,.15);color:var(--cpu);border:1px solid rgba(255,107,53,.3)">3</div>
+    <div class="step-body">
+      <div class="step-title">连复位电路</div>
+      <div class="step-desc">RC 复位电路 → CPU RESET 引脚。确保上电时 CPU 能正确初始化。</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num" style="background:rgba(0,212,255,.15);color:var(--mem);border:1px solid rgba(0,212,255,.3)">4</div>
+    <div class="step-body">
+      <div class="step-title">连内存</div>
+      <div class="step-desc">CPU 地址总线 → 内存地址引脚。CPU 数据总线 ↔ 内存数据引脚。地址译码器决定内存映射范围。</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num" style="background:rgba(74,222,128,.15);color:var(--disk);border:1px solid rgba(74,222,128,.3)">5</div>
+    <div class="step-body">
+      <div class="step-title">连存储（硬盘/ROM）</div>
+      <div class="step-desc">BIOS ROM → 地址总线（固定地址 0xFFFFFFF0）。硬盘 → SATA 控制器 → PCIe 总线 → CPU。</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num" style="background:rgba(167,139,250,.15);color:var(--io);border:1px solid rgba(167,139,250,.3)">6</div>
+    <div class="step-body">
+      <div class="step-title">连 I/O 设备</div>
+      <div class="step-desc">键盘/鼠标 → USB 控制器 → PCIe → CPU。中断线 IRQ → APIC → CPU INT 引脚。</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num" style="background:rgba(244,114,182,.15);color:var(--bus);border:1px solid rgba(244,114,182,.3)">7</div>
+    <div class="step-body">
+      <div class="step-title">验证总线</div>
+      <div class="step-desc">用示波器检查时钟波形是否正常。用逻辑分析仪检查总线数据。上电测试 POST（开机自检）。</div>
+    </div>
+  </div>
+</div>
+
+<div class="div"></div>
+
+<!-- 最简单的学习用计算机 -->
+<div class="sec">
+  <div class="sec-hd"><div class="sec-dot" style="background:var(--cpu)"></div><h2>推荐：最简单的学习方案</h2><div class="sec-line"></div></div>
+
+  <div class="note"><strong>💡 建议</strong>：如果你想亲手搭一台计算机，不要从零开始焊 CPU，而是用现成的开发板，原理完全一样但省去了大量调试工作。</div>
+
+  <div class="card">
+    <div class="card-title" style="color:var(--cpu)">推荐学习路径</div>
+    <table class="tbl">
+      <thead><tr><th>阶段</th><th>工具</th><th>学到什么</th></tr></thead>
+      <tbody>
+        <tr><td><span class="pin cpu">入门</span></td><td>Arduino Uno</td><td>时钟、GPIO、中断、串口</td></tr>
+        <tr><td><span class="pin mem">进阶</span></td><td>树莓派 Pico</td><td>双核 CPU、内存映射、USB</td></tr>
+        <tr><td><span class="pin disk">高级</span></td><td>树莓派 4</td><td>完整 Linux、SATA、PCIe</td></tr>
+        <tr><td><span class="pin io">专业</span></td><td>FPGA (Xilinx)</span></td><td>自己实现 CPU 电路</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="foot">HARDWARE CIRCUIT GUIDE — CPU · RAM · DISK · IO · CLOCK — 2026</div>
+
+</div>
+</body>
+</html>
+
+

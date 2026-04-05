@@ -1,0 +1,170 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据库设计 - 架构师学习笔记</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-4xl mx-auto p-6">
+        <div class="bg-white rounded-xl shadow-md p-8 mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-database text-green-500 mr-3"></i>数据库设计
+            </h1>
+            
+            <div class="prose max-w-none">
+                <p class="text-gray-600 mb-6">
+                    数据库是信息系统的核心组件，负责存储和管理数据。良好的数据库设计不仅能提高系统性能，还能保证数据的一致性和完整性。在现代应用架构中，合理选择和使用数据库技术对系统成功至关重要。
+                </p>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">数据库选型</h2>
+                <p class="text-gray-600 mb-4">
+                    根据业务需求和数据特点选择合适的数据库类型是架构设计的重要环节。
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-table text-green-500 mr-2"></i>
+                            关系型数据库
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            采用关系模型来组织数据的数据库，具有ACID特性，适用于对数据一致性和完整性要求高的场景。
+                        </p>
+                        <ul class="list-disc pl-8 text-gray-600 text-sm">
+                            <li>MySQL</li>
+                            <li>PostgreSQL</li>
+                            <li>Oracle</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-file-alt text-green-500 mr-2"></i>
+                            NoSQL数据库
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            非关系型数据库，具有高扩展性和高性能，适用于大数据和高并发场景。
+                        </p>
+                        <ul class="list-disc pl-8 text-gray-600 text-sm">
+                            <li>Redis（键值存储）</li>
+                            <li>MongoDB（文档存储）</li>
+                            <li>Elasticsearch（搜索引擎）</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">核心数据库技术</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-tachometer-alt text-green-500 mr-2"></i>
+                            MySQL优化
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            索引优化、查询优化、表结构设计、分库分表等技术提升MySQL性能。
+                        </p>
+                        <a href="mysql.html" class="text-blue-500 font-medium flex items-center">
+                            查看详情
+                            <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-bolt text-green-500 mr-2"></i>
+                            Redis缓存
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            利用Redis的高性能特性，实现热点数据缓存、会话存储、分布式锁等功能。
+                        </p>
+                        <a href="redis.html" class="text-blue-500 font-medium flex items-center">
+                            查看详情
+                            <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-file-code text-green-500 mr-2"></i>
+                            MongoDB
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            文档型数据库，适用于存储半结构化数据，支持灵活的查询和聚合操作。
+                        </p>
+                        <a href="mongodb.html" class="text-blue-500 font-medium flex items-center">
+                            查看详情
+                            <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-search text-green-500 mr-2"></i>
+                            Elasticsearch
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            分布式搜索引擎，提供全文检索、结构化搜索、分析等功能。
+                        </p>
+                        <a href="elasticsearch.html" class="text-blue-500 font-medium flex items-center">
+                            查看详情
+                            <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">数据库设计原则</h2>
+                <div class="bg-blue-50 rounded-lg p-6 mb-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-3">设计要点</h3>
+                    <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                        <li><strong>范式化设计：</strong>遵循数据库设计范式，减少数据冗余</li>
+                        <li><strong>索引优化：</strong>合理创建索引，提升查询性能</li>
+                        <li><strong>分库分表：</strong>根据业务特点进行水平或垂直拆分</li>
+                        <li><strong>读写分离：</strong>通过主从复制实现读写分离，提升并发能力</li>
+                        <li><strong>备份与恢复：</strong>建立完善的备份策略和恢复机制</li>
+                    </ul>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">数据库架构演进</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white border border-gray-200">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="py-2 px-4 border-b text-left">阶段</th>
+                                <th class="py-2 px-4 border-b text-left">特点</th>
+                                <th class="py-2 px-4 border-b text-left">适用场景</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="py-2 px-4 border-b font-medium">单机数据库</td>
+                                <td class="py-2 px-4 border-b">单一数据库实例，简单易维护</td>
+                                <td class="py-2 px-4 border-b">小型应用，访问量不大</td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="py-2 px-4 border-b font-medium">主从复制</td>
+                                <td class="py-2 px-4 border-b">一主多从，读写分离</td>
+                                <td class="py-2 px-4 border-b">读多写少的应用场景</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 px-4 border-b font-medium">分库分表</td>
+                                <td class="py-2 px-4 border-b">水平或垂直拆分，提升扩展性</td>
+                                <td class="py-2 px-4 border-b">大数据量，高并发场景</td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="py-2 px-4 border-b font-medium">分布式数据库</td>
+                                <td class="py-2 px-4 border-b">多节点分布式存储，自动分片</td>
+                                <td class="py-2 px-4 border-b">超大规模数据和高并发场景</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

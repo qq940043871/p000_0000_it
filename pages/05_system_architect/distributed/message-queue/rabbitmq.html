@@ -1,0 +1,356 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RabbitMQ - 架构师学习笔记</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-4xl mx-auto p-6">
+        <div class="bg-white rounded-xl shadow-md p-8 mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-envelope text-blue-500 mr-3"></i>RabbitMQ
+            </h1>
+            
+            <div class="prose max-w-none">
+                <p class="text-gray-600 mb-6">
+                    RabbitMQ是一个开源的消息代理和队列服务器，用来实现应用程序之间的异步通信。它基于AMQP（高级消息队列协议）实现，支持多种消息传递模式，具有高可靠性、灵活的路由、集群和高可用性等特性。
+                </p>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">RabbitMQ核心概念</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-exchange-alt text-blue-500 mr-2"></i>
+                            Producer（生产者）
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            消息的发送方，负责创建消息并将其发送到RabbitMQ Broker。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-inbox text-blue-500 mr-2"></i>
+                            Consumer（消费者）
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            消息的接收方，从RabbitMQ Broker获取消息并进行处理。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-server text-blue-500 mr-2"></i>
+                            Broker（消息代理）
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            消息中间件服务器，负责接收、存储和转发消息。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-road text-blue-500 mr-2"></i>
+                            Exchange（交换机）
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            接收生产者发送的消息，并根据路由规则将消息分发到队列中。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-database text-blue-500 mr-2"></i>
+                            Queue（队列）
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            存储消息的缓冲区，消息在队列中等待消费者处理。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-route text-blue-500 mr-2"></i>
+                            Binding（绑定）
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            连接Exchange和Queue的规则，定义了消息如何从Exchange路由到Queue。
+                        </p>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Exchange类型</h2>
+                
+                <div class="overflow-x-auto mb-8">
+                    <table class="min-w-full bg-white border border-gray-200">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="py-2 px-4 border-b text-left">类型</th>
+                                <th class="py-2 px-4 border-b text-left">路由规则</th>
+                                <th class="py-2 px-4 border-b text-left">特点</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="py-2 px-4 border-b font-medium">Direct</td>
+                                <td class="py-2 px-4 border-b">精确匹配Routing Key</td>
+                                <td class="py-2 px-4 border-b">点对点通信</td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="py-2 px-4 border-b font-medium">Fanout</td>
+                                <td class="py-2 px-4 border-b">广播模式，忽略Routing Key</td>
+                                <td class="py-2 px-4 border-b">发布订阅模式</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 px-4 border-b font-medium">Topic</td>
+                                <td class="py-2 px-4 border-b">模式匹配Routing Key</td>
+                                <td class="py-2 px-4 border-b">通配符匹配</td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="py-2 px-4 border-b font-medium">Headers</td>
+                                <td class="py-2 px-4 border-b">匹配消息头部属性</td>
+                                <td class="py-2 px-4 border-b">忽略Routing Key</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">消息传递模式</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-paper-plane text-blue-500 mr-2"></i>
+                            简单模式（Simple）
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            最简单的模式，一个生产者对应一个消费者。
+                        </p>
+                        <pre class="bg-gray-800 text-white p-3 rounded text-xs overflow-x-auto">
+// 生产者
+channel.queueDeclare("hello", false, false, false, null);
+channel.basicPublish("", "hello", null, message.getBytes());
+
+// 消费者
+channel.basicConsume("hello", true, consumer);</pre>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-share-alt text-blue-500 mr-2"></i>
+                            工作队列模式（Work Queue）
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            一个生产者，多个消费者，消息轮流分发给消费者。
+                        </p>
+                        <pre class="bg-gray-800 text-white p-3 rounded text-xs overflow-x-auto">
+// 生产者
+channel.queueDeclare("task_queue", true, false, false, null);
+channel.basicPublish("", "task_queue", MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes());
+
+// 消费者
+channel.basicQos(1); // 公平分发
+channel.basicConsume("task_queue", false, consumer);</pre>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-bullhorn text-blue-500 mr-2"></i>
+                            发布/订阅模式（Publish/Subscribe）
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            一个生产者，多个消费者，消息广播给所有绑定的队列。
+                        </p>
+                        <pre class="bg-gray-800 text-white p-3 rounded text-xs overflow-x-auto">
+// 生产者
+channel.exchangeDeclare("logs", "fanout");
+channel.basicPublish("logs", "", null, message.getBytes());
+
+// 消费者
+channel.exchangeDeclare("logs", "fanout");
+String queueName = channel.queueDeclare().getQueue();
+channel.queueBind(queueName, "logs", "");
+channel.basicConsume(queueName, true, consumer);</pre>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-filter text-blue-500 mr-2"></i>
+                            路由模式（Routing）
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            根据Routing Key精确匹配，将消息分发到不同的队列。
+                        </p>
+                        <pre class="bg-gray-800 text-white p-3 rounded text-xs overflow-x-auto">
+// 生产者
+channel.exchangeDeclare("direct_logs", "direct");
+channel.basicPublish("direct_logs", severity, null, message.getBytes());
+
+// 消费者
+channel.exchangeDeclare("direct_logs", "direct");
+String queueName = channel.queueDeclare().getQueue();
+channel.queueBind(queueName, "direct_logs", "error");
+channel.queueBind(queueName, "direct_logs", "warning");
+channel.basicConsume(queueName, true, consumer);</pre>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">高级特性</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-shield-alt text-blue-500 mr-2"></i>
+                            消息确认机制
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            确保消息可靠传递，防止消息丢失。
+                        </p>
+                        <ul class="list-disc pl-8 text-gray-600 text-sm">
+                            <li><strong>生产者确认：</strong>确认消息已到达Broker</li>
+                            <li><strong>消费者确认：</strong>确认消息已被消费</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-redo text-blue-500 mr-2"></i>
+                            消息持久化
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            将消息存储到磁盘，防止Broker重启后消息丢失。
+                        </p>
+                        <ul class="list-disc pl-8 text-gray-600 text-sm">
+                            <li><strong>队列持久化：</strong>设置队列durable为true</li>
+                            <li><strong>消息持久化：</strong>设置消息deliveryMode为2</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-balance-scale text-blue-500 mr-2"></i>
+                            公平分发
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            避免某些消费者过载，实现负载均衡。
+                        </p>
+                        <pre class="bg-gray-800 text-white p-2 rounded text-xs overflow-x-auto">
+channel.basicQos(1); // 每次只处理一条消息
+channel.basicConsume(queueName, false, consumer); // 手动确认</pre>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-sync text-blue-500 mr-2"></i>
+                            死信队列
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            处理无法被正常消费的消息。
+                        </p>
+                        <ul class="list-disc pl-8 text-gray-600 text-sm">
+                            <li>消息被拒绝且requeue为false</li>
+                            <li>消息过期</li>
+                            <li>队列达到最大长度</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">集群与高可用</h2>
+                
+                <div class="border border-gray-200 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">集群模式</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div class="bg-blue-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">普通集群模式</h4>
+                            <p class="text-gray-600 text-sm">
+                                同步元数据，不同步队列数据
+                            </p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">镜像队列模式</h4>
+                            <p class="text-gray-600 text-sm">
+                                同步队列数据到多个节点
+                            </p>
+                        </div>
+                        <div class="bg-purple-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">仲裁队列模式</h4>
+                            <p class="text-gray-600 text-sm">
+                                新一代高可用队列，基于Raft协议
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <h4 class="font-bold text-gray-800">高可用配置</h4>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mt-2 overflow-x-auto">
+# 镜像队列配置
+rabbitmqctl set_policy ha-all "^" '{"ha-mode":"all"}'
+
+# 仲裁队列配置
+channel.queueDeclare("my-queue", true, false, false, 
+    Collections.singletonMap("x-queue-type", "quorum"));</pre>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">监控与管理</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-chart-bar text-blue-500 mr-2"></i>
+                            Web管理界面
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            RabbitMQ提供Web管理界面，默认端口15672。
+                        </p>
+                        <ul class="list-disc pl-8 text-gray-600 text-sm">
+                            <li>查看队列、交换机、绑定等信息</li>
+                            <li>监控消息流量和性能指标</li>
+                            <li>管理用户和权限</li>
+                            <li>查看节点状态和集群信息</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-terminal text-blue-500 mr-2"></i>
+                            命令行工具
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            rabbitmqctl是RabbitMQ的命令行管理工具。
+                        </p>
+                        <pre class="bg-gray-800 text-white p-3 rounded text-xs overflow-x-auto">
+# 查看队列列表
+rabbitmqctl list_queues
+
+# 查看交换机列表
+rabbitmqctl list_exchanges
+
+# 查看绑定关系
+rabbitmqctl list_bindings
+
+# 添加用户
+rabbitmqctl add_user username password</pre>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">最佳实践</h2>
+                <div class="bg-green-50 rounded-lg p-6">
+                    <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                        <li>合理设计Exchange和Queue，避免过多的队列和绑定</li>
+                        <li>使用消息确认机制确保消息不丢失</li>
+                        <li>设置合适的消息过期时间和队列长度限制</li>
+                        <li>实施监控和告警，及时发现和处理异常</li>
+                        <li>定期清理无用的队列和交换机</li>
+                        <li>使用集群和镜像队列提高可用性</li>
+                        <li>合理设置资源限制，防止消息积压</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

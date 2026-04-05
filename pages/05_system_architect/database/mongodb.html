@@ -1,0 +1,434 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB - 架构师学习笔记</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-4xl mx-auto p-6">
+        <div class="bg-white rounded-xl shadow-md p-8 mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-file-code text-green-500 mr-3"></i>MongoDB
+            </h1>
+            
+            <div class="prose max-w-none">
+                <p class="text-gray-600 mb-6">
+                    MongoDB是一个基于分布式文件存储的开源数据库系统，属于NoSQL数据库的一种。它使用BSON（Binary JSON）格式存储数据，支持动态查询、索引、复制、分片等特性，适用于大数据量、高并发的Web应用。
+                </p>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">MongoDB核心概念</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-database text-green-500 mr-2"></i>
+                            Database（数据库）
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            数据库是集合的容器，一个MongoDB实例可以包含多个数据库。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-table text-green-500 mr-2"></i>
+                            Collection（集合）
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            集合类似于关系数据库中的表，是一组文档的集合。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-file-alt text-green-500 mr-2"></i>
+                            Document（文档）
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            文档是MongoDB中基本的数据单元，类似于关系数据库中的行记录。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-key text-green-500 mr-2"></i>
+                            Field（字段）
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            字段是文档中的键值对，类似于关系数据库中的列。
+                        </p>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">基本操作</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-plus-circle text-blue-500 mr-2"></i>
+                            插入操作
+                        </h3>
+                        <pre class="bg-gray-800 text-white p-3 rounded text-xs overflow-x-auto">
+// 插入单个文档
+db.users.insertOne({
+  name: "Alice",
+  age: 25,
+  email: "alice@example.com",
+  hobbies: ["reading", "swimming"]
+})
+
+// 插入多个文档
+db.users.insertMany([
+  {name: "Bob", age: 30, email: "bob@example.com"},
+  {name: "Charlie", age: 35, email: "charlie@example.com"}
+])</pre>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-search text-blue-500 mr-2"></i>
+                            查询操作
+                        </h3>
+                        <pre class="bg-gray-800 text-white p-3 rounded text-xs overflow-x-auto">
+// 基本查询
+db.users.find({age: {$gte: 25}})
+
+// 投影查询
+db.users.find({age: {$gte: 25}}, {name: 1, email: 1})
+
+// 排序和限制
+db.users.find().sort({age: 1}).limit(5)
+
+// 聚合查询
+db.users.aggregate([
+  {$match: {age: {$gte: 25}}},
+  {$group: {_id: "$age", count: {$sum: 1}}},
+  {$sort: {_id: 1}}
+])</pre>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-edit text-blue-500 mr-2"></i>
+                            更新操作
+                        </h3>
+                        <pre class="bg-gray-800 text-white p-3 rounded text-xs overflow-x-auto">
+// 更新单个文档
+db.users.updateOne(
+  {name: "Alice"},
+  {$set: {age: 26}}
+)
+
+// 更新多个文档
+db.users.updateMany(
+  {age: {$lt: 30}},
+  {$set: {status: "young"}}
+)
+
+// 数组操作
+db.users.updateOne(
+  {name: "Alice"},
+  {$push: {hobbies: "dancing"}}
+)</pre>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-trash-alt text-blue-500 mr-2"></i>
+                            删除操作
+                        </h3>
+                        <pre class="bg-gray-800 text-white p-3 rounded text-xs overflow-x-auto">
+// 删除单个文档
+db.users.deleteOne({name: "Alice"})
+
+// 删除多个文档
+db.users.deleteMany({age: {$lt: 25}})
+
+// 删除所有文档
+db.users.deleteMany({})</pre>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">索引优化</h2>
+                
+                <div class="border border-gray-200 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">索引类型</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white border border-gray-200">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="py-2 px-4 border-b text-left">索引类型</th>
+                                    <th class="py-2 px-4 border-b text-left">说明</th>
+                                    <th class="py-2 px-4 border-b text-left">创建语法</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="py-2 px-4 border-b">单字段索引</td>
+                                    <td class="py-2 px-4 border-b">为单个字段创建索引</td>
+                                    <td class="py-2 px-4 border-b">db.collection.createIndex({name: 1})</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 border-b">复合索引</td>
+                                    <td class="py-2 px-4 border-b">为多个字段创建索引</td>
+                                    <td class="py-2 px-4 border-b">db.collection.createIndex({name: 1, age: -1})</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-4 border-b">多键索引</td>
+                                    <td class="py-2 px-4 border-b">为数组字段创建索引</td>
+                                    <td class="py-2 px-4 border-b">db.collection.createIndex({tags: 1})</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 border-b">文本索引</td>
+                                    <td class="py-2 px-4 border-b">为文本搜索创建索引</td>
+                                    <td class="py-2 px-4 border-b">db.collection.createIndex({content: "text"})</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-4 border-b">地理空间索引</td>
+                                    <td class="py-2 px-4 border-b">为地理位置数据创建索引</td>
+                                    <td class="py-2 px-4 border-b">db.collection.createIndex({location: "2dsphere"})</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <h4 class="font-bold text-gray-800 mt-4">索引优化建议</h4>
+                    <ul class="list-disc pl-8 text-gray-600 mt-2">
+                        <li>为经常查询的字段创建索引</li>
+                        <li>复合索引遵循最左前缀原则</li>
+                        <li>定期分析索引使用情况</li>
+                        <li>删除未使用的索引</li>
+                        <li>避免过多索引影响写入性能</li>
+                    </ul>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">复制集</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-copy text-green-500 mr-2"></i>
+                            复制集架构
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li><strong>Primary节点：</strong>处理所有读写操作</li>
+                            <li><strong>Secondary节点：</strong>复制Primary数据，可处理读操作</li>
+                            <li><strong>仲裁节点：</strong>参与选举，不存储数据</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-vote-yea text-green-500 mr-2"></i>
+                            故障转移
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li>自动选举新的Primary节点</li>
+                            <li>数据一致性通过oplog保证</li>
+                            <li>支持读写分离</li>
+                            <li>提高数据可用性</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">分片集群</h2>
+                
+                <div class="border border-gray-200 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">分片架构</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                        <div class="bg-blue-50 p-4 rounded text-center">
+                            <div class="font-bold text-gray-800 mb-2">Query Router</div>
+                            <div class="text-xs text-gray-600">mongos</div>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded text-center">
+                            <div class="font-bold text-gray-800 mb-2">Config Server</div>
+                            <div class="text-xs text-gray-600">配置数据</div>
+                        </div>
+                        <div class="bg-yellow-50 p-4 rounded text-center">
+                            <div class="font-bold text-gray-800 mb-2">Shard 1</div>
+                            <div class="text-xs text-gray-600">数据分片</div>
+                        </div>
+                        <div class="bg-purple-50 p-4 rounded text-center">
+                            <div class="font-bold text-gray-800 mb-2">Shard 2</div>
+                            <div class="text-xs text-gray-600">数据分片</div>
+                        </div>
+                    </div>
+                    
+                    <h4 class="font-bold text-gray-800">分片键选择</h4>
+                    <ul class="list-disc pl-8 text-gray-600 mt-2">
+                        <li>选择基数大的字段作为分片键</li>
+                        <li>避免单调递增的字段</li>
+                        <li>考虑查询模式</li>
+                        <li>使用复合分片键提高分布均匀性</li>
+                    </ul>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">聚合管道</h2>
+                
+                <div class="border border-gray-200 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">常用聚合阶段</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white border border-gray-200 text-sm">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="py-2 px-4 border-b text-left">阶段</th>
+                                    <th class="py-2 px-4 border-b text-left">功能</th>
+                                    <th class="py-2 px-4 border-b text-left">示例</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="py-2 px-4 border-b">$match</td>
+                                    <td class="py-2 px-4 border-b">过滤文档</td>
+                                    <td class="py-2 px-4 border-b">{$match: {age: {$gte: 18}}}</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 border-b">$group</td>
+                                    <td class="py-2 px-4 border-b">分组聚合</td>
+                                    <td class="py-2 px-4 border-b">{$group: {_id: "$category", count: {$sum: 1}}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-4 border-b">$sort</td>
+                                    <td class="py-2 px-4 border-b">排序</td>
+                                    <td class="py-2 px-4 border-b">{$sort: {age: 1}}</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 border-b">$project</td>
+                                    <td class="py-2 px-4 border-b">投影</td>
+                                    <td class="py-2 px-4 border-b">{$project: {name: 1, age: 1}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-4 border-b">$limit</td>
+                                    <td class="py-2 px-4 border-b">限制数量</td>
+                                    <td class="py-2 px-4 border-b">{$limit: 10}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <h4 class="font-bold text-gray-800 mt-4">聚合示例</h4>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mt-2 overflow-x-auto">
+// 计算每个类别的商品数量和平均价格
+db.products.aggregate([
+  {
+    $group: {
+      _id: "$category",
+      count: {$sum: 1},
+      avgPrice: {$avg: "$price"}
+    }
+  },
+  {
+    $sort: {count: -1}
+  }
+])
+
+// 复杂聚合示例
+db.orders.aggregate([
+  {$match: {status: "completed"}},
+  {$lookup: {
+    from: "customers",
+    localField: "customerId",
+    foreignField: "_id",
+    as: "customer"
+  }},
+  {$unwind: "$customer"},
+  {$group: {
+    _id: "$customer.region",
+    totalSales: {$sum: "$amount"},
+    orderCount: {$sum: 1}
+  }}
+])</pre>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">性能优化</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-tachometer-alt text-yellow-500 mr-2"></i>
+                            查询优化
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li>使用explain()分析查询性能</li>
+                            <li>避免全表扫描</li>
+                            <li>合理使用索引</li>
+                            <li>限制返回结果集大小</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-hdd text-yellow-500 mr-2"></i>
+                            存储优化
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li>使用压缩存储引擎</li>
+                            <li>合理设计文档结构</li>
+                            <li>避免大文档</li>
+                            <li>定期清理无用数据</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">监控与诊断</h2>
+                
+                <div class="border border-gray-200 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">监控工具</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div class="bg-blue-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">MongoDB Compass</h4>
+                            <p class="text-gray-600 text-sm">
+                                官方图形化管理工具
+                            </p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">MongoDB Atlas</h4>
+                            <p class="text-gray-600 text-sm">
+                                云数据库监控
+                            </p>
+                        </div>
+                        <div class="bg-purple-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">第三方工具</h4>
+                            <p class="text-gray-600 text-sm">
+                                Prometheus, Grafana等
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <h4 class="font-bold text-gray-800">常用监控命令</h4>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mt-2 overflow-x-auto">
+// 数据库状态
+db.stats()
+
+// 集合状态
+db.collection.stats()
+
+// 查询分析
+db.collection.find({name: "Alice"}).explain("executionStats")
+
+// 性能监控
+db.currentOp()
+db.killOp(opid)</pre>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">MongoDB最佳实践</h2>
+                <div class="bg-green-50 rounded-lg p-6">
+                    <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                        <li>合理设计文档结构，避免过度嵌套</li>
+                        <li>建立合适的索引策略</li>
+                        <li>使用复制集提高可用性</li>
+                        <li>根据数据量选择分片策略</li>
+                        <li>定期备份重要数据</li>
+                        <li>监控性能指标，及时优化</li>
+                        <li>合理配置内存和存储资源</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

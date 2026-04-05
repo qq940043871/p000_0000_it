@@ -1,0 +1,258 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docker实战 - 架构师学习笔记</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-4xl mx-auto p-6">
+        <div class="bg-white rounded-lg shadow-md p-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fab fa-docker mr-3 text-primary"></i>Docker实战
+            </h1>
+            
+            <div class="prose max-w-none">
+                <p class="text-gray-600 mb-6">
+                    Docker作为容器化技术的代表，已经成为现代应用部署的标准。掌握Docker的实战技能对于架构师来说至关重要。
+                </p>
+                
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+                    <p class="text-blue-700">
+                        Docker通过容器化技术解决了应用部署环境不一致的问题，实现了"一次构建，到处运行"的理念。
+                    </p>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">Docker核心概念</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-box mr-2 text-primary"></i>镜像(Image)
+                        </h3>
+                        <p class="text-gray-600">
+                            镜像是Docker容器的基础，包含了运行应用所需的所有内容，包括代码、运行时、库、环境变量和配置文件。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-cube mr-2 text-primary"></i>容器(Container)
+                        </h3>
+                        <p class="text-gray-600">
+                            容器是镜像的运行实例，可以被启动、停止、删除。每个容器都是相互隔离的安全应用平台。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-network-wired mr-2 text-primary"></i>网络(Network)
+                        </h3>
+                        <p class="text-gray-600">
+                            Docker网络允许容器之间以及容器与宿主机之间进行通信，支持多种网络驱动。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-hdd mr-2 text-primary"></i>数据卷(Volume)
+                        </h3>
+                        <p class="text-gray-600">
+                            数据卷用于持久化存储容器中的数据，即使容器被删除，数据也不会丢失。
+                        </p>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">常用Docker命令</h2>
+                
+                <div class="space-y-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">镜像操作</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# 拉取镜像
+docker pull nginx:latest
+
+# 列出本地镜像
+docker images
+
+# 构建镜像
+docker build -t myapp:latest .
+
+# 删除镜像
+docker rmi nginx:latest
+
+# 查看镜像详情
+docker inspect nginx:latest</pre>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">容器操作</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# 运行容器
+docker run -d --name mynginx -p 8080:80 nginx:latest
+
+# 列出运行中的容器
+docker ps
+
+# 列出所有容器
+docker ps -a
+
+# 停止容器
+docker stop mynginx
+
+# 启动容器
+docker start mynginx
+
+# 删除容器
+docker rm mynginx
+
+# 进入容器
+docker exec -it mynginx /bin/bash</pre>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">网络和数据卷操作</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# 创建网络
+docker network create mynetwork
+
+# 列出网络
+docker network ls
+
+# 创建数据卷
+docker volume create myvolume
+
+# 列出数据卷
+docker volume ls
+
+# 挂载数据卷运行容器
+docker run -d --name myapp -v myvolume:/data myapp:latest</pre>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">Dockerfile编写</h2>
+                
+                <div class="space-y-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">基础Dockerfile示例</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+FROM openjdk:11-jre-slim
+
+# 设置工作目录
+WORKDIR /app
+
+# 复制jar文件到容器中
+COPY target/myapp.jar app.jar
+
+# 暴露端口
+EXPOSE 8080
+
+# 设置环境变量
+ENV JAVA_OPTS=""
+
+# 启动命令
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]</pre>
+                        <p class="text-gray-600">这是一个简单的Spring Boot应用Dockerfile示例。</p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">多阶段构建</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# 构建阶段
+FROM maven:3.8.4-openjdk-11 AS builder
+WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -DskipTests
+
+# 运行阶段
+FROM openjdk:11-jre-slim
+WORKDIR /app
+COPY --from=builder /app/target/*.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]</pre>
+                        <p class="text-gray-600">多阶段构建可以减小最终镜像的大小，提高安全性。</p>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">Docker Compose</h2>
+                
+                <div class="space-y-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">docker-compose.yml示例</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+      - redis
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: myapp
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+      
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
+volumes:
+  db_data:</pre>
+                        <p class="text-gray-600">使用Docker Compose可以定义和运行多容器Docker应用程序。</p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">常用Compose命令</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# 启动所有服务
+docker-compose up -d
+
+# 查看服务状态
+docker-compose ps
+
+# 查看服务日志
+docker-compose logs web
+
+# 停止所有服务
+docker-compose down
+
+# 重新构建服务
+docker-compose build
+
+# 执行命令
+docker-compose exec web /bin/bash</pre>
+                    </div>
+                </div>
+                
+                <div class="bg-green-50 border-l-4 border-green-500 p-4 mt-8">
+                    <h3 class="text-lg font-semibold text-green-700 mb-2">Docker最佳实践</h3>
+                    <ul class="list-disc pl-8 space-y-1 text-green-700">
+                        <li>使用.dockerignore文件排除不必要的文件</li>
+                        <li>合理使用多阶段构建减小镜像大小</li>
+                        <li>为镜像设置合适的标签</li>
+                        <li>避免在容器中存储数据，使用数据卷</li>
+                        <li>定期清理无用的镜像和容器</li>
+                        <li>使用健康检查确保容器正常运行</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

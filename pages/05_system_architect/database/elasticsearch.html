@@ -1,0 +1,505 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elasticsearch - 架构师学习笔记</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-4xl mx-auto p-6">
+        <div class="bg-white rounded-xl shadow-md p-8 mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-search text-orange-500 mr-3"></i>Elasticsearch
+            </h1>
+            
+            <div class="prose max-w-none">
+                <p class="text-gray-600 mb-6">
+                    Elasticsearch是一个基于Apache Lucene构建的开源、分布式、RESTful搜索引擎。它能够快速地存储、搜索和分析大量数据，广泛应用于全文搜索、日志分析、指标监控等场景。
+                </p>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Elasticsearch核心概念</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-database text-orange-500 mr-2"></i>
+                            Index（索引）
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            索引是具有相似特征的文档集合，类似于关系数据库中的数据库。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-file-alt text-orange-500 mr-2"></i>
+                            Document（文档）
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            文档是可被索引的基本单位，采用JSON格式表示，类似于关系数据库中的行。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-cube text-orange-500 mr-2"></i>
+                            Type（类型）
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            类型是索引中逻辑类别/分区的容器，但在7.x版本后已被废弃。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-divide text-orange-500 mr-2"></i>
+                            Shard（分片）
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            分片是索引的子集，用于水平分割数据，提高性能和可扩展性。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-copy text-orange-500 mr-2"></i>
+                            Replica（副本）
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            副本是分片的拷贝，提供高可用性和数据冗余。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-server text-orange-500 mr-2"></i>
+                            Node（节点）
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            节点是Elasticsearch的单个服务器实例，存储数据并参与集群操作。
+                        </p>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">基本操作</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-plus-circle text-blue-500 mr-2"></i>
+                            索引操作
+                        </h3>
+                        <pre class="bg-gray-800 text-white p-3 rounded text-xs overflow-x-auto">
+# 创建索引
+PUT /my_index
+{
+  "settings": {
+    "number_of_shards": 3,
+    "number_of_replicas": 1
+  }
+}
+
+# 删除索引
+DELETE /my_index
+
+# 查看索引信息
+GET /my_index
+
+# 打开/关闭索引
+POST /my_index/_open
+POST /my_index/_close</pre>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-file-alt text-blue-500 mr-2"></i>
+                            文档操作
+                        </h3>
+                        <pre class="bg-gray-800 text-white p-3 rounded text-xs overflow-x-auto">
+# 创建/更新文档
+POST /my_index/_doc/1
+{
+  "title": "Elasticsearch入门",
+  "content": "这是一篇关于Elasticsearch的文章",
+  "author": "张三",
+  "publish_date": "2023-01-01"
+}
+
+# 查询文档
+GET /my_index/_doc/1
+
+# 更新文档
+POST /my_index/_update/1
+{
+  "doc": {
+    "author": "李四"
+  }
+}
+
+# 删除文档
+DELETE /my_index/_doc/1</pre>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-search text-blue-500 mr-2"></i>
+                            搜索操作
+                        </h3>
+                        <pre class="bg-gray-800 text-white p-3 rounded text-xs overflow-x-auto">
+# 基本搜索
+GET /my_index/_search
+{
+  "query": {
+    "match": {
+      "title": "Elasticsearch"
+    }
+  }
+}
+
+# 复合搜索
+GET /my_index/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {"match": {"title": "Elasticsearch"}},
+        {"range": {"publish_date": {"gte": "2023-01-01"}}}
+      ]
+    }
+  }
+}
+
+# 聚合搜索
+GET /my_index/_search
+{
+  "aggs": {
+    "author_count": {
+      "terms": {"field": "author.keyword"}
+    }
+  }
+}</pre>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-cog text-blue-500 mr-2"></i>
+                            映射操作
+                        </h3>
+                        <pre class="bg-gray-800 text-white p-3 rounded text-xs overflow-x-auto">
+# 创建映射
+PUT /my_index
+{
+  "mappings": {
+    "properties": {
+      "title": {
+        "type": "text",
+        "analyzer": "ik_max_word"
+      },
+      "author": {
+        "type": "keyword"
+      },
+      "publish_date": {
+        "type": "date"
+      }
+    }
+  }
+}
+
+# 查看映射
+GET /my_index/_mapping
+
+# 更新映射（只能添加字段）
+PUT /my_index/_mapping
+{
+  "properties": {
+    "tags": {
+      "type": "keyword"
+    }
+  }
+}</pre>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">查询DSL</h2>
+                
+                <div class="border border-gray-200 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">查询类型</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white border border-gray-200">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="py-2 px-4 border-b text-left">查询类型</th>
+                                    <th class="py-2 px-4 border-b text-left">说明</th>
+                                    <th class="py-2 px-4 border-b text-left">示例</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="py-2 px-4 border-b">Match Query</td>
+                                    <td class="py-2 px-4 border-b">全文搜索</td>
+                                    <td class="py-2 px-4 border-b">{"match": {"title": "Elasticsearch"}}</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 border-b">Term Query</td>
+                                    <td class="py-2 px-4 border-b">精确匹配</td>
+                                    <td class="py-2 px-4 border-b">{"term": {"status": "published"}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-4 border-b">Range Query</td>
+                                    <td class="py-2 px-4 border-b">范围查询</td>
+                                    <td class="py-2 px-4 border-b">{"range": {"age": {"gte": 18, "lte": 65}}}</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 border-b">Bool Query</td>
+                                    <td class="py-2 px-4 border-b">复合查询</td>
+                                    <td class="py-2 px-4 border-b">{"bool": {"must": [...], "should": [...]}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-4 border-b">Wildcard Query</td>
+                                    <td class="py-2 px-4 border-b">通配符查询</td>
+                                    <td class="py-2 px-4 border-b">{"wildcard": {"title": "elastic*"}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <h4 class="font-bold text-gray-800 mt-4">复合查询示例</h4>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mt-2 overflow-x-auto">
+# 复杂查询示例
+GET /articles/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {"match": {"title": "Elasticsearch"}},
+        {"range": {"publish_date": {"gte": "2023-01-01"}}}
+      ],
+      "must_not": [
+        {"term": {"status": "draft"}}
+      ],
+      "should": [
+        {"match": {"content": "search"}},
+        {"match": {"content": "engine"}}
+      ],
+      "filter": [
+        {"term": {"category": "technology"}}
+      ]
+    }
+  },
+  "highlight": {
+    "fields": {
+      "title": {},
+      "content": {}
+    }
+  },
+  "sort": [
+    {"publish_date": {"order": "desc"}},
+    {"_score": {"order": "desc"}}
+  ]
+}</pre>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">分词器</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-text-height text-green-500 mr-2"></i>
+                            内置分词器
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li><strong>Standard Analyzer：</strong>默认分词器，按词切分</li>
+                            <li><strong>Simple Analyzer：</strong>按非字母切分，转小写</li>
+                            <li><strong>Whitespace Analyzer：</strong>按空格切分</li>
+                            <li><strong>Keyword Analyzer：</strong>不分词，整体作为关键词</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-language text-green-500 mr-2"></i>
+                            中文分词器
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li><strong>IK Analyzer：</strong>最流行的中文分词器</li>
+                            <li><strong>Smart Chinese Analyzer：</strong>ES内置中文分词器</li>
+                            <li><strong>Jieba Analyzer：</strong>结巴分词器</li>
+                        </ul>
+                        <pre class="bg-gray-800 text-white p-2 rounded text-xs mt-3 overflow-x-auto">
+# IK分词器配置示例
+PUT /chinese_index
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "ik_smart": {
+          "type": "custom",
+          "tokenizer": "ik_smart"
+        }
+      }
+    }
+  }
+}</pre>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">集群与分片</h2>
+                
+                <div class="border border-gray-200 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">集群架构</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div class="bg-blue-50 p-4 rounded text-center">
+                            <div class="font-bold text-gray-800 mb-2">Master Node</div>
+                            <div class="text-xs text-gray-600">管理集群状态</div>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded text-center">
+                            <div class="font-bold text-gray-800 mb-2">Data Node</div>
+                            <div class="text-xs text-gray-600">存储数据</div>
+                        </div>
+                        <div class="bg-purple-50 p-4 rounded text-center">
+                            <div class="font-bold text-gray-800 mb-2">Client Node</div>
+                            <div class="text-xs text-gray-600">处理请求</div>
+                        </div>
+                    </div>
+                    
+                    <h4 class="font-bold text-gray-800">分片策略</h4>
+                    <ul class="list-disc pl-8 text-gray-600 mt-2">
+                        <li>分片数量在创建索引时确定，之后不能更改</li>
+                        <li>每个分片建议保持在10-40GB之间</li>
+                        <li>分片数量不应超过节点数量的20倍</li>
+                        <li>合理设置副本数量以平衡性能和可靠性</li>
+                    </ul>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">聚合分析</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-chart-bar text-yellow-500 mr-2"></i>
+                            指标聚合
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li><strong>Avg：</strong>平均值</li>
+                            <li><strong>Max/Min：</strong>最大值/最小值</li>
+                            <li><strong>Sum：</strong>求和</li>
+                            <li><strong>Cardinality：</strong>基数统计</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-layer-group text-yellow-500 mr-2"></i>
+                            桶聚合
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li><strong>Terms：</strong>按字段值分组</li>
+                            <li><strong>Range：</strong>按范围分组</li>
+                            <li><strong>Date Histogram：</strong>按时间分组</li>
+                            <li><strong>Filters：</strong>按过滤条件分组</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">性能优化</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-tachometer-alt text-red-500 mr-2"></i>
+                            查询优化
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li>使用filter上下文代替query上下文</li>
+                            <li>合理使用_source字段过滤</li>
+                            <li>避免深度分页</li>
+                            <li>使用索引别名</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-memory text-red-500 mr-2"></i>
+                            内存优化
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li>设置合适的堆内存大小（不超过32GB）</li>
+                            <li>启用字段数据缓存</li>
+                            <li>使用doc values代替fielddata</li>
+                            <li>定期清理未使用的索引</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">监控与诊断</h2>
+                
+                <div class="border border-gray-200 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">监控API</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white border border-gray-200 text-sm">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="py-2 px-4 border-b text-left">API</th>
+                                    <th class="py-2 px-4 border-b text-left">功能</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="py-2 px-4 border-b">_cluster/health</td>
+                                    <td class="py-2 px-4 border-b">集群健康状态</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 border-b">_nodes/stats</td>
+                                    <td class="py-2 px-4 border-b">节点统计信息</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-4 border-b">_cat/indices</td>
+                                    <td class="py-2 px-4 border-b">索引信息</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 border-b">_tasks</td>
+                                    <td class="py-2 px-4 border-b">任务信息</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <h4 class="font-bold text-gray-800 mt-4">常用监控命令</h4>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mt-2 overflow-x-auto">
+# 集群健康状态
+GET /_cluster/health
+
+# 节点信息
+GET /_nodes/stats
+
+# 索引状态
+GET /_cat/indices?v
+
+# 搜索慢日志
+GET /_settings?include_defaults=true
+{
+  "index.search.slowlog.threshold.query.warn": "10s",
+  "index.search.slowlog.threshold.query.info": "5s"
+}</pre>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Elasticsearch最佳实践</h2>
+                <div class="bg-green-50 rounded-lg p-6">
+                    <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                        <li>合理设计索引和映射结构</li>
+                        <li>选择合适的分词器处理文本数据</li>
+                        <li>设置合适的分片和副本数量</li>
+                        <li>实施监控和告警机制</li>
+                        <li>定期备份重要数据</li>
+                        <li>优化查询性能，避免慢查询</li>
+                        <li>合理配置内存和存储资源</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

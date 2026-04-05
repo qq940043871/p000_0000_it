@@ -1,0 +1,261 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>机器学习基础 - 架构师学习笔记</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-4xl mx-auto p-6">
+        <div class="bg-white rounded-lg shadow-md p-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-robot mr-3 text-primary"></i>机器学习基础
+            </h1>
+            
+            <div class="prose max-w-none">
+                <p class="text-gray-600 mb-6">
+                    机器学习是人工智能的核心领域之一，它使计算机能够从数据中学习并做出预测或决策，而无需明确编程。
+                </p>
+                
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+                    <p class="text-blue-700">
+                        理解机器学习的基本概念和算法对于架构师设计智能系统至关重要。
+                    </p>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">机器学习类型</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-chalkboard-teacher mr-2 text-primary"></i>监督学习
+                        </h3>
+                        <p class="text-gray-600">
+                            使用标记数据进行训练，学习输入和输出之间的映射关系。
+                        </p>
+                        <div class="mt-4">
+                            <span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">分类</span>
+                            <span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">回归</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-book-open mr-2 text-primary"></i>无监督学习
+                        </h3>
+                        <p class="text-gray-600">
+                            从未标记的数据中发现隐藏的模式和结构。
+                        </p>
+                        <div class="mt-4">
+                            <span class="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded">聚类</span>
+                            <span class="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded">降维</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-trophy mr-2 text-primary"></i>强化学习
+                        </h3>
+                        <p class="text-gray-600">
+                            通过与环境交互学习最优行为策略，以最大化累积奖励。
+                        </p>
+                        <div class="mt-4">
+                            <span class="inline-block bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded">Q学习</span>
+                            <span class="inline-block bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded">策略梯度</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">核心算法</h2>
+                
+                <div class="space-y-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">线性回归</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+import numpy as np
+from sklearn.linear_model import LinearRegression
+import matplotlib.pyplot as plt
+
+# 生成示例数据
+X = np.array([[1], [2], [3], [4], [5]])
+y = np.array([2, 4, 6, 8, 10])
+
+# 创建并训练模型
+model = LinearRegression()
+model.fit(X, y)
+
+# 预测
+y_pred = model.predict(X)
+
+# 可视化结果
+plt.scatter(X, y, color='blue', label='实际值')
+plt.plot(X, y_pred, color='red', label='预测值')
+plt.legend()
+plt.show()
+
+print(f"斜率: {model.coef_[0]}")
+print(f"截距: {model.intercept_}")</pre>
+                        <p class="text-gray-600">
+                            线性回归用于建立输入变量和连续输出变量之间的线性关系。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">决策树</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+# 示例数据
+X = [[0, 0], [1, 1], [1, 0], [0, 1]]
+y = [0, 1, 1, 0]
+
+# 创建决策树分类器
+clf = DecisionTreeClassifier()
+
+# 训练模型
+clf.fit(X, y)
+
+# 预测
+predictions = clf.predict([[2, 2], [1, 0]])
+
+print(f"预测结果: {predictions}")</pre>
+                        <p class="text-gray-600">
+                            决策树通过树状结构进行决策，易于理解和解释。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">K均值聚类</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+from sklearn.cluster import KMeans
+import numpy as np
+import matplotlib.pyplot as plt
+
+# 生成示例数据
+X = np.array([[1, 2], [1, 4], [1, 0],
+              [10, 2], [10, 4], [10, 0]])
+
+# 创建K均值聚类器
+kmeans = KMeans(n_clusters=2, random_state=0)
+
+# 训练模型
+kmeans.fit(X)
+
+# 预测聚类标签
+labels = kmeans.labels_
+
+# 获取聚类中心
+centers = kmeans.cluster_centers_
+
+print(f"聚类标签: {labels}")
+print(f"聚类中心: {centers}")</pre>
+                        <p class="text-gray-600">
+                            K均值聚类将数据分为K个簇，使同一簇内的数据点相似度高。
+                        </p>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">机器学习流程</h2>
+                
+                <div class="space-y-4 mb-8">
+                    <div class="flex items-start">
+                        <div class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 flex-shrink-0">1</div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800">问题定义</h3>
+                            <p class="text-gray-600">明确要解决的问题类型（分类、回归、聚类等）。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 flex-shrink-0">2</div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800">数据收集与预处理</h3>
+                            <p class="text-gray-600">收集相关数据并进行清洗、转换和特征工程。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 flex-shrink-0">3</div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800">模型选择与训练</h3>
+                            <p class="text-gray-600">选择合适的算法并使用训练数据训练模型。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 flex-shrink-0">4</div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800">模型评估</h3>
+                            <p class="text-gray-600">使用测试数据评估模型性能，调整参数。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 flex-shrink-0">5</div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800">模型部署与监控</h3>
+                            <p class="text-gray-600">将模型部署到生产环境并持续监控性能。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">常用Python库</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fab fa-python mr-2 text-primary"></i>Scikit-learn
+                        </h3>
+                        <p class="text-gray-600">
+                            简单高效的数据挖掘和数据分析工具，包含大量机器学习算法。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-chart-line mr-2 text-primary"></i>Pandas
+                        </h3>
+                        <p class="text-gray-600">
+                            提供高性能、易用的数据结构和数据分析工具。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-calculator mr-2 text-primary"></i>NumPy
+                        </h3>
+                        <p class="text-gray-600">
+                            Python科学计算的基础包，提供多维数组对象和各种派生对象。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-chart-bar mr-2 text-primary"></i>Matplotlib
+                        </h3>
+                        <p class="text-gray-600">
+                            Python 2D绘图库，用于创建高质量的图表和可视化。
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="bg-green-50 border-l-4 border-green-500 p-4 mt-8">
+                    <h3 class="text-lg font-semibold text-green-700 mb-2">机器学习最佳实践</h3>
+                    <ul class="list-disc pl-8 space-y-1 text-green-700">
+                        <li>确保数据质量和数量充足</li>
+                        <li>进行适当的特征工程</li>
+                        <li>使用交叉验证评估模型性能</li>
+                        <li>避免过拟合和欠拟合</li>
+                        <li>持续监控和更新模型</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

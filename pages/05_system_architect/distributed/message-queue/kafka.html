@@ -1,0 +1,398 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kafka - 架构师学习笔记</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-4xl mx-auto p-6">
+        <div class="bg-white rounded-xl shadow-md p-8 mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-stream text-blue-500 mr-3"></i>Kafka
+            </h1>
+            
+            <div class="prose max-w-none">
+                <p class="text-gray-600 mb-6">
+                    Apache Kafka是一个分布式流处理平台，最初由LinkedIn开发，后来成为Apache项目。Kafka被设计为一个分布式、分区化、可复制的提交日志服务，主要用于构建实时数据管道和流应用。
+                </p>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Kafka核心概念</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-database text-blue-500 mr-2"></i>
+                            Topic（主题）
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            Kafka中消息的分类，类似于数据库中的表。每个Topic可以分为多个Partition。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-divide text-blue-500 mr-2"></i>
+                            Partition（分区）
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            Topic的分区，每个Partition是一个有序的、不可变的消息序列。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-map-marker-alt text-blue-500 mr-2"></i>
+                            Offset（偏移量）
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            消息在Partition中的唯一标识，表示消息在Partition中的位置。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-user text-blue-500 mr-2"></i>
+                            Consumer Group（消费者组）
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            一组消费者的逻辑分组，同一个Group中的消费者不会重复消费同一条消息。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-server text-blue-500 mr-2"></i>
+                            Broker（代理）
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            Kafka集群中的一个服务器节点，负责存储和传递消息。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-crown text-blue-500 mr-2"></i>
+                            Zookeeper
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            分布式协调服务，负责管理Kafka集群的元数据和协调工作。
+                        </p>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Kafka架构</h2>
+                
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">架构图</h3>
+                    <div class="bg-gray-100 p-6 rounded-lg mb-4">
+                        <div class="flex justify-between items-center mb-4">
+                            <div class="text-center">
+                                <div class="bg-blue-500 text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-2">P</div>
+                                <div class="text-sm">Producer</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="bg-blue-500 text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-2">C</div>
+                                <div class="text-sm">Consumer</div>
+                            </div>
+                        </div>
+                        <div class="flex justify-center">
+                            <div class="bg-white border border-gray-300 rounded-lg p-4 w-3/4">
+                                <div class="flex justify-between mb-2">
+                                    <div class="text-center">
+                                        <div class="bg-green-500 text-white rounded w-8 h-8 flex items-center justify-center mx-auto mb-1">B1</div>
+                                        <div class="text-xs">Broker 1</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="bg-green-500 text-white rounded w-8 h-8 flex items-center justify-center mx-auto mb-1">B2</div>
+                                        <div class="text-xs">Broker 2</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="bg-green-500 text-white rounded w-8 h-8 flex items-center justify-center mx-auto mb-1">B3</div>
+                                        <div class="text-xs">Broker 3</div>
+                                    </div>
+                                </div>
+                                <div class="border-t border-gray-300 pt-2 mt-2">
+                                    <div class="flex">
+                                        <div class="flex-1 border-r border-gray-300 pr-2">
+                                            <div class="text-xs font-bold mb-1">Topic A</div>
+                                            <div class="flex">
+                                                <div class="bg-yellow-200 border border-yellow-500 rounded text-xs p-1 mr-1">P0</div>
+                                                <div class="bg-yellow-200 border border-yellow-500 rounded text-xs p-1 mr-1">P1</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex-1 pl-2">
+                                            <div class="text-xs font-bold mb-1">Topic B</div>
+                                            <div class="flex">
+                                                <div class="bg-yellow-200 border border-yellow-500 rounded text-xs p-1 mr-1">P0</div>
+                                                <div class="bg-yellow-200 border border-yellow-500 rounded text-xs p-1 mr-1">P1</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex justify-center mt-4">
+                            <div class="bg-purple-500 text-white rounded w-8 h-8 flex items-center justify-center mx-auto">ZK</div>
+                            <div class="text-sm ml-2">Zookeeper</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">消息传递模式</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-long-arrow-alt-right text-blue-500 mr-2"></i>
+                            点对点模式
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            一条消息只能被一个消费者消费，消费者之间是竞争关系。
+                        </p>
+                        <pre class="bg-gray-800 text-white p-3 rounded text-xs overflow-x-auto">
+// Producer
+Properties props = new Properties();
+props.put("bootstrap.servers", "localhost:9092");
+props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+
+Producer<String, String> producer = new KafkaProducer<>(props);
+producer.send(new ProducerRecord<>("my-topic", "key", "value"));
+producer.close();</pre>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-broadcast-tower text-blue-500 mr-2"></i>
+                            发布/订阅模式
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            一条消息可以被多个消费者消费，消费者之间是独立的。
+                        </p>
+                        <pre class="bg-gray-800 text-white p-3 rounded text-xs overflow-x-auto">
+// Consumer
+Properties props = new Properties();
+props.put("bootstrap.servers", "localhost:9092");
+props.put("group.id", "my-group");
+props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+
+Consumer<String, String> consumer = new KafkaConsumer<>(props);
+consumer.subscribe(Arrays.asList("my-topic"));
+
+while (true) {
+    ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
+    for (ConsumerRecord<String, String> record : records) {
+        System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());
+    }
+}</pre>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Partition与Consumer Group</h2>
+                
+                <div class="border border-gray-200 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">分区分配策略</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div class="bg-blue-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">Range策略</h4>
+                            <p class="text-gray-600 text-sm">
+                                按照数值范围分配分区
+                            </p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">RoundRobin策略</h4>
+                            <p class="text-gray-600 text-sm">
+                                轮询分配分区
+                            </p>
+                        </div>
+                        <div class="bg-purple-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">Sticky策略</h4>
+                            <p class="text-gray-600 text-sm">
+                                尽量保持分区分配的稳定性
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <h4 class="font-bold text-gray-800">分区与消费者关系</h4>
+                    <ul class="list-disc pl-8 text-gray-600 mt-2">
+                        <li>一个Partition只能被同一个Consumer Group中的一个Consumer消费</li>
+                        <li>一个Consumer可以消费多个Partition</li>
+                        <li>Consumer数量不应超过Partition数量，否则会有Consumer空闲</li>
+                    </ul>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">可靠性保证</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-sync text-blue-500 mr-2"></i>
+                            Producer可靠性
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            通过acks参数控制消息确认机制。
+                        </p>
+                        <ul class="list-disc pl-8 text-gray-600 text-sm">
+                            <li><strong>acks=0：</strong>不等待确认，性能最高但可能丢失消息</li>
+                            <li><strong>acks=1：</strong>等待Leader确认，性能和可靠性平衡</li>
+                            <li><strong>acks=all：</strong>等待所有副本确认，可靠性最高但性能最低</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-shield-alt text-blue-500 mr-2"></i>
+                            Consumer可靠性
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            通过offset提交策略控制消费可靠性。
+                        </p>
+                        <ul class="list-disc pl-8 text-gray-600 text-sm">
+                            <li><strong>自动提交：</strong>定期自动提交offset，可能重复消费</li>
+                            <li><strong>手动提交：</strong>处理完消息后手动提交offset，可精确控制</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Kafka Streams</h2>
+                
+                <div class="border border-gray-200 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">流处理API</h3>
+                    <p class="text-gray-600 mb-4">
+                        Kafka Streams是用于构建流处理应用的客户端库，允许对Kafka中的数据进行实时处理。
+                    </p>
+                    
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg overflow-x-auto">
+// WordCount示例
+Properties props = new Properties();
+props.put(StreamsConfig.APPLICATION_ID_CONFIG, "wordcount-application");
+props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
+props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
+
+StreamsBuilder builder = new StreamsBuilder();
+KStream<String, String> source = builder.stream("input-topic");
+
+KTable<String, Long> counts = source
+    .flatMapValues(value -> Arrays.asList(value.toLowerCase().split(" ")))
+    .groupBy((key, value) -> value)
+    .count();
+
+counts.toStream().to("output-topic", Produced.with(Serdes.String(), Serdes.Long()));
+
+KafkaStreams streams = new KafkaStreams(builder.build(), props);
+streams.start();</pre>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">集群管理</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-cogs text-blue-500 mr-2"></i>
+                            集群配置
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            关键配置参数优化集群性能。
+                        </p>
+                        <ul class="list-disc pl-8 text-gray-600 text-sm">
+                            <li><strong>num.partitions：</strong>默认分区数</li>
+                            <li><strong>replication.factor：</strong>默认副本数</li>
+                            <li><strong>min.insync.replicas：</strong>最小同步副本数</li>
+                            <li><strong>unclean.leader.election.enable：</strong>是否允许非同步副本成为Leader</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-terminal text-blue-500 mr-2"></i>
+                            管理命令
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            Kafka提供的命令行工具。
+                        </p>
+                        <pre class="bg-gray-800 text-white p-3 rounded text-xs overflow-x-auto">
+# 创建Topic
+kafka-topics.sh --create --topic my-topic --partitions 3 --replication-factor 1 --bootstrap-server localhost:9092
+
+# 查看Topic列表
+kafka-topics.sh --list --bootstrap-server localhost:9092
+
+# 查看Topic详情
+kafka-topics.sh --describe --topic my-topic --bootstrap-server localhost:9092
+
+# 消费消息
+kafka-console-consumer.sh --topic my-topic --from-beginning --bootstrap-server localhost:9092</pre>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">监控与性能调优</h2>
+                
+                <div class="border border-gray-200 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">关键监控指标</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white border border-gray-200 text-sm">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="py-2 px-4 border-b text-left">指标</th>
+                                    <th class="py-2 px-4 border-b text-left">说明</th>
+                                    <th class="py-2 px-4 border-b text-left">监控工具</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="py-2 px-4 border-b">消息吞吐量</td>
+                                    <td class="py-2 px-4 border-b">每秒处理的消息数量</td>
+                                    <td class="py-2 px-4 border-b">Kafka Manager, Confluent Control Center</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 border-b">延迟</td>
+                                    <td class="py-2 px-4 border-b">消息从生产到消费的时间</td>
+                                    <td class="py-2 px-4 border-b">JMX, Prometheus</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-4 border-b">磁盘使用率</td>
+                                    <td class="py-2 px-4 border-b">磁盘空间使用情况</td>
+                                    <td class="py-2 px-4 border-b">系统监控工具</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 border-b">GC频率</td>
+                                    <td class="py-2 px-4 border-b">垃圾回收频率和时间</td>
+                                    <td class="py-2 px-4 border-b">JVM监控工具</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <h4 class="font-bold text-gray-800 mt-4">性能调优建议</h4>
+                    <ul class="list-disc pl-8 text-gray-600 mt-2">
+                        <li>合理设置Partition数量，平衡并发性和资源消耗</li>
+                        <li>优化Producer和Consumer的批处理大小</li>
+                        <li>使用压缩减少网络传输和磁盘I/O</li>
+                        <li>合理配置JVM参数和操作系统参数</li>
+                        <li>实施监控和告警机制</li>
+                    </ul>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Kafka最佳实践</h2>
+                <div class="bg-green-50 rounded-lg p-6">
+                    <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                        <li>根据业务需求合理设计Topic和Partition数量</li>
+                        <li>设置合适的副本数以保证数据可靠性</li>
+                        <li>实施监控和告警，及时发现和处理异常</li>
+                        <li>定期清理过期数据，避免磁盘空间不足</li>
+                        <li>使用消费者组实现负载均衡和容错</li>
+                        <li>合理配置Producer和Consumer参数以优化性能</li>
+                        <li>实施安全措施，如SSL/TLS加密和SASL认证</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,326 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自然语言处理 - 架构师学习笔记</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-4xl mx-auto p-6">
+        <div class="bg-white rounded-lg shadow-md p-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-comment-dots mr-3 text-primary"></i>自然语言处理
+            </h1>
+            
+            <div class="prose max-w-none">
+                <p class="text-gray-600 mb-6">
+                    自然语言处理(NLP)是人工智能的一个重要分支，致力于让计算机理解和生成人类语言，实现人机自然交流。
+                </p>
+                
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+                    <p class="text-blue-700">
+                        随着深度学习和预训练模型的发展，NLP技术在机器翻译、文本摘要、情感分析等领域取得了显著进展。
+                    </p>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">NLP核心任务</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-font mr-2 text-primary"></i>文本分类
+                        </h3>
+                        <p class="text-gray-600">
+                            将文本分配到预定义的类别中，如垃圾邮件检测、情感分析等。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-link mr-2 text-primary"></i>命名实体识别
+                        </h3>
+                        <p class="text-gray-600">
+                            识别文本中的特定实体，如人名、地名、机构名等。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-exchange-alt mr-2 text-primary"></i>机器翻译
+                        </h3>
+                        <p class="text-gray-600">
+                            将一种语言的文本自动翻译成另一种语言。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-question-circle mr-2 text-primary"></i>问答系统
+                        </h3>
+                        <p class="text-gray-600">
+                            根据用户问题从文档或知识库中找到答案。
+                        </p>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">文本预处理技术</h2>
+                
+                <div class="space-y-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">分词</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+import jieba
+import nltk
+from nltk.tokenize import word_tokenize
+
+# 中文分词
+chinese_text = "自然语言处理是人工智能的重要分支"
+chinese_tokens = jieba.lcut(chinese_text)
+print("中文分词:", chinese_tokens)
+
+# 英文分词
+english_text = "Natural language processing is an important branch of AI"
+english_tokens = word_tokenize(english_text)
+print("英文分词:", english_tokens)</pre>
+                        <p class="text-gray-600">
+                            分词是NLP的第一步，将连续的文本切分成有意义的词汇单元。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">词干提取和词形还原</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+from nltk.stem import PorterStemmer, WordNetLemmatizer
+
+# 词干提取
+stemmer = PorterStemmer()
+words = ["running", "ran", "runs", "easily", "fairly"]
+stems = [stemmer.stem(word) for word in words]
+print("词干提取:", stems)
+
+# 词形还原
+lemmatizer = WordNetLemmatizer()
+lemmas = [lemmatizer.lemmatize(word) for word in words]
+print("词形还原:", lemmas)</pre>
+                        <p class="text-gray-600">
+                            词干提取和词形还原用于将词汇变体归一化为基本形式。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">停用词过滤</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+from nltk.corpus import stopwords
+
+# 获取停用词列表
+stop_words = set(stopwords.words('english'))
+print("英文停用词:", list(stop_words)[:10])
+
+# 过滤停用词
+text = "this is a sample sentence showing off the stop words filtration"
+words = word_tokenize(text)
+filtered_words = [word for word in words if word.lower() not in stop_words]
+print("过滤停用词后:", filtered_words)</pre>
+                        <p class="text-gray-600">
+                            停用词过滤可以去除对语义贡献较小的常见词汇。
+                        </p>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">文本表示方法</h2>
+                
+                <div class="space-y-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">词袋模型(Bag of Words)</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+from sklearn.feature_extraction.text import CountVectorizer
+
+# 示例文本
+corpus = [
+    "This is the first document.",
+    "This document is the second document.",
+    "And this is the third one.",
+    "Is this the first document?",
+]
+
+# 创建词袋模型
+vectorizer = CountVectorizer()
+X = vectorizer.fit_transform(corpus)
+
+print("词汇表:", vectorizer.get_feature_names_out())
+print("词频矩阵:")
+print(X.toarray())</pre>
+                        <p class="text-gray-600">
+                            词袋模型忽略词汇顺序，仅考虑词汇出现的频率。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">TF-IDF</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+# 创建TF-IDF向量器
+tfidf_vectorizer = TfidfVectorizer()
+tfidf_matrix = tfidf_vectorizer.fit_transform(corpus)
+
+print("TF-IDF特征名称:", tfidf_vectorizer.get_feature_names_out())
+print("TF-IDF矩阵:")
+print(tfidf_matrix.toarray())</pre>
+                        <p class="text-gray-600">
+                            TF-IDF考虑了词频和逆文档频率，能够更好地表示词汇的重要性。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">词嵌入(Word Embeddings)</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# 使用gensim加载预训练的Word2Vec模型
+# from gensim.models import KeyedVectors
+# model = KeyedVectors.load_word2vec_format('word2vec.bin', binary=True)
+
+# 获取词向量
+# vector = model['computer']
+# print("computer的词向量:", vector)
+
+# 计算词汇相似度
+# similarity = model.similarity('computer', 'laptop')
+# print("computer和laptop的相似度:", similarity)</pre>
+                        <p class="text-gray-600">
+                            词嵌入将词汇映射到低维连续向量空间，能够捕捉词汇间的语义关系。
+                        </p>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">NLP深度学习模型</h2>
+                
+                <div class="space-y-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">循环神经网络(RNN) for NLP</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+import torch
+import torch.nn as nn
+
+class SimpleRNN(nn.Module):
+    def __init__(self, vocab_size, embedding_dim, hidden_dim, output_dim):
+        super(SimpleRNN, self).__init__()
+        self.embedding = nn.Embedding(vocab_size, embedding_dim)
+        self.rnn = nn.RNN(embedding_dim, hidden_dim, batch_first=True)
+        self.fc = nn.Linear(hidden_dim, output_dim)
+        
+    def forward(self, x):
+        embedded = self.embedding(x)
+        output, hidden = self.rnn(embedded)
+        # 取最后一个时间步的输出
+        last_output = output[:, -1, :]
+        return self.fc(last_output)
+
+# 模型参数
+vocab_size = 10000
+embedding_dim = 128
+hidden_dim = 256
+output_dim = 2  # 二分类
+
+# 创建模型
+model = SimpleRNN(vocab_size, embedding_dim, hidden_dim, output_dim)
+print(model)</pre>
+                        <p class="text-gray-600">
+                            RNN能够处理变长序列数据，在NLP任务中广泛应用。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Transformer架构</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# Transformer的关键组件：自注意力机制
+import torch
+import torch.nn.functional as F
+
+def scaled_dot_product_attention(Q, K, V, mask=None):
+    # 计算注意力分数
+    scores = torch.matmul(Q, K.transpose(-2, -1)) / torch.sqrt(torch.tensor(Q.shape[-1], dtype=torch.float32))
+    
+    # 应用掩码（如果提供）
+    if mask is not None:
+        scores = scores.masked_fill(mask == 0, -1e9)
+    
+    # 应用softmax获取注意力权重
+    attention_weights = F.softmax(scores, dim=-1)
+    
+    # 计算加权和
+    output = torch.matmul(attention_weights, V)
+    
+    return output, attention_weights
+
+# 示例使用
+Q = torch.randn(1, 3, 4)  # batch_size=1, seq_len=3, d_model=4
+K = torch.randn(1, 3, 4)
+V = torch.randn(1, 3, 4)
+
+output, weights = scaled_dot_product_attention(Q, K, V)
+print("输出形状:", output.shape)
+print("注意力权重:", weights)</pre>
+                        <p class="text-gray-600">
+                            Transformer基于自注意力机制，能够并行处理序列数据，在NLP领域表现卓越。
+                        </p>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">预训练语言模型</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-bert mr-2 text-primary"></i>BERT
+                        </h3>
+                        <p class="text-gray-600">
+                            双向Transformer编码器，通过掩码语言模型和下一句预测进行预训练。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-gpt mr-2 text-primary"></i>GPT
+                        </h3>
+                        <p class="text-gray-600">
+                            基于Transformer解码器的生成式预训练模型，擅长文本生成任务。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-t5 mr-2 text-primary"></i>T5
+                        </h3>
+                        <p class="text-gray-600">
+                            将所有NLP任务统一为文本到文本的转换任务。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-chinese mr-2 text-primary"></i>中文预训练模型
+                        </h3>
+                        <p class="text-gray-600">
+                            如BERT-wwm、RoBERTa-wwm、ERNIE等，专门针对中文文本进行优化。
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="bg-green-50 border-l-4 border-green-500 p-4 mt-8">
+                    <h3 class="text-lg font-semibold text-green-700 mb-2">NLP应用最佳实践</h3>
+                    <ul class="list-disc pl-8 space-y-1 text-green-700">
+                        <li>根据任务特点选择合适的预训练模型</li>
+                        <li>进行领域适应微调以提升性能</li>
+                        <li>处理好数据不平衡问题</li>
+                        <li>使用合适的评估指标</li>
+                        <li>注意模型的可解释性和公平性</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

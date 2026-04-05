@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linux是怎样工作的？ - 架构师学习笔记</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../../assets/css/common.css">
+</head>
+<body class="bg-gray-50">
+    <div class="page-container">
+        <div class="card">
+            <h1 class="page-title">
+                <i class="fas fa-linux mr-3 text-gray-600"></i>Linux是怎样工作的？
+            </h1>
+            <p class="page-subtitle">How Linux Works - 深入理解Linux操作系统的工作原理</p>
+            
+            <div class="mt-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Linux系统架构</h2>
+                <div class="flow-diagram">
+                    <div class="flex flex-col items-center">
+                        <div class="bg-blue-100 rounded-lg p-4 mb-4 text-center w-64">
+                            <div class="font-bold text-blue-700">用户空间</div>
+                            <div class="text-sm text-gray-600">User Space</div>
+                        </div>
+                        <div class="text-2xl text-gray-400">↓</div>
+                        <div class="bg-blue-100 rounded-lg p-4 mb-4 text-center w-64">
+                            <div class="font-bold text-blue-700">系统调用接口</div>
+                            <div class="text-sm text-gray-600">System Call Interface</div>
+                        </div>
+                        <div class="text-2xl text-gray-400">↓</div>
+                        <div class="bg-blue-100 rounded-lg p-4 mb-4 text-center w-64">
+                            <div class="font-bold text-blue-700">内核空间</div>
+                            <div class="text-sm text-gray-600">Kernel Space</div>
+                        </div>
+                        <div class="text-2xl text-gray-400">↓</div>
+                        <div class="bg-blue-100 rounded-lg p-4 text-center w-64">
+                            <div class="font-bold text-blue-700">硬件</div>
+                            <div class="text-sm text-gray-600">Hardware</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-12">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Linux内核的核心功能</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="feature-card bg-white rounded-lg shadow-md p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-microchip text-2xl text-blue-500 mr-3"></i>
+                            <h3 class="text-lg font-bold text-gray-800">进程管理</h3>
+                        </div>
+                        <p class="text-gray-600">管理系统中的进程，包括进程的创建、调度和终止。</p>
+                        <ul class="list-disc pl-6 mt-3 space-y-1">
+                            <li>进程调度</li>
+                            <li>进程同步</li>
+                            <li>进程通信</li>
+                            <li>进程信号</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card bg-white rounded-lg shadow-md p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-memory text-2xl text-green-500 mr-3"></i>
+                            <h3 class="text-lg font-bold text-gray-800">内存管理</h3>
+                        </div>
+                        <p class="text-gray-600">管理系统内存，包括内存分配、回收和虚拟内存。</p>
+                        <ul class="list-disc pl-6 mt-3 space-y-1">
+                            <li>物理内存管理</li>
+                            <li>虚拟内存管理</li>
+                            <li>内存分页</li>
+                            <li>内存映射</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card bg-white rounded-lg shadow-md p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-hdd text-2xl text-purple-500 mr-3"></i>
+                            <h3 class="text-lg font-bold text-gray-800">文件系统</h3>
+                        </div>
+                        <p class="text-gray-600">管理文件和目录，提供文件系统接口。</p>
+                        <ul class="list-disc pl-6 mt-3 space-y-1">
+                            <li>文件系统抽象层</li>
+                            <li>各种文件系统支持</li>
+                            <li>文件权限管理</li>
+                            <li>文件操作</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card bg-white rounded-lg shadow-md p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-plug text-2xl text-orange-500 mr-3"></i>
+                            <h3 class="text-lg font-bold text-gray-800">设备管理</h3>
+                        </div>
+                        <p class="text-gray-600">管理硬件设备，提供设备驱动接口。</p>
+                        <ul class="list-disc pl-6 mt-3 space-y-1">
+                            <li>设备驱动</li>
+                            <li>设备文件</li>
+                            <li>设备分类</li>
+                            <li>设备管理</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-12">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Linux启动过程</h2>
+                <div class="section-card">
+                    <h3 class="text-xl font-bold text-gray-700 mb-4">1. BIOS/UEFI初始化</h3>
+                    <p class="mb-4">计算机加电后，BIOS/UEFI执行加电自检(POST)，然后从启动设备加载引导程序。</p>
+                </div>
+                
+                <div class="section-card mt-6">
+                    <h3 class="text-xl font-bold text-gray-700 mb-4">2. 引导加载程序</h3>
+                    <p class="mb-4">GRUB或其他引导加载程序加载Linux内核到内存：</p>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li>显示启动菜单</li>
+                        <li>加载内核镜像</li>
+                        <li>加载初始RAM磁盘(initrd)</li>
+                        <li>将控制权转移给内核</li>
+                    </ul>
+                </div>
+                
+                <div class="section-card mt-6">
+                    <h3 class="text-xl font-bold text-gray-700 mb-4">3. 内核初始化</h3>
+                    <p class="mb-4">Linux内核初始化系统：</p>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li>初始化内存管理</li>
+                        <li>检测硬件设备</li>
+                        <li>加载设备驱动</li>
+                        <li>挂载根文件系统</li>
+                        <li>启动init进程</li>
+                    </ul>
+                </div>
+                
+                <div class="section-card mt-6">
+                    <h3 class="text-xl font-bold text-gray-700 mb-4">4. 系统初始化</h3>
+                    <p class="mb-4">init进程或systemd初始化系统：</p>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li>启动系统服务</li>
+                        <li>挂载其他文件系统</li>
+                        <li>初始化网络</li>
+                        <li>启动登录服务</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="mt-12">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Linux文件系统</h2>
+                <div class="tip-box tip-box-info">
+                    <p class="mb-4">Linux使用树形结构的文件系统：</p>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li><strong>/</strong> - 根目录</li>
+                        <li><strong>/bin</strong> - 基本命令</li>
+                        <li><strong>/sbin</strong> - 系统命令</li>
+                        <li><strong>/etc</strong> - 配置文件</li>
+                        <li><strong>/home</strong> - 用户主目录</li>
+                        <li><strong>/var</strong> - 可变数据</li>
+                        <li><strong>/tmp</strong> - 临时文件</li>
+                        <li><strong>/usr</strong> - 用户程序</li>
+                        <li><strong>/dev</strong> - 设备文件</li>
+                        <li><strong>/proc</strong> - 进程信息</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="mt-12">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Linux进程管理</h2>
+                <div class="section-card">
+                    <h3 class="text-xl font-bold text-gray-700 mb-4">进程状态</h3>
+                    <p class="mb-4">Linux进程有以下几种状态：</p>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li><strong>R</strong> - 运行态</li>
+                        <li><strong>S</strong> - 睡眠态</li>
+                        <li><strong>D</strong> - 不可中断睡眠态</li>
+                        <li><strong>Z</strong> - 僵尸态</li>
+                        <li><strong>T</strong> - 停止态</li>
+                    </ul>
+                </div>
+                
+                <div class="section-card mt-6">
+                    <h3 class="text-xl font-bold text-gray-700 mb-4">进程调度</h3>
+                    <p class="mb-4">Linux使用CFS (Completely Fair Scheduler) 调度器：</p>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li>基于时间片的调度</li>
+                        <li>考虑进程优先级</li>
+                        <li>公平分配CPU时间</li>
+                        <li>支持实时进程</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="mt-12">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Linux网络栈</h2>
+                <div class="flow-diagram">
+                    <div class="flex flex-col items-center">
+                        <div class="bg-blue-100 rounded-lg p-4 mb-4 text-center w-64">
+                            <div class="font-bold text-blue-700">应用层</div>
+                        </div>
+                        <div class="text-2xl text-gray-400">↓</div>
+                        <div class="bg-blue-100 rounded-lg p-4 mb-4 text-center w-64">
+                            <div class="font-bold text-blue-700">传输层</div>
+                            <div class="text-sm text-gray-600">TCP/UDP</div>
+                        </div>
+                        <div class="text-2xl text-gray-400">↓</div>
+                        <div class="bg-blue-100 rounded-lg p-4 mb-4 text-center w-64">
+                            <div class="font-bold text-blue-700">网络层</div>
+                            <div class="text-sm text-gray-600">IP</div>
+                        </div>
+                        <div class="text-2xl text-gray-400">↓</div>
+                        <div class="bg-blue-100 rounded-lg p-4 text-center w-64">
+                            <div class="font-bold text-blue-700">数据链路层</div>
+                            <div class="text-sm text-gray-600">Ethernet</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-12">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">总结</h2>
+                <div class="tip-box tip-box-success">
+                    <p class="mb-4">Linux是一个强大的操作系统，通过分层架构和模块化设计，实现了高效的资源管理和系统运行。</p>
+                    <p>理解Linux的工作原理，有助于我们更好地使用和管理Linux系统，也为学习更高级的系统管理和开发打下基础。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

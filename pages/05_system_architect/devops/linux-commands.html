@@ -1,0 +1,218 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linux常用命令 - 架构师学习笔记</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-4xl mx-auto p-6">
+        <div class="bg-white rounded-lg shadow-md p-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-terminal mr-3 text-primary"></i>Linux常用命令
+            </h1>
+            
+            <div class="prose max-w-none">
+                <p class="text-gray-600 mb-6">
+                    Linux作为服务器操作系统，掌握其常用命令是每个架构师的基本技能。这些命令可以帮助我们进行系统管理、故障排查、性能监控等工作。
+                </p>
+                
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+                    <p class="text-blue-700">
+                        熟练掌握Linux命令不仅能提高工作效率，还能帮助我们快速定位和解决系统问题。
+                    </p>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">系统信息命令</h2>
+                
+                <div class="space-y-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">uname - 系统信息</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# 查看系统信息
+uname -a
+
+# 查看内核版本
+uname -r
+
+# 查看系统架构
+uname -m</pre>
+                        <p class="text-gray-600">显示系统基本信息，包括内核版本、硬件架构等。</p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">top/htop - 进程监控</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# 查看系统进程和资源使用情况
+top
+
+# 更友好的进程监控工具
+htop</pre>
+                        <p class="text-gray-600">实时监控系统进程和资源使用情况，包括CPU、内存等。</p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">df - 磁盘空间</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# 查看磁盘空间使用情况
+df -h
+
+# 查看inode使用情况
+df -i</pre>
+                        <p class="text-gray-600">查看文件系统磁盘空间使用情况，帮助判断是否需要清理空间。</p>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">文件操作命令</h2>
+                
+                <div class="space-y-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">ls - 列出文件</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# 列出当前目录文件
+ls -la
+
+# 按时间排序
+ls -lt
+
+# 递归列出子目录
+ls -R</pre>
+                        <p class="text-gray-600">列出目录中的文件和子目录，支持多种显示选项。</p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">find - 查找文件</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# 按文件名查找
+find /path -name "filename"
+
+# 按修改时间查找
+find /path -mtime -7
+
+# 按文件大小查找
+find /path -size +100M</pre>
+                        <p class="text-gray-600">在指定目录中查找文件，支持按名称、时间、大小等条件查找。</p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">grep - 文本搜索</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# 在文件中搜索文本
+grep "pattern" file.txt
+
+# 递归搜索目录
+grep -r "pattern" /path
+
+# 忽略大小写
+grep -i "pattern" file.txt
+
+# 显示行号
+grep -n "pattern" file.txt</pre>
+                        <p class="text-gray-600">在文件中搜索指定的文本模式，是日志分析的重要工具。</p>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">网络诊断命令</h2>
+                
+                <div class="space-y-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">netstat/ss - 网络连接</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# 查看网络连接状态
+netstat -tuln
+
+# 查看监听端口
+ss -tuln
+
+# 查看进程占用端口
+netstat -tulnp</pre>
+                        <p class="text-gray-600">查看网络连接状态、监听端口以及进程占用端口情况。</p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">ping/curl - 网络连通性</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# 测试网络连通性
+ping google.com
+
+# 发送HTTP请求
+curl -I https://www.example.com
+
+# 测试端口连通性
+telnet hostname port</pre>
+                        <p class="text-gray-600">测试网络连通性和服务可用性。</p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">tcpdump - 网络抓包</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# 抓取指定接口的数据包
+tcpdump -i eth0
+
+# 抓取指定主机的数据包
+tcpdump host hostname
+
+# 抓取HTTP数据包
+tcpdump -s 0 -A 'tcp port 80 and (((ip[2:2] - ((ip[0]&0xf)<<2)) - ((tcp[12]&0xf0)>>2)) != 0)'</pre>
+                        <p class="text-gray-600">捕获和分析网络数据包，用于网络故障排查。</p>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">系统性能监控</h2>
+                
+                <div class="space-y-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">vmstat - 虚拟内存统计</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# 查看系统整体性能
+vmstat 1 5
+
+# 查看磁盘I/O统计
+vmstat -d</pre>
+                        <p class="text-gray-600">报告虚拟内存统计信息，包括进程、内存、分页、块IO、系统和CPU活动。</p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">iostat - I/O统计</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# 查看CPU和I/O统计
+iostat -x 1 5
+
+# 查看指定设备的统计信息
+iostat -p sda</pre>
+                        <p class="text-gray-600">监控系统设备的I/O负载，帮助识别I/O瓶颈。</p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">sar - 系统活动报告</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# 查看CPU使用率
+sar -u
+
+# 查看内存使用情况
+sar -r
+
+# 查看网络统计
+sar -n DEV</pre>
+                        <p class="text-gray-600">收集、报告和保存系统活动信息，是性能分析的重要工具。</p>
+                    </div>
+                </div>
+                
+                <div class="bg-green-50 border-l-4 border-green-500 p-4 mt-8">
+                    <h3 class="text-lg font-semibold text-green-700 mb-2">Linux命令使用技巧</h3>
+                    <ul class="list-disc pl-8 space-y-1 text-green-700">
+                        <li>使用管道(|)组合命令，实现复杂功能</li>
+                        <li>使用重定向(>, >>, <)控制输入输出</li>
+                        <li>使用通配符(*)匹配多个文件</li>
+                        <li>使用别名(alias)简化常用命令</li>
+                        <li>使用history查看命令历史</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

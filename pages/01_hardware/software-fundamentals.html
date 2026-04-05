@@ -1,0 +1,319 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>软件基础 - 架构师学习笔记</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-4xl mx-auto p-6">
+        <div class="bg-white rounded-lg shadow-md p-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-code mr-3 text-primary"></i>软件基础
+            </h1>
+            
+            <div class="prose max-w-none">
+                <p class="text-gray-600 mb-6">
+                    软件基础是计算机系统的核心组成部分，包括操作系统、编译原理、数据结构与算法等关键领域，为应用程序的开发和运行提供支撑。
+                </p>
+                
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+                    <p class="text-blue-700">
+                        深入理解软件基础有助于架构师设计出高效、稳定、可维护的软件系统。
+                    </p>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">操作系统原理</h2>
+                
+                <div class="space-y-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">进程与线程</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-gray-50 p-4 rounded">
+                                <h4 class="font-semibold text-gray-800 mb-2">进程</h4>
+                                <ul class="list-disc pl-8 space-y-1 text-gray-600">
+                                    <li>程序的一次执行过程</li>
+                                    <li>拥有独立的内存空间</li>
+                                    <li>进程间相互隔离</li>
+                                    <li>创建和切换开销较大</li>
+                                </ul>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded">
+                                <h4 class="font-semibold text-gray-800 mb-2">线程</h4>
+                                <ul class="list-disc pl-8 space-y-1 text-gray-600">
+                                    <li>进程内的执行单元</li>
+                                    <li>共享进程的内存空间</li>
+                                    <li>线程间通信更高效</li>
+                                    <li>创建和切换开销较小</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mt-4">
+# 进程状态转换
+"""
+创建态 -> 就绪态 -> 运行态 -> 阻塞态 -> 终止态
+     ↗              ↘    ↗            ↘
+   调度            I/O请求        I/O完成      正常/异常结束
+"""</pre>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">内存管理</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# 内存分配方式
+"""
+连续分配:
+- 单一连续分配: 内存分为系统区和用户区
+- 固定分区分配: 预先划分固定大小的分区
+- 动态分区分配: 根据进程大小动态划分
+
+离散分配:
+- 分页存储管理: 将内存和进程地址空间划分为固定大小的页
+- 分段存储管理: 按逻辑关系划分段
+- 段页式存储管理: 分段和分页相结合
+"""</pre>
+                        <p class="text-gray-600">
+                            内存管理是操作系统的核心功能之一，直接影响系统性能和资源利用率。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">文件系统</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# 文件系统结构
+"""
+文件逻辑结构:
+- 无结构文件: 字节流
+- 有结构文件: 记录式文件
+
+文件物理结构:
+- 连续分配: 文件存储在连续的磁盘块中
+- 链接分配: 通过指针链接磁盘块
+- 索引分配: 使用索引表记录文件块位置
+
+目录管理:
+- 单级目录: 所有文件在同一目录下
+- 两级目录: 为每个用户建立独立目录
+- 树形目录: 层次化的目录结构
+"""</pre>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">编译原理</h2>
+                
+                <div class="space-y-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">编译过程</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# 编译器工作流程
+"""
+1. 词法分析: 将源代码分解为记号(token)
+2. 语法分析: 构建语法树，检查语法正确性
+3. 语义分析: 检查语义正确性，进行类型检查
+4. 中间代码生成: 生成与机器无关的中间表示
+5. 代码优化: 优化中间代码
+6. 目标代码生成: 生成机器代码
+7. 目标代码优化: 进一步优化生成的机器代码
+"""</pre>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">虚拟机与解释器</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-gray-50 p-4 rounded">
+                                <h4 class="font-semibold text-gray-800 mb-2">虚拟机</h4>
+                                <p class="text-gray-600">
+                                    在物理机上模拟出的计算机系统，如JVM、.NET CLR。
+                                </p>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded">
+                                <h4 class="font-semibold text-gray-800 mb-2">解释器</h4>
+                                <p class="text-gray-600">
+                                    逐行解释执行源代码，如Python解释器、JavaScript引擎。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">数据结构与算法</h2>
+                
+                <div class="space-y-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">常用数据结构</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-gray-50 p-4 rounded">
+                                <h4 class="font-semibold text-gray-800 mb-2">线性结构</h4>
+                                <ul class="list-disc pl-8 space-y-1 text-gray-600">
+                                    <li>数组</li>
+                                    <li>链表</li>
+                                    <li>栈</li>
+                                    <li>队列</li>
+                                </ul>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded">
+                                <h4 class="font-semibold text-gray-800 mb-2">树形结构</h4>
+                                <ul class="list-disc pl-8 space-y-1 text-gray-600">
+                                    <li>二叉树</li>
+                                    <li>平衡树</li>
+                                    <li>堆</li>
+                                    <li>字典树</li>
+                                </ul>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded">
+                                <h4 class="font-semibold text-gray-800 mb-2">图结构</h4>
+                                <ul class="list-disc pl-8 space-y-1 text-gray-600">
+                                    <li>有向图</li>
+                                    <li>无向图</li>
+                                    <li>加权图</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">经典算法</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# 算法分类
+"""
+排序算法:
+- 冒泡排序 O(n²)
+- 快速排序 O(n log n)
+- 归并排序 O(n log n)
+- 堆排序 O(n log n)
+
+搜索算法:
+- 线性搜索 O(n)
+- 二分搜索 O(log n)
+- 哈希搜索 O(1)
+
+图算法:
+- 深度优先搜索(DFS)
+- 广度优先搜索(BFS)
+- 最短路径算法(Dijkstra)
+- 最小生成树(Prim, Kruskal)
+"""</pre>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">网络基础</h2>
+                
+                <div class="space-y-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">OSI七层模型</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# OSI七层网络模型
+"""
+应用层(第7层): 为应用程序提供网络服务
+表示层(第6层): 数据格式转换、加密解密
+会话层(第5层): 建立、管理和终止会话
+传输层(第4层): 端到端的数据传输(TCP/UDP)
+网络层(第3层): 路径选择和逻辑地址(IP)
+数据链路层(第2层): 物理地址寻址、差错校验
+物理层(第1层): 比特流传输
+"""</pre>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">TCP/IP协议栈</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# TCP/IP四层模型
+"""
+应用层: HTTP, FTP, SMTP, DNS等
+传输层: TCP(可靠传输), UDP(不可靠传输)
+网络层: IP(网络互连), ICMP, ARP
+网络接口层: 以太网, Wi-Fi等
+"""</pre>
+                        <p class="text-gray-600">
+                            理解网络协议对于设计分布式系统和解决网络问题至关重要。
+                        </p>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">数据库基础</h2>
+                
+                <div class="space-y-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">关系数据库</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# 关系数据库核心概念
+"""
+表(Table): 数据存储的基本单位
+行(Row): 表中的一条记录
+列(Column): 表中的一个字段
+主键(Primary Key): 唯一标识表中每一行
+外键(Foreign Key): 建立表间关系的字段
+索引(Index): 提高查询速度的数据结构
+
+SQL语言:
+- DDL(数据定义语言): CREATE, ALTER, DROP
+- DML(数据操作语言): INSERT, UPDATE, DELETE
+- DQL(数据查询语言): SELECT
+- DCL(数据控制语言): GRANT, REVOKE
+"""</pre>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">事务与并发控制</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# 数据库事务ACID特性
+"""
+原子性(Atomicity): 事务要么全部成功，要么全部失败
+一致性(Consistency): 事务执行前后数据保持一致状态
+隔离性(Isolation): 多个事务并发执行时相互隔离
+持久性(Durability): 事务提交后对数据库的修改是永久的
+
+并发控制:
+- 锁机制: 共享锁、排他锁
+- 时间戳: 基于时间顺序控制并发
+- 乐观控制: 假设冲突较少，提交时检查
+- 多版本并发控制(MVCC): 保存数据的多个版本
+"""</pre>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">软件工程基础</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-project-diagram mr-2 text-primary"></i>设计模式
+                        </h3>
+                        <ul class="list-disc pl-8 space-y-1 text-gray-600">
+                            <li><strong>创建型模式</strong>：单例、工厂、建造者等</li>
+                            <li><strong>结构型模式</strong>：适配器、装饰器、代理等</li>
+                            <li><strong>行为型模式</strong>：观察者、策略、命令等</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-sync mr-2 text-primary"></i>软件开发生命周期
+                        </h3>
+                        <ul class="list-disc pl-8 space-y-1 text-gray-600">
+                            <li><strong>需求分析</strong>：明确系统功能和性能要求</li>
+                            <li><strong>系统设计</strong>：设计系统架构和模块</li>
+                            <li><strong>编码实现</strong>：编写程序代码</li>
+                            <li><strong>测试验证</strong>：验证系统正确性</li>
+                            <li><strong>部署维护</strong>：系统上线和后续维护</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="bg-green-50 border-l-4 border-green-500 p-4 mt-8">
+                    <h3 class="text-lg font-semibold text-green-700 mb-2">软件基础学习建议</h3>
+                    <ul class="list-disc pl-8 space-y-1 text-green-700">
+                        <li>理论与实践相结合，通过编程加深理解</li>
+                        <li>关注新技术发展，了解主流框架和工具</li>
+                        <li>建立完整的知识体系，理解各领域之间的联系</li>
+                        <li>注重代码质量和软件工程实践</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

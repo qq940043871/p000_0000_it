@@ -1,0 +1,376 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CDN加速 - 架构师学习笔记</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-4xl mx-auto p-6">
+        <div class="bg-white rounded-xl shadow-md p-8 mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-cloud-download-alt text-yellow-500 mr-3"></i>CDN加速
+            </h1>
+            
+            <div class="prose max-w-none">
+                <p class="text-gray-600 mb-6">
+                    CDN（Content Delivery Network，内容分发网络）是一种分布式网络架构，通过将内容分发到全球各地的边缘节点，使用户能够从最近的节点获取所需内容，从而显著提高网站访问速度和用户体验。
+                </p>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">CDN工作原理</h2>
+                
+                <div class="border border-gray-200 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">工作流程</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                        <div class="bg-blue-50 p-4 rounded text-center">
+                            <div class="font-bold text-gray-800 mb-2">1. 用户请求</div>
+                            <div class="text-xs text-gray-600">用户访问网站资源</div>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded text-center">
+                            <div class="font-bold text-gray-800 mb-2">2. DNS解析</div>
+                            <div class="text-xs text-gray-600">智能DNS返回最近节点IP</div>
+                        </div>
+                        <div class="bg-yellow-50 p-4 rounded text-center">
+                            <div class="font-bold text-gray-800 mb-2">3. 节点响应</div>
+                            <div class="text-xs text-gray-600">边缘节点返回缓存内容</div>
+                        </div>
+                        <div class="bg-purple-50 p-4 rounded text-center">
+                            <div class="font-bold text-gray-800 mb-2">4. 回源获取</div>
+                            <div class="text-xs text-gray-600">节点缺失时回源站获取</div>
+                        </div>
+                    </div>
+                    
+                    <h4 class="font-bold text-gray-800">核心组件</h4>
+                    <ul class="list-disc pl-8 text-gray-600 mt-2">
+                        <li><strong>边缘节点：</strong>分布在全球各地的缓存服务器</li>
+                        <li><strong>_origin服务器：</strong>内容源站，存储原始内容</li>
+                        <li><strong>负载均衡系统：</strong>智能调度用户请求到最优节点</li>
+                        <li><strong>DNS系统：</strong>将域名解析到最近的CDN节点</li>
+                        <li><strong>监控系统：</strong>实时监控CDN节点状态和性能</li>
+                    </ul>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">CDN优势</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-tachometer-alt text-green-500 mr-2"></i>
+                            提高访问速度
+                        </h3>
+                        <p class="text-gray-600">
+                            用户从就近节点获取内容，大幅减少网络延迟。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-shield-alt text-green-500 mr-2"></i>
+                            增强可靠性
+                        </h3>
+                        <p class="text-gray-600">
+                            分布式架构提供冗余，单点故障不影响整体服务。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-database text-green-500 mr-2"></i>
+                            降低源站负载
+                        </h3>
+                        <p class="text-gray-600">
+                            大部分请求由CDN节点处理，减轻源站压力。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-globe text-green-500 mr-2"></i>
+                            全球覆盖
+                        </h3>
+                        <p class="text-gray-600">
+                            节点遍布全球，为世界各地用户提供优质服务。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-lock text-green-500 mr-2"></i>
+                            安全防护
+                        </h3>
+                        <p class="text-gray-600">
+                            提供DDoS防护、WAF等安全功能。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-dollar-sign text-green-500 mr-2"></i>
+                            节省带宽成本
+                        </h3>
+                        <p class="text-gray-600">
+                            减少源站带宽消耗，降低运营成本。
+                        </p>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">CDN缓存策略</h2>
+                
+                <div class="border border-gray-200 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">缓存控制</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div class="bg-blue-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">HTTP头部控制</h4>
+                            <p class="text-gray-600 text-sm">
+                                通过HTTP响应头控制缓存行为
+                            </p>
+                            <pre class="bg-gray-800 text-white p-2 rounded text-xs mt-2 overflow-x-auto">
+Cache-Control: max-age=3600
+Expires: Wed, 21 Oct 2023 07:28:00 GMT
+ETag: "33a64df551425fcc55e4d42a148795d5f8b7c6"</pre>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">CDN控制台配置</h4>
+                            <p class="text-gray-600 text-sm">
+                                通过CDN服务商控制台配置缓存规则
+                            </p>
+                            <ul class="list-disc pl-5 text-gray-600 text-xs mt-2">
+                                <li>目录刷新</li>
+                                <li>URL预热</li>
+                                <li>缓存过期时间设置</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <h4 class="font-bold text-gray-800">缓存更新策略</h4>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white border border-gray-200 text-sm">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="py-2 px-4 border-b text-left">策略</th>
+                                    <th class="py-2 px-4 border-b text-left">说明</th>
+                                    <th class="py-2 px-4 border-b text-left">适用场景</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="py-2 px-4 border-b">主动刷新</td>
+                                    <td class="py-2 px-4 border-b">手动触发CDN节点缓存更新</td>
+                                    <td class="py-2 px-4 border-b">紧急更新、BUG修复</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 border-b">URL预热</td>
+                                    <td class="py-2 px-4 border-b">提前将资源缓存到CDN节点</td>
+                                    <td class="py-2 px-4 border-b">热点资源、大促活动</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-4 border-b">智能缓存</td>
+                                    <td class="py-2 px-4 border-b">根据访问模式自动调整缓存策略</td>
+                                    <td class="py-2 px-4 border-b">动态内容、个性化资源</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">主流CDN服务商</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-cloud text-blue-500 mr-2"></i>
+                            阿里云CDN
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            阿里巴巴集团旗下的CDN服务，覆盖全球2800+节点。
+                        </p>
+                        <ul class="list-disc pl-8 text-gray-600 text-sm">
+                            <li>智能调度</li>
+                            <li>安全防护</li>
+                            <li>实时监控</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-cloud text-green-500 mr-2"></i>
+                            腾讯云CDN
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            腾讯云提供的CDN服务，拥有1200+国内外节点。
+                        </p>
+                        <ul class="list-disc pl-8 text-gray-600 text-sm">
+                            <li>动态加速</li>
+                            <li>视频直播</li>
+                            <li>HTTPS优化</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-cloud text-purple-500 mr-2"></i>
+                            Cloudflare
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            国际知名CDN服务商，提供免费和付费服务。
+                        </p>
+                        <ul class="list-disc pl-8 text-gray-600 text-sm">
+                            <li>DDoS防护</li>
+                            <li>WAF防火墙</li>
+                            <li>全球Anycast网络</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">CDN应用场景</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-image text-yellow-500 mr-2"></i>
+                            静态资源加速
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li>图片、CSS、JavaScript文件</li>
+                            <li>网站Logo和图标</li>
+                            <li>字体文件</li>
+                            <li>文档和压缩包</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-video text-yellow-500 mr-2"></i>
+                            音视频加速
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li>在线视频点播</li>
+                            <li>直播流媒体</li>
+                            <li>音频文件</li>
+                            <li>短视频平台</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-download text-yellow-500 mr-2"></i>
+                            大文件下载
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li>软件安装包</li>
+                            <li>游戏客户端</li>
+                            <li>系统镜像</li>
+                            <li>应用更新包</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-mobile-alt text-yellow-500 mr-2"></i>
+                            移动应用加速
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li>APP内容分发</li>
+                            <li>移动游戏资源</li>
+                            <li>OTA更新</li>
+                            <li>移动网站优化</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">CDN配置优化</h2>
+                
+                <div class="border border-gray-200 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">性能优化</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div class="bg-blue-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">压缩优化</h4>
+                            <ul class="list-disc pl-5 text-gray-600 text-sm">
+                                <li>Gzip压缩静态资源</li>
+                                <li>图片格式优化（WebP、AVIF）</li>
+                                <li>资源合并减少请求数</li>
+                            </ul>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">缓存优化</h4>
+                            <ul class="list-disc pl-5 text-gray-600 text-sm">
+                                <li>合理设置缓存时间</li>
+                                <li>版本号控制缓存更新</li>
+                                <li>条件请求减少传输</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <h4 class="font-bold text-gray-800">安全配置</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
+                        <div class="bg-red-50 p-3 rounded">
+                            <h5 class="font-bold text-gray-800 text-sm mb-1">防盗链</h5>
+                            <p class="text-gray-600 text-xs">
+                                限制资源引用来源，防止盗用
+                            </p>
+                        </div>
+                        <div class="bg-orange-50 p-3 rounded">
+                            <h5 class="font-bold text-gray-800 text-sm mb-1">HTTPS</h5>
+                            <p class="text-gray-600 text-xs">
+                                启用HTTPS加密传输
+                            </p>
+                        </div>
+                        <div class="bg-purple-50 p-3 rounded">
+                            <h5 class="font-bold text-gray-800 text-sm mb-1">访问控制</h5>
+                            <p class="text-gray-600 text-xs">
+                                IP黑白名单、频率限制
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">监控与分析</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-chart-line text-red-500 mr-2"></i>
+                            关键指标
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li><strong>命中率：</strong>CDN节点缓存命中比例</li>
+                            <li><strong>响应时间：</strong>用户访问资源的平均时间</li>
+                            <li><strong>带宽使用：</strong>CDN节点的带宽消耗情况</li>
+                            <li><strong>请求数：</strong>CDN节点处理的请求数量</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-bug text-red-500 mr-2"></i>
+                            常见问题排查
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li>缓存未更新：检查缓存时间设置</li>
+                            <li>资源404：检查源站资源是否存在</li>
+                            <li>访问缓慢：检查节点分布和网络状况</li>
+                            <li>安全攻击：启用防护功能</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">CDN最佳实践</h2>
+                <div class="bg-green-50 rounded-lg p-6">
+                    <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                        <li>合理规划CDN节点分布</li>
+                        <li>设置合适的缓存策略和过期时间</li>
+                        <li>启用压缩和HTTPS优化</li>
+                        <li>实施安全防护措施</li>
+                        <li>建立完善的监控和告警机制</li>
+                        <li>定期分析访问日志和性能数据</li>
+                        <li>制定应急预案和故障处理流程</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

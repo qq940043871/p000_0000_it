@@ -1,0 +1,310 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MySQL优化 - 架构师学习笔记</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-4xl mx-auto p-6">
+        <div class="bg-white rounded-xl shadow-md p-8 mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-tachometer-alt text-green-500 mr-3"></i>MySQL优化
+            </h1>
+            
+            <div class="prose max-w-none">
+                <p class="text-gray-600 mb-6">
+                    MySQL是世界上最流行的开源关系型数据库管理系统之一。随着数据量和访问量的增长，数据库性能优化成为系统架构中的关键环节。合理的优化策略可以显著提升系统性能和用户体验。
+                </p>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">SQL优化</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-search text-blue-500 mr-2"></i>
+                            EXPLAIN执行计划
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            通过EXPLAIN分析SQL语句的执行计划，找出性能瓶颈。
+                        </p>
+                        <pre class="bg-gray-800 text-white p-3 rounded text-xs overflow-x-auto">
+EXPLAIN SELECT * FROM users WHERE age > 25;
+
+-- 关键字段说明
+-- type: 访问类型（ALL、index、range、ref、eq_ref、const）
+-- key: 实际使用的索引
+-- rows: 扫描的行数
+-- Extra: 额外信息</pre>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-bolt text-blue-500 mr-2"></i>
+                            SQL优化技巧
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li>避免SELECT *，只查询需要的字段</li>
+                            <li>使用LIMIT限制返回结果集大小</li>
+                            <li>避免在WHERE子句中使用函数</li>
+                            <li>使用JOIN代替子查询</li>
+                            <li>合理使用UNION和UNION ALL</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">索引优化</h2>
+                
+                <div class="border border-gray-200 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">索引类型</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white border border-gray-200">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="py-2 px-4 border-b text-left">索引类型</th>
+                                    <th class="py-2 px-4 border-b text-left">特点</th>
+                                    <th class="py-2 px-4 border-b text-left">适用场景</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="py-2 px-4 border-b">主键索引</td>
+                                    <td class="py-2 px-4 border-b">唯一且非空，一张表只能有一个</td>
+                                    <td class="py-2 px-4 border-b">主键字段</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 border-b">唯一索引</td>
+                                    <td class="py-2 px-4 border-b">索引列的值必须唯一，允许空值</td>
+                                    <td class="py-2 px-4 border-b">需要唯一性约束的字段</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-4 border-b">普通索引</td>
+                                    <td class="py-2 px-4 border-b">最基本的索引，没有任何限制</td>
+                                    <td class="py-2 px-4 border-b">频繁查询的字段</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 border-b">复合索引</td>
+                                    <td class="py-2 px-4 border-b">多个字段组成的索引</td>
+                                    <td class="py-2 px-4 border-b">多条件查询</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-4 border-b">全文索引</td>
+                                    <td class="py-2 px-4 border-b">用于全文搜索</td>
+                                    <td class="py-2 px-4 border-b">文本搜索</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <h4 class="font-bold text-gray-800 mt-4">索引优化原则</h4>
+                    <ul class="list-disc pl-8 text-gray-600 mt-2">
+                        <li>选择区分度高的列作为索引</li>
+                        <li>为经常出现在WHERE、ORDER BY、GROUP BY中的列创建索引</li>
+                        <li>复合索引遵循最左前缀原则</li>
+                        <li>避免过多索引，影响写入性能</li>
+                        <li>定期分析和优化索引使用情况</li>
+                    </ul>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">表结构优化</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-table text-green-500 mr-2"></i>
+                            数据类型选择
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li>选择合适的数据类型，避免过度分配</li>
+                            <li>使用NOT NULL约束，避免NULL值</li>
+                            <li>使用ENUM代替字符串，节省存储空间</li>
+                            <li>使用TIMESTAMP代替DATETIME，节省存储空间</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-divide text-green-500 mr-2"></i>
+                            表拆分策略
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li><strong>垂直拆分：</strong>将表按列拆分为多个表</li>
+                            <li><strong>水平拆分：</strong>将表按行拆分为多个表</li>
+                            <li><strong>冷热数据分离：</strong>将不常用数据归档</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">查询优化</h2>
+                
+                <div class="border border-gray-200 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">优化技巧</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-blue-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">避免全表扫描</h4>
+                            <ul class="list-disc pl-5 text-gray-600 text-sm">
+                                <li>为WHERE条件字段创建索引</li>
+                                <li>避免在索引列上使用函数</li>
+                                <li>避免使用!=或<>操作符</li>
+                            </ul>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">优化JOIN操作</h4>
+                            <ul class="list-disc pl-5 text-gray-600 text-sm">
+                                <li>确保JOIN字段上有索引</li>
+                                <li>优先过滤数据再JOIN</li>
+                                <li>避免大表JOIN大表</li>
+                            </ul>
+                        </div>
+                        <div class="bg-yellow-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">优化子查询</h4>
+                            <ul class="list-disc pl-5 text-gray-600 text-sm">
+                                <li>使用JOIN代替子查询</li>
+                                <li>使用EXISTS代替IN</li>
+                                <li>避免嵌套过深的子查询</li>
+                            </ul>
+                        </div>
+                        <div class="bg-purple-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">优化GROUP BY</h4>
+                            <ul class="list-disc pl-5 text-gray-600 text-sm">
+                                <li>为GROUP BY字段创建索引</li>
+                                <li>使用ORDER BY NULL避免排序</li>
+                                <li>合理使用WITH ROLLUP</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">存储引擎优化</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-engine-warning text-blue-500 mr-2"></i>
+                            InnoDB存储引擎
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li>支持事务和外键约束</li>
+                            <li>支持行级锁和MVCC</li>
+                            <li>支持崩溃恢复</li>
+                            <li>适合高并发读写场景</li>
+                        </ul>
+                        <pre class="bg-gray-800 text-white p-2 rounded text-xs mt-3 overflow-x-auto">
+-- InnoDB配置优化
+innodb_buffer_pool_size = 70%内存
+innodb_log_file_size = 256M
+innodb_flush_log_at_trx_commit = 2</pre>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-archive text-blue-500 mr-2"></i>
+                            MyISAM存储引擎
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li>不支持事务和行级锁</li>
+                            <li>查询性能高</li>
+                            <li>支持全文索引</li>
+                            <li>适合读多写少场景</li>
+                        </ul>
+                        <pre class="bg-gray-800 text-white p-2 rounded text-xs mt-3 overflow-x-auto">
+-- MyISAM配置优化
+key_buffer_size = 256M
+myisam_sort_buffer_size = 128M</pre>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">配置优化</h2>
+                
+                <div class="border border-gray-200 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">关键配置参数</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white border border-gray-200 text-sm">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="py-2 px-4 border-b text-left">参数</th>
+                                    <th class="py-2 px-4 border-b text-left">说明</th>
+                                    <th class="py-2 px-4 border-b text-left">推荐值</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="py-2 px-4 border-b">innodb_buffer_pool_size</td>
+                                    <td class="py-2 px-4 border-b">InnoDB缓冲池大小</td>
+                                    <td class="py-2 px-4 border-b">物理内存的70-80%</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 border-b">innodb_log_file_size</td>
+                                    <td class="py-2 px-4 border-b">InnoDB日志文件大小</td>
+                                    <td class="py-2 px-4 border-b">256M-2G</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-4 border-b">query_cache_size</td>
+                                    <td class="py-2 px-4 border-b">查询缓存大小</td>
+                                    <td class="py-2 px-4 border-b">根据查询特点设置</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 border-b">max_connections</td>
+                                    <td class="py-2 px-4 border-b">最大连接数</td>
+                                    <td class="py-2 px-4 border-b">根据并发需求设置</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-4 border-b">tmp_table_size</td>
+                                    <td class="py-2 px-4 border-b">临时表大小</td>
+                                    <td class="py-2 px-4 border-b">64M-256M</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">监控与诊断</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-chart-bar text-green-500 mr-2"></i>
+                            性能监控
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li>SHOW PROCESSLIST查看当前连接</li>
+                            <li>SHOW STATUS查看服务器状态</li>
+                            <li>SHOW VARIABLES查看配置参数</li>
+                            <li>慢查询日志分析</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-bug text-green-500 mr-2"></i>
+                            常见问题诊断
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li>锁等待和死锁问题</li>
+                            <li>索引失效问题</li>
+                            <li>慢查询优化</li>
+                            <li>连接数过多问题</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">MySQL优化最佳实践</h2>
+                <div class="bg-green-50 rounded-lg p-6">
+                    <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                        <li>定期分析和优化表结构</li>
+                        <li>建立完善的索引策略</li>
+                        <li>优化SQL查询语句</li>
+                        <li>合理配置MySQL参数</li>
+                        <li>实施监控和告警机制</li>
+                        <li>定期备份和恢复测试</li>
+                        <li>使用读写分离和分库分表</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

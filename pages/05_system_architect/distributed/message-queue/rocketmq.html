@@ -1,0 +1,425 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RocketMQ - 架构师学习笔记</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-4xl mx-auto p-6">
+        <div class="bg-white rounded-xl shadow-md p-8 mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-rocket text-blue-500 mr-3"></i>RocketMQ
+            </h1>
+            
+            <div class="prose max-w-none">
+                <p class="text-gray-600 mb-6">
+                    Apache RocketMQ是阿里巴巴开源的分布式消息中间件，具有低延迟、高性能、高可靠性、万亿级容量和灵活的可扩展性等特点。RocketMQ最初是为满足阿里巴巴集团内部大规模分布式系统的需求而开发的，后来成为Apache顶级项目。
+                </p>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">RocketMQ核心概念</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-database text-blue-500 mr-2"></i>
+                            Topic（主题）
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            消息的逻辑分类，类似于数据库中的表。生产者将消息发送到特定的Topic，消费者从Topic订阅消息。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-divide text-blue-500 mr-2"></i>
+                            Message Queue（消息队列）
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            Topic的物理分区，每个Topic包含多个Message Queue，用于实现并行处理和负载均衡。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-map-marker-alt text-blue-500 mr-2"></i>
+                            Message（消息）
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            消息是RocketMQ中最小的数据传输单位，包含消息头和消息体两部分。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-user text-blue-500 mr-2"></i>
+                            Consumer Group（消费者组）
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            消费者组是一组逻辑上相同的消费者实例，用于实现负载均衡和容错。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-server text-blue-500 mr-2"></i>
+                            NameServer（命名服务器）
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            提供轻量级的服务发现和路由功能，Broker向NameServer注册路由信息。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-warehouse text-blue-500 mr-2"></i>
+                            Broker（代理）
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            消息存储和转发的核心组件，负责接收、存储和投递消息。
+                        </p>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">RocketMQ架构</h2>
+                
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">架构图</h3>
+                    <div class="bg-gray-100 p-6 rounded-lg mb-4">
+                        <div class="flex justify-between items-center mb-4">
+                            <div class="text-center">
+                                <div class="bg-blue-500 text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-2">P</div>
+                                <div class="text-sm">Producer</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="bg-blue-500 text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-2">C</div>
+                                <div class="text-sm">Consumer</div>
+                            </div>
+                        </div>
+                        <div class="flex justify-center">
+                            <div class="bg-white border border-gray-300 rounded-lg p-4 w-3/4">
+                                <div class="flex justify-between mb-2">
+                                    <div class="text-center">
+                                        <div class="bg-purple-500 text-white rounded w-8 h-8 flex items-center justify-center mx-auto mb-1">NS1</div>
+                                        <div class="text-xs">NameServer 1</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="bg-purple-500 text-white rounded w-8 h-8 flex items-center justify-center mx-auto mb-1">NS2</div>
+                                        <div class="text-xs">NameServer 2</div>
+                                    </div>
+                                </div>
+                                <div class="border-t border-gray-300 pt-2 mt-2">
+                                    <div class="flex justify-between mb-2">
+                                        <div class="text-center">
+                                            <div class="bg-green-500 text-white rounded w-8 h-8 flex items-center justify-center mx-auto mb-1">B1</div>
+                                            <div class="text-xs">Broker 1</div>
+                                        </div>
+                                        <div class="text-center">
+                                            <div class="bg-green-500 text-white rounded w-8 h-8 flex items-center justify-center mx-auto mb-1">B2</div>
+                                            <div class="text-xs">Broker 2</div>
+                                        </div>
+                                        <div class="text-center">
+                                            <div class="bg-green-500 text-white rounded w-8 h-8 flex items-center justify-center mx-auto mb-1">B3</div>
+                                            <div class="text-xs">Broker 3</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex">
+                                        <div class="flex-1 border-r border-gray-300 pr-2">
+                                            <div class="text-xs font-bold mb-1">Topic A</div>
+                                            <div class="flex">
+                                                <div class="bg-yellow-200 border border-yellow-500 rounded text-xs p-1 mr-1">Q0</div>
+                                                <div class="bg-yellow-200 border border-yellow-500 rounded text-xs p-1 mr-1">Q1</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex-1 pl-2">
+                                            <div class="text-xs font-bold mb-1">Topic B</div>
+                                            <div class="flex">
+                                                <div class="bg-yellow-200 border border-yellow-500 rounded text-xs p-1 mr-1">Q0</div>
+                                                <div class="bg-yellow-200 border border-yellow-500 rounded text-xs p-1 mr-1">Q1</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">消息类型</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-envelope text-blue-500 mr-2"></i>
+                            普通消息
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            最基本的消息类型，支持集群消费和广播消费模式。
+                        </p>
+                        <pre class="bg-gray-800 text-white p-3 rounded text-xs overflow-x-auto">
+// Producer
+DefaultMQProducer producer = new DefaultMQProducer("producer_group");
+producer.setNamesrvAddr("localhost:9876");
+producer.start();
+
+Message msg = new Message("TopicTest", "TagA", "OrderID188", "Hello RocketMQ".getBytes());
+SendResult sendResult = producer.send(msg);
+producer.shutdown();
+
+// Consumer
+DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("consumer_group");
+consumer.setNamesrvAddr("localhost:9876");
+consumer.subscribe("TopicTest", "*");
+
+consumer.registerMessageListener((MessageListenerConcurrently) (msgs, context) -> {
+    for (MessageExt msg : msgs) {
+        System.out.println(new String(msg.getBody()));
+    }
+    return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+});
+consumer.start();</pre>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-clock text-blue-500 mr-2"></i>
+                            延迟消息
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            消息发送后不会立即投递，而是在指定的延迟时间后才投递给消费者。
+                        </p>
+                        <pre class="bg-gray-800 text-white p-3 rounded text-xs overflow-x-auto">
+Message msg = new Message("TopicTest", "TagA", "OrderID188", "Hello RocketMQ".getBytes());
+// 设置延迟等级，1s 5s 10s 30s 1m 2m 3m 4m 5m 6m 7m 8m 9m 10m 20m 30m 1h 2h
+msg.setDelayTimeLevel(3); // 10秒后投递
+producer.send(msg);</pre>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-sync-alt text-blue-500 mr-2"></i>
+                            顺序消息
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            保证消息按照发送顺序进行消费，适用于需要严格顺序处理的场景。
+                        </p>
+                        <pre class="bg-gray-800 text-white p-3 rounded text-xs overflow-x-auto">
+// Producer - 选择队列发送
+producer.send(msg, new MessageQueueSelector() {
+    @Override
+    public MessageQueue select(List<MessageQueue> mqs, Message msg, Object arg) {
+        Integer id = (Integer) arg;
+        int index = id % mqs.size();
+        return mqs.get(index);
+    }
+}, orderId);
+
+// Consumer - 顺序消费
+DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("consumer_group");
+consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
+consumer.registerMessageListener((MessageListenerOrderly) (msgs, context) -> {
+    for (MessageExt msg : msgs) {
+        System.out.println(new String(msg.getBody()));
+    }
+    return ConsumeOrderlyStatus.SUCCESS;
+});</pre>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-check-circle text-blue-500 mr-2"></i>
+                            事务消息
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            实现分布式事务，确保本地事务和消息发送的原子性。
+                        </p>
+                        <pre class="bg-gray-800 text-white p-3 rounded text-xs overflow-x-auto">
+// Producer
+TransactionMQProducer producer = new TransactionMQProducer("transaction_producer_group");
+producer.setTransactionListener(new TransactionListener() {
+    @Override
+    public LocalTransactionState executeLocalTransaction(Message msg, Object arg) {
+        // 执行本地事务
+        return LocalTransactionState.COMMIT_MESSAGE;
+    }
+    
+    @Override
+    public LocalTransactionState checkLocalTransaction(MessageExt msg) {
+        // 检查本地事务状态
+        return LocalTransactionState.COMMIT_MESSAGE;
+    }
+});
+producer.send(msg);</pre>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">消费模式</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-users text-blue-500 mr-2"></i>
+                            集群消费模式
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            同一个Consumer Group中的消费者平均分配消息，每条消息只会被其中一个消费者消费。
+                        </p>
+                        <ul class="list-disc pl-8 text-gray-600 text-sm">
+                            <li>负载均衡</li>
+                            <li>容错性好</li>
+                            <li>适用于大部分业务场景</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-broadcast-tower text-blue-500 mr-2"></i>
+                            广播消费模式
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            同一个Consumer Group中的每个消费者都会消费所有消息。
+                        </p>
+                        <ul class="list-disc pl-8 text-gray-600 text-sm">
+                            <li>消息广播</li>
+                            <li>每个消费者都收到完整消息</li>
+                            <li>适用于配置更新等场景</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">存储机制</h2>
+                
+                <div class="border border-gray-200 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">CommitLog存储</h3>
+                    <p class="text-gray-600 mb-4">
+                        RocketMQ采用混合存储结构，所有消息都存储在CommitLog中，提高了写入性能。
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div class="bg-blue-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">CommitLog</h4>
+                            <p class="text-gray-600 text-sm">
+                                实际存储消息数据的文件
+                            </p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">ConsumeQueue</h4>
+                            <p class="text-gray-600 text-sm">
+                                消息消费的逻辑队列
+                            </p>
+                        </div>
+                        <div class="bg-purple-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">IndexFile</h4>
+                            <p class="text-gray-600 text-sm">
+                                消息索引文件，支持按消息Key查询
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <h4 class="font-bold text-gray-800">存储特点</h4>
+                    <ul class="list-disc pl-8 text-gray-600 mt-2">
+                        <li>顺序写入CommitLog，提高写入性能</li>
+                        <li>ConsumeQueue作为索引，加速消息检索</li>
+                        <li>支持消息过期清理和文件预分配</li>
+                        <li>支持主从同步，保证数据可靠性</li>
+                    </ul>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">高可用与负载均衡</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-sync text-blue-500 mr-2"></i>
+                            主从复制
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            Broker支持主从架构，主节点负责读写，从节点负责数据备份。
+                        </p>
+                        <ul class="list-disc pl-8 text-gray-600 text-sm">
+                            <li>异步复制：性能高但可能丢失数据</li>
+                            <li>同步双写：数据一致性好但性能较低</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-balance-scale text-blue-500 mr-2"></i>
+                            负载均衡
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            通过多个Broker节点和队列分片实现负载均衡。
+                        </p>
+                        <ul class="list-disc pl-8 text-gray-600 text-sm">
+                            <li>Producer负载均衡：轮询选择队列</li>
+                            <li>Consumer负载均衡：队列分配算法</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">监控与管理</h2>
+                
+                <div class="border border-gray-200 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">监控指标</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white border border-gray-200 text-sm">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="py-2 px-4 border-b text-left">指标</th>
+                                    <th class="py-2 px-4 border-b text-left">说明</th>
+                                    <th class="py-2 px-4 border-b text-left">监控工具</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="py-2 px-4 border-b">TPS</td>
+                                    <td class="py-2 px-4 border-b">每秒处理的消息数量</td>
+                                    <td class="py-2 px-4 border-b">RocketMQ Console, Prometheus</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 border-b">延迟</td>
+                                    <td class="py-2 px-4 border-b">消息从生产到消费的时间</td>
+                                    <td class="py-2 px-4 border-b">RocketMQ Console</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-4 border-b">Broker状态</td>
+                                    <td class="py-2 px-4 border-b">Broker运行状态和资源使用情况</td>
+                                    <td class="py-2 px-4 border-b">RocketMQ Console</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 border-b">消息堆积</td>
+                                    <td class="py-2 px-4 border-b">未消费的消息数量</td>
+                                    <td class="py-2 px-4 border-b">RocketMQ Console</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <h4 class="font-bold text-gray-800 mt-4">管理工具</h4>
+                    <ul class="list-disc pl-8 text-gray-600 mt-2">
+                        <li><strong>RocketMQ Console：</strong>Web管理界面</li>
+                        <li><strong>mqadmin命令：</strong>命令行管理工具</li>
+                        <li><strong>监控告警：</strong>集成Prometheus、Grafana等</li>
+                    </ul>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">RocketMQ最佳实践</h2>
+                <div class="bg-green-50 rounded-lg p-6">
+                    <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                        <li>合理设计Topic和Tag，便于消息分类和检索</li>
+                        <li>根据业务需求选择合适的消息类型</li>
+                        <li>设置合适的消息过期时间和存储策略</li>
+                        <li>实施监控和告警，及时发现和处理异常</li>
+                        <li>合理配置Producer和Consumer参数以优化性能</li>
+                        <li>使用集群模式提高可用性和容错能力</li>
+                        <li>定期清理无用的Topic和Consumer Group</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

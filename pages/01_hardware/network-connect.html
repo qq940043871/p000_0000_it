@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>网络是怎样连接的？ - 架构师学习笔记</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../../assets/css/common.css">
+</head>
+<body class="bg-gray-50">
+    <div class="page-container">
+        <div class="card">
+            <h1 class="page-title">
+                <i class="fas fa-network-wired mr-3 text-gray-600"></i>网络是怎样连接的？
+            </h1>
+            <p class="page-subtitle">How Networks Connect - 深入理解网络连接的原理</p>
+            
+            <div class="mt-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">网络连接总览</h2>
+                <div class="flow-diagram">
+                    <div class="flex flex-col md:flex-row justify-between items-center">
+                        <div class="bg-blue-100 rounded-lg p-4 mb-4 md:mb-0 md:mr-4 text-center">
+                            <div class="font-bold text-blue-700">1. 应用层</div>
+                            <div class="text-sm text-gray-600">Application</div>
+                        </div>
+                        <div class="text-2xl text-gray-400">→</div>
+                        <div class="bg-blue-100 rounded-lg p-4 mb-4 md:mb-0 md:mr-4 text-center">
+                            <div class="font-bold text-blue-700">2. 传输层</div>
+                            <div class="text-sm text-gray-600">Transport</div>
+                        </div>
+                        <div class="text-2xl text-gray-400">→</div>
+                        <div class="bg-blue-100 rounded-lg p-4 mb-4 md:mb-0 md:mr-4 text-center">
+                            <div class="font-bold text-blue-700">3. 网络层</div>
+                            <div class="text-sm text-gray-600">Network</div>
+                        </div>
+                        <div class="text-2xl text-gray-400">→</div>
+                        <div class="bg-blue-100 rounded-lg p-4 text-center">
+                            <div class="font-bold text-blue-700">4. 数据链路层</div>
+                            <div class="text-sm text-gray-600">Data Link</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-12">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">OSI七层模型</h2>
+                <div class="flow-diagram">
+                    <div class="flex flex-col items-center">
+                        <div class="bg-blue-100 rounded-lg p-4 mb-4 text-center w-64">
+                            <div class="font-bold text-blue-700">应用层</div>
+                            <div class="text-sm text-gray-600">Application</div>
+                        </div>
+                        <div class="text-2xl text-gray-400">↓</div>
+                        <div class="bg-blue-100 rounded-lg p-4 mb-4 text-center w-64">
+                            <div class="font-bold text-blue-700">表示层</div>
+                            <div class="text-sm text-gray-600">Presentation</div>
+                        </div>
+                        <div class="text-2xl text-gray-400">↓</div>
+                        <div class="bg-blue-100 rounded-lg p-4 mb-4 text-center w-64">
+                            <div class="font-bold text-blue-700">会话层</div>
+                            <div class="text-sm text-gray-600">Session</div>
+                        </div>
+                        <div class="text-2xl text-gray-400">↓</div>
+                        <div class="bg-blue-100 rounded-lg p-4 mb-4 text-center w-64">
+                            <div class="font-bold text-blue-700">传输层</div>
+                            <div class="text-sm text-gray-600">Transport</div>
+                        </div>
+                        <div class="text-2xl text-gray-400">↓</div>
+                        <div class="bg-blue-100 rounded-lg p-4 mb-4 text-center w-64">
+                            <div class="font-bold text-blue-700">网络层</div>
+                            <div class="text-sm text-gray-600">Network</div>
+                        </div>
+                        <div class="text-2xl text-gray-400">↓</div>
+                        <div class="bg-blue-100 rounded-lg p-4 mb-4 text-center w-64">
+                            <div class="font-bold text-blue-700">数据链路层</div>
+                            <div class="text-sm text-gray-600">Data Link</div>
+                        </div>
+                        <div class="text-2xl text-gray-400">↓</div>
+                        <div class="bg-blue-100 rounded-lg p-4 text-center w-64">
+                            <div class="font-bold text-blue-700">物理层</div>
+                            <div class="text-sm text-gray-600">Physical</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-12">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">TCP/IP四层模型</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="feature-card bg-white rounded-lg shadow-md p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-laptop text-2xl text-blue-500 mr-3"></i>
+                            <h3 class="text-lg font-bold text-gray-800">应用层</h3>
+                        </div>
+                        <p class="text-gray-600">提供应用程序之间的通信。</p>
+                        <ul class="list-disc pl-6 mt-3 space-y-1">
+                            <li>HTTP/HTTPS</li>
+                            <li>FTP</li>
+                            <li>SMTP</li>
+                            <li>DNS</li>
+                            <li>SSH</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card bg-white rounded-lg shadow-md p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-exchange-alt text-2xl text-green-500 mr-3"></i>
+                            <h3 class="text-lg font-bold text-gray-800">传输层</h3>
+                        </div>
+                        <p class="text-gray-600">提供端到端的通信。</p>
+                        <ul class="list-disc pl-6 mt-3 space-y-1">
+                            <li>TCP (Transmission Control Protocol)</li>
+                            <li>UDP (User Datagram Protocol)</li>
+                            <li>SCTP (Stream Control Transmission Protocol)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card bg-white rounded-lg shadow-md p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-router text-2xl text-purple-500 mr-3"></i>
+                            <h3 class="text-lg font-bold text-gray-800">网络层</h3>
+                        </div>
+                        <p class="text-gray-600">提供网络间的路由。</p>
+                        <ul class="list-disc pl-6 mt-3 space-y-1">
+                            <li>IP (Internet Protocol)</li>
+                            <li>ICMP (Internet Control Message Protocol)</li>
+                            <li>ARP (Address Resolution Protocol)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card bg-white rounded-lg shadow-md p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-cable text-2xl text-orange-500 mr-3"></i>
+                            <h3 class="text-lg font-bold text-gray-800">数据链路层</h3>
+                        </div>
+                        <p class="text-gray-600">提供物理网络的访问。</p>
+                        <ul class="list-disc pl-6 mt-3 space-y-1">
+                            <li>Ethernet</li>
+                            <li>Wi-Fi</li>
+                            <li>PPP (Point-to-Point Protocol)</li>
+                            <li>ATM (Asynchronous Transfer Mode)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-12">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">网络数据传输过程</h2>
+                <div class="section-card">
+                    <h3 class="text-xl font-bold text-gray-700 mb-4">数据发送过程</h3>
+                    <p class="mb-4">当你在浏览器中输入网址并按下回车时：</p>
+                    <ol class="list-decimal pl-6 space-y-2">
+                        <li><strong>应用层</strong>：浏览器生成HTTP请求</li>
+                        <li><strong>传输层</strong>：HTTP请求被封装成TCP段</li>
+                        <li><strong>网络层</strong>：TCP段被封装成IP数据包</li>
+                        <li><strong>数据链路层</strong>：IP数据包被封装成以太网帧</li>
+                        <li><strong>物理层</strong>：以太网帧通过物理介质传输</li>
+                    </ol>
+                </div>
+                
+                <div class="section-card mt-6">
+                    <h3 class="text-xl font-bold text-gray-700 mb-4">数据接收过程</h3>
+                    <p class="mb-4">服务器接收到数据后：</p>
+                    <ol class="list-decimal pl-6 space-y-2">
+                        <li><strong>物理层</strong>：接收以太网帧</li>
+                        <li><strong>数据链路层</strong>：解封装以太网帧，得到IP数据包</li>
+                        <li><strong>网络层</strong>：解封装IP数据包，得到TCP段</li>
+                        <li><strong>传输层</strong>：解封装TCP段，得到HTTP请求</li>
+                        <li><strong>应用层</strong>：服务器处理HTTP请求，生成响应</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <div class="mt-12">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">网络寻址</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="feature-card bg-white rounded-lg shadow-md p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-ip text-2xl text-blue-500 mr-3"></i>
+                            <h3 class="text-lg font-bold text-gray-800">IP地址</h3>
+                        </div>
+                        <p class="text-gray-600">用于在网络中唯一标识设备。</p>
+                        <ul class="list-disc pl-6 mt-3 space-y-1">
+                            <li>IPv4：32位地址，如 192.168.1.1</li>
+                            <li>IPv6：128位地址，如 2001:0db8:85a3:0000:0000:8a2e:0370:7334</li>
+                            <li>公网IP：全球唯一</li>
+                            <li>私网IP：局域网内使用</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card bg-white rounded-lg shadow-md p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-microchip text-2xl text-green-500 mr-3"></i>
+                            <h3 class="text-lg font-bold text-gray-800">MAC地址</h3>
+                        </div>
+                        <p class="text-gray-600">网络接口的物理地址。</p>
+                        <ul class="list-disc pl-6 mt-3 space-y-1">
+                            <li>48位地址，如 00:1B:44:11:3A:B7</li>
+                            <li>由网卡厂商分配</li>
+                            <li>在数据链路层使用</li>
+                            <li>用于局域网内通信</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-12">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">网络路由</h2>
+                <div class="section-card">
+                    <h3 class="text-xl font-bold text-gray-700 mb-4">路由过程</h3>
+                    <p class="mb-4">数据从源到目的地的路由过程：</p>
+                    <ol class="list-decimal pl-6 space-y-2">
+                        <li>源主机确定目标IP地址</li>
+                        <li>检查目标是否在同一局域网内</li>
+                        <li>如果是，直接发送到目标</li>
+                        <li>如果不是，发送到默认网关</li>
+                        <li>路由器根据路由表转发数据包</li>
+                        <li>数据包经过多个路由器到达目的地</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <div class="mt-12">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">网络协议</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="feature-card bg-white rounded-lg shadow-md p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-globe text-2xl text-blue-500 mr-3"></i>
+                            <h3 class="text-lg font-bold text-gray-800">HTTP/HTTPS</h3>
+                        </div>
+                        <p class="text-gray-600">用于网页浏览的协议。</p>
+                        <ul class="list-disc pl-6 mt-3 space-y-1">
+                            <li>HTTP：明文传输</li>
+                            <li>HTTPS：加密传输</li>
+                            <li>基于TCP协议</li>
+                            <li>端口：80/443</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card bg-white rounded-lg shadow-md p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-envelope text-2xl text-green-500 mr-3"></i>
+                            <h3 class="text-lg font-bold text-gray-800">SMTP/POP3/IMAP</h3>
+                        </div>
+                        <p class="text-gray-600">用于电子邮件的协议。</p>
+                        <ul class="list-disc pl-6 mt-3 space-y-1">
+                            <li>SMTP：发送邮件</li>
+                            <li>POP3：接收邮件</li>
+                            <li>IMAP：接收邮件（更高级）</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card bg-white rounded-lg shadow-md p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-database text-2xl text-purple-500 mr-3"></i>
+                            <h3 class="text-lg font-bold text-gray-800">DNS</h3>
+                        </div>
+                        <p class="text-gray-600">域名解析协议。</p>
+                        <ul class="list-disc pl-6 mt-3 space-y-1">
+                            <li>将域名转换为IP地址</li>
+                            <li>基于UDP协议</li>
+                            <li>端口：53</li>
+                            <li>分布式系统</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card bg-white rounded-lg shadow-md p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-terminal text-2xl text-orange-500 mr-3"></i>
+                            <h3 class="text-lg font-bold text-gray-800">SSH</h3>
+                        </div>
+                        <p class="text-gray-600">安全远程登录协议。</p>
+                        <ul class="list-disc pl-6 mt-3 space-y-1">
+                            <li>加密传输</li>
+                            <li>基于TCP协议</li>
+                            <li>端口：22</li>
+                            <li>替代Telnet</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-12">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">网络安全</h2>
+                <div class="tip-box tip-box-info">
+                    <p class="mb-4">网络安全的重要考虑因素：</p>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li><strong>防火墙</strong>：控制网络访问</li>
+                        <li><strong>加密</strong>：保护数据传输</li>
+                        <li><strong>认证</strong>：验证用户身份</li>
+                        <li><strong>入侵检测</strong>：检测异常行为</li>
+                        <li><strong>安全更新</strong>：修复漏洞</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="mt-12">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">总结</h2>
+                <div class="tip-box tip-box-success">
+                    <p class="mb-4">网络连接是一个复杂但有序的过程，通过分层架构和各种协议，实现了设备之间的数据传输。</p>
+                    <p>理解网络连接的原理，有助于我们更好地设计和维护网络系统，也为学习更高级的网络知识打下基础。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

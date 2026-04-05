@@ -1,0 +1,294 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JVM调优实战 - 架构师学习笔记</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-4xl mx-auto p-6">
+        <div class="bg-white rounded-lg shadow-md p-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-cogs mr-3 text-primary"></i>JVM调优实战
+            </h1>
+            
+            <div class="prose max-w-none">
+                <p class="text-gray-600 mb-6">
+                    JVM（Java Virtual Machine）是Java应用程序运行的核心环境。掌握JVM调优技能对于提升应用性能、解决内存问题和优化系统资源利用至关重要。
+                </p>
+                
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+                    <p class="text-blue-700">
+                        JVM调优是Java应用性能优化的关键环节，通过合理的参数配置和监控可以显著提升应用的稳定性和性能。
+                    </p>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">JVM内存结构</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-memory mr-2 text-primary"></i>堆内存(Heap)
+                        </h3>
+                        <p class="text-gray-600">
+                            存储对象实例和数组，是垃圾回收器管理的主要区域，分为新生代和老年代。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-stack mr-2 text-primary"></i>栈内存(Stack)
+                        </h3>
+                        <p class="text-gray-600">
+                            存储局部变量、方法调用和部分结果，每个线程都有独立的栈空间。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-database mr-2 text-primary"></i>方法区(Metaspace)
+                        </h3>
+                        <p class="text-gray-600">
+                            存储类信息、常量、静态变量等，JDK 8后由永久代改为元空间。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-recycle mr-2 text-primary"></i>程序计数器
+                        </h3>
+                        <p class="text-gray-600">
+                            记录当前线程执行的字节码指令地址，是线程私有的内存区域。
+                        </p>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">垃圾回收机制</h2>
+                
+                <div class="space-y-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">垃圾回收器类型</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# Serial GC - 单线程垃圾回收器
+-XX:+UseSerialGC
+
+# Parallel GC - 并行垃圾回收器（默认）
+-XX:+UseParallelGC
+
+# CMS GC - 并发标记清除垃圾回收器
+-XX:+UseConcMarkSweepGC
+
+# G1 GC - Garbage First垃圾回收器
+-XX:+UseG1GC
+
+# ZGC - 低延迟垃圾回收器（JDK 11+）
+-XX:+UseZGC</pre>
+                        <p class="text-gray-600">
+                            不同的垃圾回收器适用于不同的应用场景，需要根据应用特点选择合适的GC。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">GC日志分析</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# 启用GC日志（JDK 9+）
+-Xlog:gc*:gc.log:time,tags
+
+# JDK 8及以下版本
+-XX:+PrintGC
+-XX:+PrintGCDetails
+-XX:+PrintGCTimeStamps
+-Xloggc:gc.log
+
+# GC日志示例分析
+[GC (Allocation Failure) [PSYoungGen: 1024K->512K(2048K)] 2048K->1536K(4096K), 0.0012345 secs]
+[Full GC (Ergonomics) [PSYoungGen: 512K->0K(2048K)] [ParOldGen: 1024K->800K(2048K)] 1536K->800K(4096K), [Metaspace: 2048K->2048K(10240K)], 0.0056789 secs]</pre>
+                        <p class="text-gray-600">
+                            通过分析GC日志可以了解垃圾回收的频率、耗时和内存使用情况。
+                        </p>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">JVM核心参数调优</h2>
+                
+                <div class="space-y-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">内存相关参数</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# 堆内存初始大小
+-Xms2g
+
+# 堆内存最大大小
+-Xmx4g
+
+# 新生代大小
+-Xmn1g
+
+# 设置元空间大小
+-XX:MetaspaceSize=256m
+-XX:MaxMetaspaceSize=512m
+
+# 直接内存大小
+-XX:MaxDirectMemorySize=1g</pre>
+                        <p class="text-gray-600">
+                            合理设置内存参数可以避免频繁的垃圾回收和内存溢出问题。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">垃圾回收参数</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# G1垃圾回收器调优参数
+-XX:+UseG1GC
+-XX:MaxGCPauseMillis=200
+-XX:G1HeapRegionSize=16m
+-XX:G1NewSizePercent=30
+-XX:G1MaxNewSizePercent=40
+
+# Parallel GC调优参数
+-XX:+UseParallelGC
+-XX:ParallelGCThreads=8
+-XX:+UseAdaptiveSizePolicy
+
+# CMS垃圾回收器调优参数
+-XX:+UseConcMarkSweepGC
+-XX:CMSInitiatingOccupancyFraction=70
+-XX:+UseCMSInitiatingOccupancyOnly</pre>
+                        <p class="text-gray-600">
+                            根据应用特点和性能要求调整垃圾回收参数。
+                        </p>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">性能监控与调优工具</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-chart-line mr-2 text-primary"></i>jstat
+                        </h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# 查看GC统计信息
+jstat -gc <pid>
+
+# 查看类加载信息
+jstat -class <pid>
+
+# 查看编译统计信息
+jstat -compiler <pid></pre>
+                        <p class="text-gray-600">
+                            jstat是JDK自带的轻量级监控工具，可以实时查看JVM运行状态。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-tachometer-alt mr-2 text-primary"></i>jmap
+                        </h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# 查看堆内存使用情况
+jmap -heap <pid>
+
+# 生成堆转储文件
+jmap -dump:format=b,file=heap.hprof <pid>
+
+# 查看对象统计信息
+jmap -histo <pid></pre>
+                        <p class="text-gray-600">
+                            jmap用于生成堆内存快照，分析内存使用情况和内存泄漏问题。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-search mr-2 text-primary"></i>jstack
+                        </h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# 生成线程快照
+jstack <pid>
+
+# 检测死锁
+jstack -l <pid></pre>
+                        <p class="text-gray-600">
+                            jstack用于生成线程快照，分析线程状态和死锁问题。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-eye mr-2 text-primary"></i>VisualVM
+                        </h3>
+                        <p class="text-gray-600">
+                            图形化监控工具，集成了多种JDK命令行工具的功能，提供直观的性能分析界面。
+                        </p>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">常见问题诊断与解决</h2>
+                
+                <div class="space-y-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">内存溢出(OOM)问题</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# 常见的OOM类型及解决方案
+
+# 1. Java heap space
+# 原因：堆内存不足
+# 解决方案：增加堆内存(-Xmx)或优化代码减少对象创建
+
+# 2. Metaspace
+# 原因：元空间不足
+# 解决方案：增加元空间大小(-XX:MaxMetaspaceSize)或检查类加载泄漏
+
+# 3. GC overhead limit exceeded
+# 原因：GC花费时间过长
+# 解决方案：增加堆内存或优化内存使用
+
+# 4. Direct buffer memory
+# 原因：直接内存不足
+# 解决方案：增加直接内存限制(-XX:MaxDirectMemorySize)</pre>
+                        <p class="text-gray-600">
+                            针对不同类型的OOM问题采取相应的解决方案。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">CPU使用率过高问题</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# 诊断步骤：
+# 1. 使用top命令找到高CPU使用率的Java进程
+top -p <pid>
+
+# 2. 查看该进程中高CPU使用率的线程
+top -H -p <pid>
+
+# 3. 将线程ID转换为16进制
+printf "%x\n" <tid>
+
+# 4. 使用jstack生成线程快照并查找对应线程
+jstack <pid> | grep -A 10 "<hex_tid>"</pre>
+                        <p class="text-gray-600">
+                            通过线程快照分析CPU使用率过高的原因。
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="bg-green-50 border-l-4 border-green-500 p-4 mt-8">
+                    <h3 class="text-lg font-semibold text-green-700 mb-2">JVM调优最佳实践</h3>
+                    <ul class="list-disc pl-8 space-y-1 text-green-700">
+                        <li>根据应用特点选择合适的垃圾回收器</li>
+                        <li>合理设置堆内存大小，避免过大或过小</li>
+                        <li>监控GC日志，及时发现性能问题</li>
+                        <li>定期进行性能测试和调优</li>
+                        <li>使用专业的监控工具进行实时监控</li>
+                        <li>建立完善的报警机制</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

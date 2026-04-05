@@ -1,0 +1,355 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kubernetes - 架构师学习笔记</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-4xl mx-auto p-6">
+        <div class="bg-white rounded-xl shadow-md p-8 mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-server text-blue-500 mr-3"></i>Kubernetes
+            </h1>
+            
+            <div class="prose max-w-none">
+                <p class="text-gray-600 mb-6">
+                    Kubernetes（简称K8s）是Google开源的容器编排平台，用于自动化部署、扩展和管理容器化应用程序。它提供了服务发现、负载均衡、存储编排、自动部署和回滚、自动装箱、自我修复、密钥与配置管理等功能。
+                </p>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Kubernetes核心概念</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-cube text-blue-500 mr-2"></i>
+                            Pod
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            Kubernetes中最小的可部署单元，可以包含一个或多个容器，共享网络和存储资源。
+                        </p>
+                        <ul class="list-disc pl-8 text-gray-600 text-sm">
+                            <li>最小部署单元</li>
+                            <li>共享网络和存储</li>
+                            <li>生命周期短暂</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-layer-group text-blue-500 mr-2"></i>
+                            Service
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            为一组Pod提供稳定的网络访问入口，实现服务发现和负载均衡。
+                        </p>
+                        <ul class="list-disc pl-8 text-gray-600 text-sm">
+                            <li>稳定访问入口</li>
+                            <li>负载均衡</li>
+                            <li>服务发现</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-sync-alt text-blue-500 mr-2"></i>
+                            Deployment
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            用于管理Pod和ReplicaSet，提供声明式的更新和部署能力。
+                        </p>
+                        <ul class="list-disc pl-8 text-gray-600 text-sm">
+                            <li>声明式部署</li>
+                            <li>滚动更新</li>
+                            <li>回滚支持</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-hdd text-blue-500 mr-2"></i>
+                            Volume
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            为Pod提供持久化存储，支持多种存储类型。
+                        </p>
+                        <ul class="list-disc pl-8 text-gray-600 text-sm">
+                            <li>持久化存储</li>
+                            <li>多种存储类型</li>
+                            <li>数据共享</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Kubernetes架构</h2>
+                
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">控制平面组件</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white border border-gray-200">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="py-2 px-4 border-b text-left">组件</th>
+                                    <th class="py-2 px-4 border-b text-left">功能</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="py-2 px-4 border-b font-medium">kube-apiserver</td>
+                                    <td class="py-2 px-4 border-b">集群控制的前端，提供REST API</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 border-b font-medium">etcd</td>
+                                    <td class="py-2 px-4 border-b">分布式键值存储，保存集群状态</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-4 border-b font-medium">kube-scheduler</td>
+                                    <td class="py-2 px-4 border-b">负责Pod调度到合适的节点</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 border-b font-medium">kube-controller-manager</td>
+                                    <td class="py-2 px-4 border-b">运行控制器进程</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-4 border-b font-medium">cloud-controller-manager</td>
+                                    <td class="py-2 px-4 border-b">与云提供商交互的控制器</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">节点组件</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white border border-gray-200">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="py-2 px-4 border-b text-left">组件</th>
+                                    <th class="py-2 px-4 border-b text-left">功能</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="py-2 px-4 border-b font-medium">kubelet</td>
+                                    <td class="py-2 px-4 border-b">负责节点上的Pod管理</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 border-b font-medium">kube-proxy</td>
+                                    <td class="py-2 px-4 border-b">实现服务网络代理和负载均衡</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-4 border-b font-medium">容器运行时</td>
+                                    <td class="py-2 px-4 border-b">负责运行容器（如Docker、containerd）</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">常用kubectl命令</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">资源管理</h3>
+                        <pre class="bg-gray-800 text-white p-3 rounded text-xs overflow-x-auto">
+# 创建资源
+kubectl apply -f deployment.yaml
+
+# 删除资源
+kubectl delete deployment myapp
+
+# 查看资源
+kubectl get pods
+kubectl get deployments
+kubectl get services
+
+# 查看资源详情
+kubectl describe pod pod-name</pre>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">Pod操作</h3>
+                        <pre class="bg-gray-800 text-white p-3 rounded text-xs overflow-x-auto">
+# 进入Pod
+kubectl exec -it pod-name -- /bin/bash
+
+# 查看日志
+kubectl logs pod-name
+
+# 复制文件到Pod
+kubectl cp local-file pod-name:/path/to/file
+
+# 端口转发
+kubectl port-forward pod-name 8080:80</pre>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Deployment示例</h2>
+                
+                <div class="border border-gray-200 rounded-lg p-6 mb-8">
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg overflow-x-auto">
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"</pre>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Service示例</h2>
+                
+                <div class="border border-gray-200 rounded-lg p-6 mb-8">
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg overflow-x-auto">
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  selector:
+    app: nginx
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer</pre>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">存储管理</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">PersistentVolume</h3>
+                        <pre class="bg-gray-800 text-white p-3 rounded text-xs overflow-x-auto">
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-volume
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+  hostPath:
+    path: "/mnt/data"</pre>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">PersistentVolumeClaim</h3>
+                        <pre class="bg-gray-800 text-white p-3 rounded text-xs overflow-x-auto">
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pv-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 3Gi</pre>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">配置管理</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">ConfigMap</h3>
+                        <pre class="bg-gray-800 text-white p-3 rounded text-xs overflow-x-auto">
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  database_url: postgresql://localhost:5432/mydb
+  log_level: INFO</pre>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">Secret</h3>
+                        <pre class="bg-gray-800 text-white p-3 rounded text-xs overflow-x-auto">
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-secret
+type: Opaque
+data:
+  username: bXl1c2Vy
+  password: bXlwYXNzd29yZA==</pre>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Kubernetes网络</h2>
+                
+                <div class="border border-gray-200 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">网络模型</h3>
+                    <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                        <li><strong>Pod间通信：</strong>所有Pod都在一个可以直接连通的、扁平的网络空间中</li>
+                        <li><strong>Pod与Service通信：</strong>通过Service的ClusterIP实现</li>
+                        <li><strong>外部与Service通信：</strong>通过NodePort、LoadBalancer或Ingress实现</li>
+                    </ul>
+                    
+                    <h4 class="font-bold text-gray-800 mt-4">Ingress示例</h4>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mt-2 overflow-x-auto">
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: example-ingress
+spec:
+  rules:
+  - host: myapp.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: myapp-service
+            port:
+              number: 80</pre>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Kubernetes最佳实践</h2>
+                <div class="bg-green-50 rounded-lg p-6">
+                    <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                        <li>合理设置资源请求和限制，避免资源浪费</li>
+                        <li>使用健康检查（liveness和readiness probes）确保应用健康</li>
+                        <li>实施标签和注解策略，便于资源管理和查询</li>
+                        <li>使用命名空间隔离不同环境和团队的资源</li>
+                        <li>定期备份etcd数据，确保集群状态可恢复</li>
+                        <li>实施安全策略，如RBAC、网络策略等</li>
+                        <li>监控和日志收集，使用Prometheus、Grafana等工具</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,267 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>硬件基础 - 架构师学习笔记</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-4xl mx-auto p-6">
+        <div class="bg-white rounded-lg shadow-md p-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-microchip mr-3 text-primary"></i>硬件基础
+            </h1>
+            
+            <div class="prose max-w-none">
+                <p class="text-gray-600 mb-6">
+                    硬件基础是计算机系统的物理支撑，理解硬件组成和工作原理对于系统性能优化和故障排查至关重要。
+                </p>
+                
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+                    <p class="text-blue-700">
+                        深入理解硬件基础有助于架构师在设计系统时做出更合理的资源分配和性能优化决策。
+                    </p>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">中央处理器(CPU)</h2>
+                
+                <div class="space-y-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">CPU架构</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-gray-50 p-4 rounded">
+                                <h4 class="font-semibold text-gray-800 mb-2">核心组件</h4>
+                                <ul class="list-disc pl-8 space-y-1 text-gray-600">
+                                    <li><strong>控制单元</strong>：负责指令的获取和译码</li>
+                                    <li><strong>运算单元</strong>：执行算术和逻辑运算</li>
+                                    <li><strong>寄存器组</strong>：高速存储临时数据</li>
+                                    <li><strong>时钟发生器</strong>：提供同步信号</li>
+                                </ul>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded">
+                                <h4 class="font-semibold text-gray-800 mb-2">性能指标</h4>
+                                <ul class="list-disc pl-8 space-y-1 text-gray-600">
+                                    <li><strong>主频</strong>：CPU每秒执行的时钟周期数</li>
+                                    <li><strong>核心数</strong>：同时执行指令的处理单元数量</li>
+                                    <li><strong>缓存大小</strong>：高速缓存的容量</li>
+                                    <li><strong>指令集</strong>：支持的指令类型</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">CPU缓存</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# CPU缓存层次结构
+"""
+L1缓存: 
+- 最接近CPU核心
+- 容量最小(32-256KB)
+- 速度最快
+- 分为指令缓存和数据缓存
+
+L2缓存:
+- 位于L1和L3之间
+- 容量中等(256KB-2MB)
+- 速度较快
+
+L3缓存:
+- 多核心共享
+- 容量最大(2-32MB)
+- 速度相对较慢
+"""</pre>
+                        <p class="text-gray-600">
+                            CPU缓存是提高数据访问速度的关键组件，合理利用缓存可以显著提升程序性能。
+                        </p>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">内存系统</h2>
+                
+                <div class="space-y-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">内存层次结构</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-gray-50 p-4 rounded">
+                                <h4 class="font-semibold text-gray-800 mb-2">寄存器</h4>
+                                <p class="text-gray-600">
+                                    CPU内部的高速存储单元，访问速度最快。
+                                </p>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded">
+                                <h4 class="font-semibold text-gray-800 mb-2">缓存</h4>
+                                <p class="text-gray-600">
+                                    CPU和主存之间的高速缓冲存储器。
+                                </p>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded">
+                                <h4 class="font-semibold text-gray-800 mb-2">主存</h4>
+                                <p class="text-gray-600">
+                                    计算机的主要工作存储器，容量大但速度相对较慢。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">内存管理</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# 虚拟内存管理
+"""
+虚拟地址空间: 每个进程拥有独立的地址空间
+物理地址空间: 实际的物理内存地址
+地址转换: 通过MMU将虚拟地址转换为物理地址
+
+内存分配策略:
+- 连续分配: 固定分区、可变分区
+- 离散分配: 分页、分段、段页式
+
+页面置换算法:
+- FIFO(先进先出)
+- LRU(最近最少使用)
+- LFU(最不经常使用)
+"""</pre>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">存储系统</h2>
+                
+                <div class="space-y-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">存储设备类型</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-gray-50 p-4 rounded">
+                                <h4 class="font-semibold text-gray-800 mb-2">机械硬盘(HDD)</h4>
+                                <ul class="list-disc pl-8 space-y-1 text-gray-600">
+                                    <li>容量大、价格低</li>
+                                    <li>读写速度相对较慢</li>
+                                    <li>有机械运动部件</li>
+                                    <li>适合大容量存储</li>
+                                </ul>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded">
+                                <h4 class="font-semibold text-gray-800 mb-2">固态硬盘(SSD)</h4>
+                                <ul class="list-disc pl-8 space-y-1 text-gray-600">
+                                    <li>读写速度快</li>
+                                    <li>无机械运动部件</li>
+                                    <li>功耗低、噪音小</li>
+                                    <li>价格相对较高</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">RAID技术</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# 常见RAID级别
+"""
+RAID 0: 条带化
+- 优点: 读写性能高
+- 缺点: 无冗余，任何磁盘故障都会导致数据丢失
+
+RAID 1: 镜像
+- 优点: 数据安全性高
+- 缺点: 存储利用率低(50%)
+
+RAID 5: 分布式奇偶校验
+- 优点: 性能和安全性平衡
+- 缺点: 写入性能受影响
+
+RAID 10: RAID 1+0组合
+- 优点: 高性能和高安全性
+- 缺点: 成本较高
+"""</pre>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">输入输出系统</h2>
+                
+                <div class="space-y-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">I/O接口</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-gray-50 p-4 rounded">
+                                <h4 class="font-semibold text-gray-800 mb-2">USB</h4>
+                                <p class="text-gray-600">
+                                    通用串行总线，支持热插拔和即插即用。
+                                </p>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded">
+                                <h4 class="font-semibold text-gray-800 mb-2">PCIe</h4>
+                                <p class="text-gray-600">
+                                    高速串行计算机扩展总线标准。
+                                </p>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded">
+                                <h4 class="font-semibold text-gray-800 mb-2">SATA</h4>
+                                <p class="text-gray-600">
+                                    串行ATA接口，用于连接存储设备。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">中断机制</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# 中断处理过程
+"""
+1. 中断请求: 外设向CPU发出中断信号
+2. 中断响应: CPU完成当前指令后响应中断
+3. 中断识别: 确定中断源和中断类型
+4. 中断处理: 执行相应的中断服务程序
+5. 中断返回: 恢复被中断程序的执行
+"""</pre>
+                        <p class="text-gray-600">
+                            中断机制使得CPU能够及时响应外部事件，提高系统效率。
+                        </p>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">性能指标与优化</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-tachometer-alt mr-2 text-primary"></i>性能指标
+                        </h3>
+                        <ul class="list-disc pl-8 space-y-1 text-gray-600">
+                            <li><strong>CPU利用率</strong>：CPU忙碌时间占比</li>
+                            <li><strong>内存使用率</strong>：已使用内存占总内存比例</li>
+                            <li><strong>I/O吞吐量</strong>：单位时间内数据传输量</li>
+                            <li><strong>响应时间</strong>：系统对请求的响应速度</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-cogs mr-2 text-primary"></i>优化策略
+                        </h3>
+                        <ul class="list-disc pl-8 space-y-1 text-gray-600">
+                            <li><strong>缓存优化</strong>：提高缓存命中率</li>
+                            <li><strong>并行处理</strong>：利用多核心优势</li>
+                            <li><strong>存储优化</strong>：选择合适的存储设备</li>
+                            <li><strong>总线优化</strong>：提高数据传输效率</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="bg-green-50 border-l-4 border-green-500 p-4 mt-8">
+                    <h3 class="text-lg font-semibold text-green-700 mb-2">硬件基础学习建议</h3>
+                    <ul class="list-disc pl-8 space-y-1 text-green-700">
+                        <li>理解各硬件组件的工作原理和相互关系</li>
+                        <li>关注硬件发展趋势和新技术</li>
+                        <li>通过实验和实践加深理解</li>
+                        <li>学会使用性能监控和分析工具</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

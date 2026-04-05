@@ -1,0 +1,338 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docker容器 - 架构师学习笔记</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-4xl mx-auto p-6">
+        <div class="bg-white rounded-xl shadow-md p-8 mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fab fa-docker text-blue-500 mr-3"></i>Docker容器
+            </h1>
+            
+            <div class="prose max-w-none">
+                <p class="text-gray-600 mb-6">
+                    Docker是一个开源的应用容器引擎，基于Go语言并遵从Apache2.0协议开源。Docker可以让开发者打包他们的应用以及依赖包到一个轻量级、可移植的容器中，然后发布到任何流行的Linux机器上，也可以实现虚拟化。
+                </p>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Docker核心概念</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-box text-blue-500 mr-2"></i>
+                            镜像（Image）
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            Docker镜像是一个轻量级、独立的可执行软件包，包含运行应用程序所需的所有内容：代码、运行时、系统工具、系统库和设置。
+                        </p>
+                        <ul class="list-disc pl-8 text-gray-600 text-sm">
+                            <li>只读模板</li>
+                            <li>可以基于其他镜像创建</li>
+                            <li>通过Dockerfile构建</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-cube text-blue-500 mr-2"></i>
+                            容器（Container）
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            容器是镜像的运行实例，可以被启动、开始、停止、删除。每个容器都是相互隔离的、安全的平台。
+                        </p>
+                        <ul class="list-disc pl-8 text-gray-600 text-sm">
+                            <li>镜像的运行时实例</li>
+                            <li>具有状态和生命周期</li>
+                            <li>可以被创建、启动、停止、删除</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-warehouse text-blue-500 mr-2"></i>
+                            仓库（Registry）
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            集中存放镜像文件的场所，分为公开仓库（如Docker Hub）和私有仓库。
+                        </p>
+                        <ul class="list-disc pl-8 text-gray-600 text-sm">
+                            <li>存储和分发Docker镜像</li>
+                            <li>分为公有和私有仓库</li>
+                            <li>Docker Hub是最常用的公共仓库</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-file-code text-blue-500 mr-2"></i>
+                            Dockerfile
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            用于定义构建Docker镜像的文本文件，包含一系列指令来自动化构建镜像。
+                        </p>
+                        <ul class="list-disc pl-8 text-gray-600 text-sm">
+                            <li>自动化构建镜像</li>
+                            <li>包含一系列构建指令</li>
+                            <li>支持版本控制</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">常用Docker命令</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">镜像操作</h3>
+                        <pre class="bg-gray-800 text-white p-3 rounded text-xs overflow-x-auto">
+# 拉取镜像
+docker pull nginx
+
+# 查看本地镜像
+docker images
+
+# 构建镜像
+docker build -t myapp:1.0 .
+
+# 删除镜像
+docker rmi nginx
+
+# 推送镜像到仓库
+docker push username/myapp:1.0</pre>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">容器操作</h3>
+                        <pre class="bg-gray-800 text-white p-3 rounded text-xs overflow-x-auto">
+# 运行容器
+docker run -d -p 8080:80 nginx
+
+# 查看运行中的容器
+docker ps
+
+# 查看所有容器
+docker ps -a
+
+# 停止容器
+docker stop container_id
+
+# 删除容器
+docker rm container_id
+
+# 进入容器
+docker exec -it container_id /bin/bash</pre>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Dockerfile详解</h2>
+                
+                <div class="border border-gray-200 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">常用指令</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white border border-gray-200 text-sm">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="py-2 px-4 border-b text-left">指令</th>
+                                    <th class="py-2 px-4 border-b text-left">说明</th>
+                                    <th class="py-2 px-4 border-b text-left">示例</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="py-2 px-4 border-b">FROM</td>
+                                    <td class="py-2 px-4 border-b">指定基础镜像</td>
+                                    <td class="py-2 px-4 border-b">FROM openjdk:8-jdk-alpine</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 border-b">WORKDIR</td>
+                                    <td class="py-2 px-4 border-b">设置工作目录</td>
+                                    <td class="py-2 px-4 border-b">WORKDIR /app</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-4 border-b">COPY</td>
+                                    <td class="py-2 px-4 border-b">复制文件到镜像</td>
+                                    <td class="py-2 px-4 border-b">COPY . /app</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 border-b">ADD</td>
+                                    <td class="py-2 px-4 border-b">复制文件，支持URL和解压</td>
+                                    <td class="py-2 px-4 border-b">ADD app.jar /app/app.jar</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-4 border-b">RUN</td>
+                                    <td class="py-2 px-4 border-b">执行命令</td>
+                                    <td class="py-2 px-4 border-b">RUN mvn clean package</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 border-b">EXPOSE</td>
+                                    <td class="py-2 px-4 border-b">声明端口</td>
+                                    <td class="py-2 px-4 border-b">EXPOSE 8080</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-4 border-b">CMD</td>
+                                    <td class="py-2 px-4 border-b">容器启动时执行的命令</td>
+                                    <td class="py-2 px-4 border-b">CMD ["java", "-jar", "app.jar"]</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 border-b">ENTRYPOINT</td>
+                                    <td class="py-2 px-4 border-b">容器启动时执行的命令</td>
+                                    <td class="py-2 px-4 border-b">ENTRYPOINT ["java", "-jar", "app.jar"]</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <h4 class="font-bold text-gray-800 mt-4">示例Dockerfile</h4>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mt-2 overflow-x-auto">
+# 使用官方Java运行时作为基础镜像
+FROM openjdk:8-jdk-alpine
+
+# 设置工作目录
+WORKDIR /app
+
+# 将jar文件复制到容器中
+COPY target/myapp.jar app.jar
+
+# 暴露端口
+EXPOSE 8080
+
+# 运行应用程序
+ENTRYPOINT ["java", "-jar", "app.jar"]</pre>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Docker网络</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">网络模式</h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li><strong>bridge：</strong>默认网络模式，为容器分配IP</li>
+                            <li><strong>host：</strong>容器使用宿主机网络</li>
+                            <li><strong>none：</strong>容器无网络</li>
+                            <li><strong>container：</strong>与其他容器共享网络</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">网络操作</h3>
+                        <pre class="bg-gray-800 text-white p-3 rounded text-xs overflow-x-auto">
+# 创建自定义网络
+docker network create mynetwork
+
+# 查看网络
+docker network ls
+
+# 连接容器到网络
+docker network connect mynetwork container_id
+
+# 断开容器网络
+docker network disconnect mynetwork container_id</pre>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">数据持久化</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-hdd text-blue-500 mr-2"></i>
+                            数据卷（Volume）
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            Docker管理宿主机文件系统的一部分，由Docker管理，持久化存储数据。
+                        </p>
+                        <pre class="bg-gray-800 text-white p-2 rounded text-xs overflow-x-auto">
+# 创建数据卷
+docker volume create myvolume
+
+# 查看数据卷
+docker volume ls
+
+# 运行容器并挂载数据卷
+docker run -v myvolume:/data nginx</pre>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-folder-open text-blue-500 mr-2"></i>
+                            绑定挂载（Bind Mount）
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            将宿主机上的文件或目录挂载到容器中，由用户管理。
+                        </p>
+                        <pre class="bg-gray-800 text-white p-2 rounded text-xs overflow-x-auto">
+# 绑定挂载
+docker run -v /host/path:/container/path nginx
+
+# 只读挂载
+docker run -v /host/path:/container/path:ro nginx</pre>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Docker Compose</h2>
+                
+                <div class="border border-gray-200 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">多容器应用编排</h3>
+                    <p class="text-gray-600 mb-4">
+                        Docker Compose是用于定义和运行多容器Docker应用程序的工具。
+                    </p>
+                    
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg overflow-x-auto">
+# docker-compose.yml示例
+version: '3.8'
+services:
+  web:
+    image: nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - db
+    volumes:
+      - ./html:/usr/share/nginx/html
+  
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:</pre>
+                    
+                    <pre class="bg-gray-800 text-white p-3 rounded text-xs mt-4 overflow-x-auto">
+# 启动服务
+docker-compose up -d
+
+# 停止服务
+docker-compose down
+
+# 查看服务状态
+docker-compose ps
+
+# 查看日志
+docker-compose logs</pre>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Docker最佳实践</h2>
+                <div class="bg-green-50 rounded-lg p-6">
+                    <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                        <li>使用.dockerignore文件排除不必要的文件</li>
+                        <li>合理使用多阶段构建减小镜像体积</li>
+                        <li>为镜像打标签，便于版本管理</li>
+                        <li>使用非root用户运行容器</li>
+                        <li>定期清理无用的镜像和容器</li>
+                        <li>使用健康检查确保容器正常运行</li>
+                        <li>配置资源限制防止容器耗尽系统资源</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

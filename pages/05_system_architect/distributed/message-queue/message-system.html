@@ -1,0 +1,174 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>消息系统 - 架构师学习笔记</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-4xl mx-auto p-6">
+        <div class="bg-white rounded-lg shadow-md p-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-comments mr-3 text-primary"></i>消息系统设计
+            </h1>
+            
+            <div class="prose max-w-none">
+                <p class="text-gray-600 mb-6">
+                    消息系统是社交平台中不可或缺的组件，负责处理用户间的实时通信。一个优秀的消息系统需要具备高并发、低延迟、高可靠性等特点。
+                </p>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">系统架构</h2>
+                
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+                    <p class="text-blue-700">
+                        消息系统通常采用发布/订阅模式，结合长连接和消息队列技术实现。
+                    </p>
+                </div>
+                
+                <h3 class="text-xl font-semibold text-gray-800 mt-6 mb-3">核心组件</h3>
+                <ul class="list-disc pl-8 space-y-2 text-gray-600 mb-6">
+                    <li><strong>消息网关</strong>：负责连接管理、协议转换、负载均衡</li>
+                    <li><strong>消息存储</strong>：持久化消息内容，支持历史消息查询</li>
+                    <li><strong>消息队列</strong>：异步处理消息投递，削峰填谷</li>
+                    <li><strong>推送服务</strong>：负责消息的实时推送</li>
+                    <li><strong>离线服务</strong>：处理离线消息存储与推送</li>
+                </ul>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">技术实现</h2>
+                
+                <h3 class="text-xl font-semibold text-gray-800 mt-6 mb-3">长连接方案</h3>
+                <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-4">
+// 使用Netty实现WebSocket长连接
+@Component
+public class WebSocketServer {
+    private final ChannelGroup channels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+    
+    public void handleConnection(WebSocketSession session) {
+        // 添加连接到连接组
+        channels.add(session.getChannel());
+        
+        // 注册用户与连接的映射关系
+        UserConnectionManager.register(session.getUserId(), session.getChannel());
+    }
+    
+    public void handleMessage(WebSocketSession session, TextWebSocketFrame frame) {
+        Message message = JSON.parseObject(frame.text(), Message.class);
+        
+        // 消息处理逻辑
+        messageService.processMessage(message);
+    }
+}</pre>
+                
+                <h3 class="text-xl font-semibold text-gray-800 mt-6 mb-3">消息存储设计</h3>
+                <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-4">
+// 消息表设计
+CREATE TABLE message (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    sender_id BIGINT NOT NULL,
+    receiver_id BIGINT NOT NULL,
+    content TEXT NOT NULL,
+    msg_type TINYINT NOT NULL DEFAULT 1, -- 1:文本 2:图片 3:语音
+    status TINYINT NOT NULL DEFAULT 0,   -- 0:未读 1:已读
+    create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_sender_receiver (sender_id, receiver_id, create_time),
+    INDEX idx_receiver_time (receiver_id, create_time)
+);
+
+// 使用Redis缓存最近消息
+String redisKey = "recent_messages:" + userId;
+redisTemplate.opsForList().leftPush(redisKey, message);
+redisTemplate.expire(redisKey, Duration.ofHours(24));</pre>
+                
+                <h3 class="text-xl font-semibold text-gray-800 mt-6 mb-3">消息投递保证</h3>
+                <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-4">
+@Service
+public class MessageDeliveryService {
+    
+    @Autowired
+    private MessageQueue messageQueue;
+    
+    @Autowired
+    private UserConnectionManager connectionManager;
+    
+    public void sendMessage(Message message) {
+        // 1. 持久化消息
+        messageRepository.save(message);
+        
+        // 2. 推送到消息队列
+        messageQueue.send("message_delivery", message);
+        
+        // 3. 实时推送（如果用户在线）
+        Channel channel = connectionManager.getChannel(message.getReceiverId());
+        if (channel != null && channel.isActive()) {
+            channel.writeAndFlush(new TextWebSocketFrame(JSON.toJSONString(message)));
+        }
+    }
+    
+    @RabbitListener(queues = "message_delivery")
+    public void handleMessageDelivery(Message message) {
+        // 异步处理消息投递
+        Channel channel = connectionManager.getChannel(message.getReceiverId());
+        if (channel != null && channel.isActive()) {
+            // 在线投递
+            channel.writeAndFlush(new TextWebSocketFrame(JSON.toJSONString(message)));
+        } else {
+            // 离线存储
+            offlineMessageService.save(message);
+        }
+    }
+}</pre>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">性能优化</h2>
+                
+                <h3 class="text-xl font-semibold text-gray-800 mt-6 mb-3">连接管理优化</h3>
+                <ul class="list-disc pl-8 space-y-2 text-gray-600 mb-6">
+                    <li><strong>心跳机制</strong>：定期发送心跳包维持连接</li>
+                    <li><strong>连接复用</strong>：同一用户多个设备共享连接</li>
+                    <li><strong>负载均衡</strong>：根据连接数和CPU使用率分配连接</li>
+                    <li><strong>连接迁移</strong>：服务器重启时平滑迁移连接</li>
+                </ul>
+                
+                <h3 class="text-xl font-semibold text-gray-800 mt-6 mb-3">消息处理优化</h3>
+                <ul class="list-disc pl-8 space-y-2 text-gray-600 mb-6">
+                    <li><strong>批量处理</strong>：合并多个消息统一处理</li>
+                    <li><strong>异步处理</strong>：使用线程池异步处理耗时操作</li>
+                    <li><strong>缓存热点</strong>：缓存高频用户的消息内容</li>
+                    <li><strong>压缩传输</strong>：对消息内容进行压缩传输</li>
+                </ul>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">可靠性保障</h2>
+                
+                <h3 class="text-xl font-semibold text-gray-800 mt-6 mb-3">消息可靠性</h3>
+                <ul class="list-disc pl-8 space-y-2 text-gray-600 mb-6">
+                    <li><strong>ACK机制</strong>：接收方确认收到消息</li>
+                    <li><strong>重试机制</strong>：失败消息自动重试</li>
+                    <li><strong>消息去重</strong>：防止重复消息</li>
+                    <li><strong>顺序保证</strong>：保证同一会话消息顺序</li>
+                </ul>
+                
+                <h3 class="text-xl font-semibold text-gray-800 mt-6 mb-3">系统监控</h3>
+                <ul class="list-disc pl-8 space-y-2 text-gray-600 mb-6">
+                    <li><strong>连接监控</strong>：实时监控连接数和活跃度</li>
+                    <li><strong>延迟监控</strong>：监控消息投递延迟</li>
+                    <li><strong>错误监控</strong>：监控系统异常和错误</li>
+                    <li><strong>容量规划</strong>：根据监控数据进行容量规划</li>
+                </ul>
+                
+                <div class="bg-green-50 border-l-4 border-green-500 p-4 mt-8">
+                    <h3 class="text-lg font-semibold text-green-700 mb-2">最佳实践</h3>
+                    <ul class="list-disc pl-8 space-y-1 text-green-700">
+                        <li>使用成熟的MQ组件如RabbitMQ、Kafka处理异步消息</li>
+                        <li>合理设计消息表索引，优化查询性能</li>
+                        <li>实现消息确认机制，确保消息不丢失</li>
+                        <li>对热点用户进行限流保护</li>
+                        <li>建立完善的监控告警机制</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

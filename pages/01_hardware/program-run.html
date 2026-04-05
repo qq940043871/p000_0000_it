@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>程序是怎么跑起来的？ - 架构师学习笔记</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../../assets/css/common.css">
+</head>
+<body class="bg-gray-50">
+    <div class="page-container">
+        <div class="card">
+            <h1 class="page-title">
+                <i class="fas fa-code mr-3 text-gray-600"></i>程序是怎么跑起来的？
+            </h1>
+            <p class="page-subtitle">How Programs Run - 深入理解程序的执行过程</p>
+            
+            <div class="mt-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">程序执行流程</h2>
+                <div class="flow-diagram">
+                    <div class="flex flex-col md:flex-row justify-between items-center">
+                        <div class="bg-blue-100 rounded-lg p-4 mb-4 md:mb-0 md:mr-4 text-center">
+                            <div class="font-bold text-blue-700">1. 编译</div>
+                            <div class="text-sm text-gray-600">Compilation</div>
+                        </div>
+                        <div class="text-2xl text-gray-400">→</div>
+                        <div class="bg-blue-100 rounded-lg p-4 mb-4 md:mb-0 md:mr-4 text-center">
+                            <div class="font-bold text-blue-700">2. 链接</div>
+                            <div class="text-sm text-gray-600">Linking</div>
+                        </div>
+                        <div class="text-2xl text-gray-400">→</div>
+                        <div class="bg-blue-100 rounded-lg p-4 mb-4 md:mb-0 md:mr-4 text-center">
+                            <div class="font-bold text-blue-700">3. 加载</div>
+                            <div class="text-sm text-gray-600">Loading</div>
+                        </div>
+                        <div class="text-2xl text-gray-400">→</div>
+                        <div class="bg-blue-100 rounded-lg p-4 text-center">
+                            <div class="font-bold text-blue-700">4. 执行</div>
+                            <div class="text-sm text-gray-600">Execution</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-12">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">1. 编译过程</h2>
+                <div class="section-card">
+                    <h3 class="text-xl font-bold text-gray-700 mb-4">编译阶段</h3>
+                    <p class="mb-4">编译器将源代码转换为目标代码：</p>
+                    <ol class="list-decimal pl-6 space-y-2">
+                        <li><strong>预处理</strong>：处理宏定义、头文件包含等</li>
+                        <li><strong>词法分析</strong>：将源代码分解为词法单元</li>
+                        <li><strong>语法分析</strong>：构建抽象语法树</li>
+                        <li><strong>语义分析</strong>：检查语义错误</li>
+                        <li><strong>代码生成</strong>：生成目标代码</li>
+                        <li><strong>代码优化</strong>：优化目标代码</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <div class="mt-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">2. 链接过程</h2>
+                <div class="section-card">
+                    <h3 class="text-xl font-bold text-gray-700 mb-4">链接类型</h3>
+                    <p class="mb-4">链接器将目标文件和库文件链接为可执行文件：</p>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li><strong>静态链接</strong>：将库函数直接复制到可执行文件中</li>
+                        <li><strong>动态链接</strong>：在运行时加载库函数</li>
+                    </ul>
+                    
+                    <h3 class="text-xl font-bold text-gray-700 mt-6 mb-4">链接步骤</h3>
+                    <ol class="list-decimal pl-6 space-y-2">
+                        <li>解析符号引用</li>
+                        <li>分配内存地址</li>
+                        <li>重定位符号地址</li>
+                        <li>生成可执行文件</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <div class="mt-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">3. 加载过程</h2>
+                <div class="section-card">
+                    <h3 class="text-xl font-bold text-gray-700 mb-4">加载器的工作</h3>
+                    <p class="mb-4">加载器将可执行文件加载到内存中：</p>
+                    <ol class="list-decimal pl-6 space-y-2">
+                        <li>读取可执行文件头</li>
+                        <li>分配内存空间</li>
+                        <li>将可执行文件内容加载到内存</li>
+                        <li>进行地址重定位</li>
+                        <li>加载动态链接库</li>
+                        <li>跳转到程序入口点</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <div class="mt-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">4. 执行过程</h2>
+                <div class="section-card">
+                    <h3 class="text-xl font-bold text-gray-700 mb-4">CPU执行指令</h3>
+                    <p class="mb-4">CPU执行程序的过程：</p>
+                    <ol class="list-decimal pl-6 space-y-2">
+                        <li><strong>取指</strong>：从内存中获取指令</li>
+                        <li><strong>解码</strong>：解析指令的含义</li>
+                        <li><strong>执行</strong>：执行指令操作</li>
+                        <li><strong>存储</strong>：存储执行结果</li>
+                    </ol>
+                </div>
+                
+                <div class="section-card mt-6">
+                    <h3 class="text-xl font-bold text-gray-700 mb-4">程序的内存布局</h3>
+                    <div class="flow-diagram">
+                        <div class="flex flex-col items-center">
+                            <div class="bg-blue-100 rounded-lg p-4 mb-4 text-center w-64">
+                                <div class="font-bold text-blue-700">栈</div>
+                                <div class="text-sm text-gray-600">Stack</div>
+                            </div>
+                            <div class="text-2xl text-gray-400">↓</div>
+                            <div class="bg-blue-100 rounded-lg p-4 mb-4 text-center w-64">
+                                <div class="font-bold text-blue-700">堆</div>
+                                <div class="text-sm text-gray-600">Heap</div>
+                            </div>
+                            <div class="text-2xl text-gray-400">↓</div>
+                            <div class="bg-blue-100 rounded-lg p-4 mb-4 text-center w-64">
+                                <div class="font-bold text-blue-700">数据段</div>
+                                <div class="text-sm text-gray-600">Data Segment</div>
+                            </div>
+                            <div class="text-2xl text-gray-400">↓</div>
+                            <div class="bg-blue-100 rounded-lg p-4 text-center w-64">
+                                <div class="font-bold text-blue-700">代码段</div>
+                                <div class="text-sm text-gray-600">Code Segment</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-12">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">不同编程语言的执行方式</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="feature-card bg-white rounded-lg shadow-md p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-file-code text-2xl text-blue-500 mr-3"></i>
+                            <h3 class="text-lg font-bold text-gray-800">编译型语言</h3>
+                        </div>
+                        <p class="text-gray-600">如C、C++、Rust等，需要先编译成可执行文件，然后运行。</p>
+                        <ul class="list-disc pl-6 mt-3 space-y-1">
+                            <li>执行速度快</li>
+                            <li>需要编译步骤</li>
+                            <li>生成独立可执行文件</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card bg-white rounded-lg shadow-md p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-code text-2xl text-green-500 mr-3"></i>
+                            <h3 class="text-lg font-bold text-gray-800">解释型语言</h3>
+                        </div>
+                        <p class="text-gray-600">如Python、JavaScript、Ruby等，由解释器直接执行。</p>
+                        <ul class="list-disc pl-6 mt-3 space-y-1">
+                            <li>无需编译</li>
+                            <li>执行速度相对较慢</li>
+                            <li>跨平台性好</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card bg-white rounded-lg shadow-md p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-cogs text-2xl text-purple-500 mr-3"></i>
+                            <h3 class="text-lg font-bold text-gray-800">半编译型语言</h3>
+                        </div>
+                        <p class="text-gray-600">如Java、C#等，先编译成中间代码，然后由虚拟机执行。</p>
+                        <ul class="list-disc pl-6 mt-3 space-y-1">
+                            <li>编译成中间代码</li>
+                            <li>由虚拟机执行</li>
+                            <li>跨平台性好</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card bg-white rounded-lg shadow-md p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-microchip text-2xl text-orange-500 mr-3"></i>
+                            <h3 class="text-lg font-bold text-gray-800">汇编语言</h3>
+                        </div>
+                        <p class="text-gray-600">直接使用CPU指令集，需要汇编器转换为机器码。</p>
+                        <ul class="list-disc pl-6 mt-3 space-y-1">
+                            <li>执行速度最快</li>
+                            <li>编程难度高</li>
+                            <li>与硬件密切相关</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-12">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">程序执行的生命周期</h2>
+                <div class="tip-box tip-box-info">
+                    <p class="mb-4">程序的完整生命周期包括：</p>
+                    <ol class="list-decimal pl-6 space-y-2">
+                        <li><strong>创建</strong>：通过系统调用创建进程</li>
+                        <li><strong>初始化</strong>：分配资源，初始化环境</li>
+                        <li><strong>执行</strong>：运行程序代码</li>
+                        <li><strong>等待</strong>：等待输入或事件</li>
+                        <li><strong>终止</strong>：完成任务或异常终止</li>
+                        <li><strong>回收</strong>：系统回收资源</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <div class="mt-12">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">总结</h2>
+                <div class="tip-box tip-box-success">
+                    <p class="mb-4">程序的执行是一个从源代码到可执行文件，再到内存中运行的完整过程。不同的编程语言有不同的执行方式，但核心原理都是将代码转换为CPU可以理解的指令。</p>
+                    <p>理解程序的执行过程，有助于我们更好地编写和调试程序，也为学习更高级的计算机知识打下基础。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

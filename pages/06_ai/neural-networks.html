@@ -1,0 +1,310 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>神经网络 - 架构师学习笔记</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-4xl mx-auto p-6">
+        <div class="bg-white rounded-lg shadow-md p-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-project-diagram mr-3 text-primary"></i>神经网络
+            </h1>
+            
+            <div class="prose max-w-none">
+                <p class="text-gray-600 mb-6">
+                    神经网络是深度学习的基础，模拟人脑神经元的工作方式来处理信息。它在图像识别、自然语言处理等领域取得了突破性进展。
+                </p>
+                
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+                    <p class="text-blue-700">
+                        理解神经网络的原理和实现对于开发智能应用和设计AI系统架构至关重要。
+                    </p>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">神经网络基础概念</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-circle mr-2 text-primary"></i>神经元(Neuron)
+                        </h3>
+                        <p class="text-gray-600">
+                            神经网络的基本单元，接收输入信号，经过加权求和和激活函数处理后输出结果。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-layer-group mr-2 text-primary"></i>层(Layer)
+                        </h3>
+                        <p class="text-gray-600">
+                            由多个神经元组成的集合，常见的有输入层、隐藏层和输出层。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-weight mr-2 text-primary"></i>权重和偏置
+                        </h3>
+                        <p class="text-gray-600">
+                            权重决定输入信号的重要性，偏置提供额外的灵活性来拟合数据。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-bolt mr-2 text-primary"></i>激活函数
+                        </h3>
+                        <p class="text-gray-600">
+                            引入非线性因素，使神经网络能够学习复杂的模式。
+                        </p>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">神经网络工作原理</h2>
+                
+                <div class="space-y-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">前向传播</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+import numpy as np
+
+# 简单的神经网络前向传播示例
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
+
+# 输入数据
+X = np.array([[0.5, 0.3]])
+
+# 权重和偏置
+W1 = np.array([[0.2, 0.4], [0.1, 0.3]])
+b1 = np.array([[0.1, 0.2]])
+W2 = np.array([[0.3], [0.2]])
+b2 = np.array([[0.1]])
+
+# 前向传播
+z1 = np.dot(X, W1) + b1
+a1 = sigmoid(z1)
+z2 = np.dot(a1, W2) + b2
+a2 = sigmoid(z2)
+
+print(f"输入: {X}")
+print(f"第一层输出: {a1}")
+print(f"最终输出: {a2}")</pre>
+                        <p class="text-gray-600">
+                            前向传播是数据从输入层经过隐藏层到输出层的流动过程。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">反向传播</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# 反向传播计算梯度示例
+def sigmoid_derivative(x):
+    return x * (1 - x)
+
+# 假设真实标签
+y_true = np.array([[1]])
+
+# 计算损失
+loss = 0.5 * (y_true - a2)**2
+
+# 反向传播
+dL_da2 = a2 - y_true
+da2_dz2 = sigmoid_derivative(a2)
+dL_dz2 = dL_da2 * da2_dz2
+
+dL_dW2 = np.dot(a1.T, dL_dz2)
+dL_db2 = dL_dz2
+
+dL_da1 = np.dot(dL_dz2, W2.T)
+da1_dz1 = sigmoid_derivative(a1)
+dL_dz1 = dL_da1 * da1_dz1
+
+dL_dW1 = np.dot(X.T, dL_dz1)
+dL_db1 = dL_dz1
+
+print(f"损失: {loss}")
+print(f"W1梯度: {dL_dW1}")
+print(f"W2梯度: {dL_dW2}")</pre>
+                        <p class="text-gray-600">
+                            反向传播通过链式法则计算损失函数对各参数的梯度。
+                        </p>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">常用激活函数</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Sigmoid</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
+
+def sigmoid_derivative(x):
+    return x * (1 - x)</pre>
+                        <p class="text-gray-600">
+                            将值映射到(0,1)区间，常用于二分类问题的输出层。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">ReLU</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+def relu(x):
+    return np.maximum(0, x)
+
+def relu_derivative(x):
+    return (x > 0).astype(float)</pre>
+                        <p class="text-gray-600">
+                            现在最常用的激活函数，计算简单且能缓解梯度消失问题。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Tanh</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+def tanh(x):
+    return np.tanh(x)
+
+def tanh_derivative(x):
+    return 1 - np.tanh(x)**2</pre>
+                        <p class="text-gray-600">
+                            将值映射到(-1,1)区间，输出以0为中心。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Softmax</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+def softmax(x):
+    exp_x = np.exp(x - np.max(x))  # 防止溢出
+    return exp_x / np.sum(exp_x)</pre>
+                        <p class="text-gray-600">
+                            常用于多分类问题的输出层，使输出表示概率分布。
+                        </p>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">深度学习框架</h2>
+                
+                <div class="space-y-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">TensorFlow/Keras示例</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+import tensorflow as tf
+from tensorflow import keras
+
+# 创建简单的神经网络
+model = keras.Sequential([
+    keras.layers.Dense(128, activation='relu', input_shape=(784,)),
+    keras.layers.Dropout(0.2),
+    keras.layers.Dense(10, activation='softmax')
+])
+
+# 编译模型
+model.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
+
+# 显示模型结构
+model.summary()</pre>
+                        <p class="text-gray-600">
+                            TensorFlow是Google开发的开源机器学习框架，Keras是其高级API。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">PyTorch示例</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+import torch
+import torch.nn as nn
+import torch.optim as optim
+
+# 定义神经网络
+class Net(nn.Module):
+    def __init__(self):
+        super(Net, self).__init__()
+        self.fc1 = nn.Linear(784, 128)
+        self.dropout = nn.Dropout(0.2)
+        self.fc2 = nn.Linear(128, 10)
+        
+    def forward(self, x):
+        x = torch.relu(self.fc1(x))
+        x = self.dropout(x)
+        x = self.fc2(x)
+        return x
+
+# 创建模型实例
+model = Net()
+
+# 定义损失函数和优化器
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters())</pre>
+                        <p class="text-gray-600">
+                            PyTorch是Facebook开发的开源深度学习框架，具有动态计算图的特点。
+                        </p>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">常见网络架构</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-th mr-2 text-primary"></i>卷积神经网络(CNN)
+                        </h3>
+                        <p class="text-gray-600">
+                            主要用于图像处理，通过卷积层提取空间特征。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-exchange-alt mr-2 text-primary"></i>循环神经网络(RNN)
+                        </h3>
+                        <p class="text-gray-600">
+                            适用于序列数据处理，如文本和时间序列，具有记忆能力。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-transformer mr-2 text-primary"></i>Transformer
+                        </h3>
+                        <p class="text-gray-600">
+                            基于注意力机制的架构，在自然语言处理领域表现卓越。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-generative mr-2 text-primary"></i>生成对抗网络(GAN)
+                        </h3>
+                        <p class="text-gray-600">
+                            由生成器和判别器组成，用于生成新的数据样本。
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="bg-green-50 border-l-4 border-green-500 p-4 mt-8">
+                    <h3 class="text-lg font-semibold text-green-700 mb-2">神经网络训练技巧</h3>
+                    <ul class="list-disc pl-8 space-y-1 text-green-700">
+                        <li>合理初始化权重，避免梯度消失或爆炸</li>
+                        <li>使用批量归一化加速训练</li>
+                        <li>采用合适的优化算法，如Adam、RMSprop</li>
+                        <li>使用学习率调度策略</li>
+                        <li>实施正则化技术防止过拟合</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

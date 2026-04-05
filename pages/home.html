@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>架构师学习笔记 - 首页</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/common.css">
+    <style>
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-6xl mx-auto p-6">
+        <div class="text-center py-12">
+            <h1 class="text-4xl font-bold text-gray-800 mb-4">架构师学习笔记</h1>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                欢迎来到架构师学习笔记网站，这里记录了从Java基础到分布式系统、数据库设计、系统架构等全方位的技术知识。
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            <div class="bg-white rounded-xl shadow-md p-6 card transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-desktop text-3xl text-gray-600 mr-4"></i>
+                    <h2 class="text-2xl font-bold text-gray-800">计算机基础</h2>
+                </div>
+                <p class="text-gray-600 mb-4">
+                    计算机硬件和软件的基础知识，包括CPU、内存、操作系统、编译原理、数据结构与算法等核心内容。
+                </p>
+                <a href="computer-foundations/hardware/hardware-fundamentals.html" class="text-blue-500 font-medium flex items-center">
+                    开始学习
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 card transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-java text-3xl text-orange-600 mr-4"></i>
+                    <h2 class="text-2xl font-bold text-gray-800">Java学习之旅</h2>
+                </div>
+                <p class="text-gray-600 mb-4">
+                    从Java基础语法到高级特性，包括面向对象、集合框架、并发编程和JVM原理等核心知识。
+                </p>
+                <a href="java/java-overview.html" class="text-blue-500 font-medium flex items-center">
+                    开始学习
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 card transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-network-wired text-3xl text-blue-500 mr-4"></i>
+                    <h2 class="text-2xl font-bold text-gray-800">分布式系统</h2>
+                </div>
+                <p class="text-gray-600 mb-4">
+                    微服务架构、Spring Cloud、Docker容器化、Kubernetes编排以及各种消息队列技术的深入解析。
+                </p>
+                <a href="distributed/microservices.html" class="text-blue-500 font-medium flex items-center">
+                    开始学习
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 card transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-database text-3xl text-green-500 mr-4"></i>
+                    <h2 class="text-2xl font-bold text-gray-800">数据库设计</h2>
+                </div>
+                <p class="text-gray-600 mb-4">
+                    MySQL性能优化、Redis缓存策略、MongoDB文档数据库以及Elasticsearch搜索引擎的实战应用。
+                </p>
+                <a href="database/mysql.html" class="text-blue-500 font-medium flex items-center">
+                    开始学习
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 card transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-bolt text-3xl text-yellow-500 mr-4"></i>
+                    <h2 class="text-2xl font-bold text-gray-800">高并发架构</h2>
+                </div>
+                <p class="text-gray-600 mb-4">
+                    负载均衡、缓存策略、数据库分片、CDN加速等构建高并发系统的架构设计与优化方案。
+                </p>
+                <a href="high-concurrency/load-balancing.html" class="text-blue-500 font-medium flex items-center">
+                    开始学习
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 card transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-shopping-cart text-3xl text-purple-500 mr-4"></i>
+                    <h2 class="text-2xl font-bold text-gray-800">电商系统</h2>
+                </div>
+                <p class="text-gray-600 mb-4">
+                    订单系统、支付系统、库存系统、促销系统等电商核心模块的设计与实现方案。
+                </p>
+                <a href="ecommerce/ecommerce-overview.html" class="text-blue-500 font-medium flex items-center">
+                    开始学习
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 card transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-users text-3xl text-pink-500 mr-4"></i>
+                    <h2 class="text-2xl font-bold text-gray-800">社交平台</h2>
+                </div>
+                <p class="text-gray-600 mb-4">
+                    用户系统、好友系统、动态系统、消息系统等社交平台核心功能的设计与实现。
+                </p>
+                <a href="social/social-overview.html" class="text-blue-500 font-medium flex items-center">
+                    开始学习
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 card transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-microchip text-3xl text-indigo-500 mr-4"></i>
+                    <h2 class="text-2xl font-bold text-gray-800">大模型原理</h2>
+                </div>
+                <p class="text-gray-600 mb-4">
+                    Transformer架构、注意力机制、预训练与微调、模型压缩与加速等大模型核心技术原理。
+                </p>
+                <a href="llm-principles/llm-principles.html" class="text-blue-500 font-medium flex items-center">
+                    开始学习
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 card transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-rocket text-3xl text-red-500 mr-4"></i>
+                    <h2 class="text-2xl font-bold text-gray-800">大模型应用</h2>
+                </div>
+                <p class="text-gray-600 mb-4">
+                    聊天机器人设计、文本生成应用、代码生成工具、多模态应用等大模型实际应用场景。
+                </p>
+                <a href="llm-applications/llm-applications.html" class="text-blue-500 font-medium flex items-center">
+                    开始学习
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-md p-8 mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">学习路径规划</h2>
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex-1 mb-6 md:mb-0">
+                    <ol class="relative border-l border-gray-200">
+                        <li class="mb-10 ml-6">
+                            <div class="absolute -left-3 mt-1.5 w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center">
+                                <i class="fas fa-check text-white text-xs"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900">Java基础进阶</h3>
+                            <time class="text-sm font-normal leading-none text-gray-500">第1-2个月</time>
+                            <p class="text-base font-normal text-gray-600 mt-2">
+                                掌握Java核心语法、面向对象编程、集合框架和并发编程基础。
+                            </p>
+                        </li>
+                        <li class="mb-10 ml-6">
+                            <div class="absolute -left-3 mt-1.5 w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center">
+                                <i class="fas fa-check text-white text-xs"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900">数据库与缓存</h3>
+                            <time class="text-sm font-normal leading-none text-gray-500">第3-4个月</time>
+                            <p class="text-base font-normal text-gray-600 mt-2">
+                                深入学习MySQL优化、Redis缓存策略以及NoSQL数据库的使用。
+                            </p>
+                        </li>
+                        <li class="ml-6">
+                            <div class="absolute -left-3 mt-1.5 w-6 h-6 rounded-full bg-gray-300 flex items-center justify-center">
+                                <i class="fas fa-arrow-right text-white text-xs"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900">分布式系统</h3>
+                            <time class="text-sm font-normal leading-none text-gray-500">第5-6个月</time>
+                            <p class="text-base font-normal text-gray-600 mt-2">
+                                学习微服务架构、容器化技术以及分布式系统的核心组件。
+                            </p>
+                        </li>
+                    </ol>
+                </div>
+                <div class="flex-1 md:pl-12">
+                    <div class="bg-blue-50 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">学习建议</h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <i class="fas fa-book text-blue-500 mt-1 mr-3"></i>
+                                <span>每天至少投入2小时学习新技术</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-code text-blue-500 mt-1 mr-3"></i>
+                                <span>理论结合实践，每个知识点都要动手实验</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-project-diagram text-blue-500 mt-1 mr-3"></i>
+                                <span>定期整理知识体系，构建自己的技术博客</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-users text-blue-500 mt-1 mr-3"></i>
+                                <span>参与技术社区讨论，与同行交流经验</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,240 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JVM原理 - 架构师学习笔记</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-4xl mx-auto p-6">
+        <div class="bg-white rounded-xl shadow-md p-8 mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-microchip text-orange-600 mr-3"></i>JVM原理
+            </h1>
+            
+            <div class="prose max-w-none">
+                <p class="text-gray-600 mb-6">
+                    Java虚拟机（JVM）是Java平台的核心组件，它负责执行Java字节码，提供内存管理、垃圾回收、即时编译等核心功能。深入理解JVM原理对于Java性能调优和故障排查至关重要。
+                </p>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">JVM架构</h2>
+                
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">JVM组成</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white border border-gray-200">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="py-2 px-4 border-b text-left">组件</th>
+                                    <th class="py-2 px-4 border-b text-left">功能</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="py-2 px-4 border-b font-medium">类加载器（Class Loader）</td>
+                                    <td class="py-2 px-4 border-b">负责加载.class文件到内存</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 border-b font-medium">运行时数据区（Runtime Data Area）</td>
+                                    <td class="py-2 px-4 border-b">管理JVM运行时的内存区域</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-4 border-b font-medium">执行引擎（Execution Engine）</td>
+                                    <td class="py-2 px-4 border-b">执行字节码指令</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 border-b font-medium">本地方法接口（JNI）</td>
+                                    <td class="py-2 px-4 border-b">与本地方法库交互</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-4 border-b font-medium">本地方法库（Native Method Libraries）</td>
+                                    <td class="py-2 px-4 border-b">本地方法的实现</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">运行时数据区</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-memory text-blue-500 mr-2"></i>
+                            方法区（Method Area）
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li>存储类信息、常量、静态变量等</li>
+                            <li>被所有线程共享</li>
+                            <li>在JDK 8中被元空间（Metaspace）替代</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-cube text-blue-500 mr-2"></i>
+                            堆（Heap）
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li>存储对象实例和数组</li>
+                            <li>被所有线程共享</li>
+                            <li>是垃圾回收的主要区域</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-vector-square text-blue-500 mr-2"></i>
+                            虚拟机栈（VM Stack）
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li>存储局部变量表、操作数栈等</li>
+                            <li>每个线程私有</li>
+                            <li>StackOverflowError异常发生地</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-border-all text-blue-500 mr-2"></i>
+                            本地方法栈（Native Method Stack）
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li>为本地方法服务</li>
+                            <li>每个线程私有</li>
+                            <li>与虚拟机栈类似但为Native方法服务</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="border border-gray-200 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                        <i class="fas fa-recycle text-blue-500 mr-2"></i>
+                        程序计数器（Program Counter Register）
+                    </h3>
+                    <ul class="list-disc pl-8 text-gray-600">
+                        <li>记录当前线程执行的字节码指令地址</li>
+                        <li>每个线程私有</li>
+                        <li>是唯一不会出现OutOfMemoryError的区域</li>
+                    </ul>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">垃圾回收机制</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">垃圾回收算法</h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li><strong>标记-清除算法：</strong>标记所有需要回收的对象，统一回收</li>
+                            <li><strong>复制算法：</strong>将存活对象复制到另一块内存区域</li>
+                            <li><strong>标记-整理算法：</strong>标记后将存活对象向一端移动</li>
+                            <li><strong>分代收集算法：</strong>根据对象存活周期将内存分为几块</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">垃圾收集器</h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li><strong>Serial收集器：</strong>单线程收集器</li>
+                            <li><strong>ParNew收集器：</strong>Serial收集器的多线程版本</li>
+                            <li><strong>Parallel Scavenge收集器：</strong>关注吞吐量的收集器</li>
+                            <li><strong>CMS收集器：</strong>以最短回收停顿时间为目标</li>
+                            <li><strong>G1收集器：</strong>面向服务端应用的收集器</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">类加载机制</h2>
+                
+                <div class="bg-blue-50 rounded-lg p-6 mb-8">
+                    <h3 class="text-lg font-bold text-gray-800 mb-3">双亲委派模型</h3>
+                    <p class="text-gray-600 mb-4">
+                        类加载器之间的层次关系，保证Java程序的稳定运行。
+                    </p>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white border border-gray-200">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="py-2 px-4 border-b text-left">类加载器</th>
+                                    <th class="py-2 px-4 border-b text-left">加载类的范围</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="py-2 px-4 border-b">启动类加载器（Bootstrap ClassLoader）</td>
+                                    <td class="py-2 px-4 border-b">加载%JAVA_HOME%/lib目录下的类库</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 border-b">扩展类加载器（Extension ClassLoader）</td>
+                                    <td class="py-2 px-4 border-b">加载%JAVA_HOME%/lib/ext目录下的类库</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-4 border-b">应用程序类加载器（Application ClassLoader）</td>
+                                    <td class="py-2 px-4 border-b">加载用户类路径上指定的类库</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <h4 class="font-bold text-gray-800 mt-4">工作原理</h4>
+                    <ul class="list-disc pl-8 text-gray-600 mt-2">
+                        <li>类加载器收到类加载请求时，不会自己去加载，而是委派给父类加载器</li>
+                        <li>父类加载器无法加载时，才会尝试自己加载</li>
+                        <li>保证核心类库的安全性和一致性</li>
+                    </ul>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">JVM性能调优</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">内存调优参数</h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li><strong>-Xms：</strong>设置堆的初始大小</li>
+                            <li><strong>-Xmx：</strong>设置堆的最大大小</li>
+                            <li><strong>-Xmn：</strong>设置新生代大小</li>
+                            <li><strong>-XX:NewRatio：</strong>设置老年代与新生代的比例</li>
+                            <li><strong>-XX:SurvivorRatio：</strong>设置Eden区与Survivor区的比例</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">垃圾收集器调优</h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li><strong>-XX:+UseSerialGC：</strong>使用Serial+Serial Old收集器</li>
+                            <li><strong>-XX:+UseParNewGC：</strong>使用ParNew+Serial Old收集器</li>
+                            <li><strong>-XX:+UseParallelGC：</strong>使用Parallel Scavenge+Parallel Old收集器</li>
+                            <li><strong>-XX:+UseConcMarkSweepGC：</strong>使用ParNew+CMS+Serial Old收集器</li>
+                            <li><strong>-XX:+UseG1GC：</strong>使用G1收集器</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">常见问题诊断</h2>
+                <div class="bg-red-50 rounded-lg p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-3">常见JVM异常</h3>
+                    <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                        <li><strong>OutOfMemoryError：</strong>内存不足，需要调整内存参数或优化代码</li>
+                        <li><strong>StackOverflowError：</strong>栈溢出，通常是递归调用过深</li>
+                        <li><strong>ClassNotFoundException：</strong>类未找到，检查类路径配置</li>
+                        <li><strong>NoClassDefFoundError：</strong>编译时能找到类，运行时找不到</li>
+                    </ul>
+                    
+                    <h4 class="font-bold text-gray-800 mt-4">诊断工具</h4>
+                    <ul class="list-disc pl-8 text-gray-600 mt-2">
+                        <li><strong>jps：</strong>查看Java进程</li>
+                        <li><strong>jstat：</strong>监控JVM统计信息</li>
+                        <li><strong>jmap：</strong>生成堆转储快照</li>
+                        <li><strong>jstack：</strong>生成线程快照</li>
+                        <li><strong>VisualVM：</strong>可视化监控工具</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

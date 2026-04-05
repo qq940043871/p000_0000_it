@@ -1,0 +1,355 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据库分片 - 架构师学习笔记</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-4xl mx-auto p-6">
+        <div class="bg-white rounded-xl shadow-md p-8 mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-divide text-yellow-500 mr-3"></i>数据库分片
+            </h1>
+            
+            <div class="prose max-w-none">
+                <p class="text-gray-600 mb-6">
+                    数据库分片是一种水平分割数据库的技术，将大型数据库分割成更小、更快、更容易管理的部分，这些部分称为数据分片。分片可以显著提高数据库的性能和可扩展性，是解决大数据量和高并发访问的有效手段。
+                </p>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">分片概述</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-expand-alt text-blue-500 mr-2"></i>
+                            分片优势
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li>提高系统性能和吞吐量</li>
+                            <li>增强系统可扩展性</li>
+                            <li>降低单个数据库的负载</li>
+                            <li>提高系统可用性</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-exclamation-triangle text-blue-500 mr-2"></i>
+                            分片挑战
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li>增加系统复杂性</li>
+                            <li>跨分片事务处理困难</li>
+                            <li>数据分布不均问题</li>
+                            <li>分片键选择困难</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">分片策略</h2>
+                
+                <div class="border border-gray-200 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">分片方式</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div class="bg-blue-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">水平分片</h4>
+                            <p class="text-gray-600 text-sm">
+                                按行分割数据，不同行存储在不同分片中
+                            </p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">垂直分片</h4>
+                            <p class="text-gray-600 text-sm">
+                                按列分割数据，不同列存储在不同分片中
+                            </p>
+                        </div>
+                        <div class="bg-purple-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">混合分片</h4>
+                            <p class="text-gray-600 text-sm">
+                                结合水平和垂直分片的优点
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">分片算法</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white border border-gray-200">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="py-2 px-4 border-b text-left">算法</th>
+                                    <th class="py-2 px-4 border-b text-left">说明</th>
+                                    <th class="py-2 px-4 border-b text-left">优点</th>
+                                    <th class="py-2 px-4 border-b text-left">缺点</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="py-2 px-4 border-b">哈希分片</td>
+                                    <td class="py-2 px-4 border-b">通过哈希函数计算分片位置</td>
+                                    <td class="py-2 px-4 border-b">数据分布均匀</td>
+                                    <td class="py-2 px-4 border-b">扩容困难</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 border-b">范围分片</td>
+                                    <td class="py-2 px-4 border-b">根据字段值范围划分分片</td>
+                                    <td class="py-2 px-4 border-b">易于扩容</td>
+                                    <td class="py-2 px-4 border-b">数据分布可能不均</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-4 border-b">列表分片</td>
+                                    <td class="py-2 px-4 border-b">根据字段值列表划分分片</td>
+                                    <td class="py-2 px-4 border-b">精确控制</td>
+                                    <td class="py-2 px-4 border-b">维护成本高</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 border-b">复合分片</td>
+                                    <td class="py-2 px-4 border-b">结合多种分片策略</td>
+                                    <td class="py-2 px-4 border-b">灵活性高</td>
+                                    <td class="py-2 px-4 border-b">复杂度高</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">分片键选择</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-key text-green-500 mr-2"></i>
+                            分片键特性
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li><strong>高基数：</strong>分片键值应具有较高的唯一性</li>
+                            <li><strong>均匀分布：</strong>分片键值应均匀分布</li>
+                            <li><strong>稳定性：</strong>分片键值应相对稳定，不易变更</li>
+                            <li><strong>查询相关性：</strong>分片键应与常用查询条件相关</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-times-circle text-green-500 mr-2"></i>
+                            避免的问题
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li>避免使用单调递增字段作为分片键</li>
+                            <li>避免使用热点数据集中的字段</li>
+                            <li>避免使用频繁更新的字段</li>
+                            <li>避免使用NULL值较多的字段</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">分片实现方案</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-cogs text-purple-500 mr-2"></i>
+                            应用层分片
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            在应用代码中实现分片逻辑，灵活性高但开发复杂。
+                        </p>
+                        <pre class="bg-gray-800 text-white p-3 rounded text-xs overflow-x-auto">
+// 分片路由示例
+public class ShardingRouter {
+    private int shardCount = 16;
+    
+    public int getShardIndex(long userId) {
+        return (int) (userId % shardCount);
+    }
+    
+    public DataSource getDataSource(long userId) {
+        int shardIndex = getShardIndex(userId);
+        return dataSourceMap.get("shard_" + shardIndex);
+    }
+}</pre>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-database text-purple-500 mr-2"></i>
+                            中间件分片
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            使用分片中间件实现分片，降低应用复杂度。
+                        </p>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li>MyCat</li>
+                            <li>ShardingSphere</li>
+                            <li>Vitess</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">ShardingSphere</h2>
+                
+                <div class="border border-gray-200 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">分片配置示例</h3>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg overflow-x-auto">
+# application.yml
+spring:
+  shardingsphere:
+    datasource:
+      names: ds0,ds1
+      ds0:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://localhost:3306/ds0
+        username: root
+        password: password
+      ds1:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://localhost:3306/ds1
+        username: root
+        password: password
+    
+    rules:
+      sharding:
+        tables:
+          t_order:
+            actual-data-nodes: ds$->{0..1}.t_order_$->{0..1}
+            table-strategy:
+              standard:
+                sharding-column: order_id
+                sharding-algorithm-name: table-inline
+            database-strategy:
+              standard:
+                sharding-column: user_id
+                sharding-algorithm-name: database-inline
+        sharding-algorithms:
+          table-inline:
+            type: INLINE
+            props:
+              algorithm-expression: t_order_$->{order_id % 2}
+          database-inline:
+            type: INLINE
+            props:
+              algorithm-expression: ds$->{user_id % 2}</pre>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">分布式事务</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-sync-alt text-red-500 mr-2"></i>
+                            事务类型
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li><strong>本地事务：</strong>单个数据库内的事务</li>
+                            <li><strong>分布式事务：</strong>跨多个数据库的事务</li>
+                            <li><strong>最终一致性：</strong>通过补偿机制实现一致性</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-balance-scale text-red-500 mr-2"></i>
+                            解决方案
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li><strong>XA协议：</strong>两阶段提交，强一致性</li>
+                            <li><strong>Seata：</strong>AT模式，无侵入</li>
+                            <li><strong>TCC：</strong>Try-Confirm-Cancel模式</li>
+                            <li><strong>消息队列：</strong>通过消息实现最终一致性</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">分片扩容</h2>
+                
+                <div class="border border-gray-200 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">扩容策略</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div class="bg-blue-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">平滑扩容</h4>
+                            <p class="text-gray-600 text-sm">
+                                在不影响业务的情况下增加分片
+                            </p>
+                            <ul class="list-disc pl-5 text-gray-600 text-xs mt-2">
+                                <li>一致性哈希算法</li>
+                                <li>预分片策略</li>
+                                <li>数据迁移工具</li>
+                            </ul>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">数据迁移</h4>
+                            <p class="text-gray-600 text-sm">
+                                将现有数据重新分布到新的分片中
+                            </p>
+                            <ul class="list-disc pl-5 text-gray-600 text-xs mt-2">
+                                <li>在线迁移</li>
+                                <li>双写迁移</li>
+                                <li>停机迁移</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <h4 class="font-bold text-gray-800">扩容步骤</h4>
+                    <ol class="list-decimal pl-8 text-gray-600 space-y-2">
+                        <li>评估扩容需求和方案</li>
+                        <li>准备新的数据库实例</li>
+                        <li>修改分片规则配置</li>
+                        <li>执行数据迁移</li>
+                        <li>验证数据一致性</li>
+                        <li>切换流量到新分片</li>
+                        <li>清理旧分片数据</li>
+                    </ol>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">监控与运维</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-chart-bar text-yellow-500 mr-2"></i>
+                            监控指标
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li>各分片的负载情况</li>
+                            <li>查询响应时间</li>
+                            <li>数据分布均匀性</li>
+                            <li>连接池使用情况</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-tools text-yellow-500 mr-2"></i>
+                            运维工具
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li>分片管理平台</li>
+                            <li>数据迁移工具</li>
+                            <li>SQL审计工具</li>
+                            <li>性能分析工具</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">分片最佳实践</h2>
+                <div class="bg-green-50 rounded-lg p-6">
+                    <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                        <li>合理设计分片键，避免数据倾斜</li>
+                        <li>预估业务增长，合理规划分片数量</li>
+                        <li>选择合适的分片算法和中间件</li>
+                        <li>实施完善的监控和告警机制</li>
+                        <li>制定详细的数据迁移和扩容方案</li>
+                        <li>处理好分布式事务和数据一致性</li>
+                        <li>定期分析和优化分片策略</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

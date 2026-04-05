@@ -1,0 +1,892 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>计算机如何运行 - 从底层出发</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    
+    <!-- 配置Tailwind自定义颜色和字体 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#36CFC9',
+                        dark: '#1D2129',
+                        light: '#F2F3F5',
+                        code: '#282c34'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .transition-all-300 {
+                transition: all 300ms ease-in-out;
+            }
+            .scroll-smooth {
+                scroll-behavior: smooth;
+            }
+        }
+    </style>
+</head>
+<body class="bg-light text-dark font-sans scroll-smooth">
+    <!-- 导航栏 -->
+    <nav class="fixed w-full bg-white/90 backdrop-blur-sm shadow-sm z-50 transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fa fa-microchip text-primary text-2xl"></i>
+                <span class="font-bold text-xl">计算机运行原理</span>
+            </div>
+            <div class="hidden md:flex space-x-6">
+                <a href="#hardware" class="hover:text-primary transition-all-300">硬件基础</a>
+                <a href="#binary" class="hover:text-primary transition-all-300">二进制世界</a>
+                <a href="#cpu" class="hover:text-primary transition-all-300">CPU工作原理</a>
+                <a href="#memory" class="hover:text-primary transition-all-300">内存与存储</a>
+                <a href="#execution" class="hover:text-primary transition-all-300">程序执行</a>
+            </div>
+            <button class="md:hidden text-dark text-xl" id="menuToggle">
+                <i class="fa fa-bars"></i>
+            </button>
+        </div>
+        <!-- 移动端菜单 -->
+        <div class="md:hidden hidden bg-white w-full border-t" id="mobileMenu">
+            <div class="container mx-auto px-4 py-2 flex flex-col space-y-3">
+                <a href="#hardware" class="py-2 hover:text-primary transition-all-300">硬件基础</a>
+                <a href="#binary" class="py-2 hover:text-primary transition-all-300">二进制世界</a>
+                <a href="#cpu" class="py-2 hover:text-primary transition-all-300">CPU工作原理</a>
+                <a href="#memory" class="py-2 hover:text-primary transition-all-300">内存与存储</a>
+                <a href="#execution" class="py-2 hover:text-primary transition-all-300">程序执行</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 英雄区域 -->
+    <header class="pt-28 pb-20 bg-gradient-to-br from-primary/5 to-secondary/5">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold mb-6 text-shadow leading-tight">
+                    计算机是如何运行的？<br>从底层出发
+                </h1>
+                <p class="text-lg md:text-xl text-gray-600 mb-8">
+                    探索从电子电路到程序执行的完整旅程，理解计算机运行的本质原理
+                </p>
+                <a href="#hardware" class="inline-flex items-center px-6 py-3 bg-primary text-white rounded-lg shadow-md hover:bg-primary/90 transition-all-300">
+                    开始探索 <i class="fa fa-arrow-down ml-2"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-16">
+        <!-- 硬件基础部分 -->
+        <section id="hardware" class="mb-24 scroll-mt-24">
+            <div class="max-w-5xl mx-auto">
+                <div class="flex items-center mb-8">
+                    <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mr-4">
+                        <i class="fa fa-cogs text-primary text-xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold">硬件基础：从电子元件开始</h2>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                    <p class="mb-6">计算机的运行始于最基本的电子元件。一切复杂的计算和操作，最终都可以分解为简单的电子信号处理。</p>
+                    
+                    <div class="grid md:grid-cols-2 gap-8 mb-8">
+                        <div class="bg-light rounded-lg p-5 hover:shadow-md transition-all-300">
+                            <h3 class="font-bold text-xl mb-3 flex items-center">
+                                <i class="fa fa-bolt text-yellow-500 mr-2"></i> 晶体管
+                            </h3>
+                            <p>晶体管是现代计算机的基本 building block，它是一种可以控制电流流动的半导体器件。通过控制晶体管的导通与截止，我们可以表示两种状态：</p>
+                            <ul class="list-disc pl-5 mt-2 space-y-1">
+                                <li>导通 → 有电流 → 表示 "1"</li>
+                                <li>截止 → 无电流 → 表示 "0"</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-light rounded-lg p-5 hover:shadow-md transition-all-300">
+                            <h3 class="font-bold text-xl mb-3 flex items-center">
+                                <i class="fa fa-exchange text-blue-500 mr-2"></i> 逻辑门
+                            </h3>
+                            <p>多个晶体管可以组成逻辑门，实现基本的逻辑运算：</p>
+                            <ul class="list-disc pl-5 mt-2 space-y-1">
+                                <li>与门 (AND)：所有输入为1时输出1</li>
+                                <li>或门 (OR)：至少一个输入为1时输出1</li>
+                                <li>非门 (NOT)：输入与输出相反</li>
+                                <li>异或门 (XOR)：输入不同时输出1</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- 逻辑门交互演示 -->
+                    <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                        <h4 class="font-bold mb-4">逻辑门演示：AND 门</h4>
+                        <div class="flex flex-col md:flex-row items-center justify-center gap-6">
+                            <div class="flex flex-col items-center">
+                                <label class="mb-2">输入 A</label>
+                                <button id="inputA" class="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center text-xl font-bold hover:bg-gray-400 transition-all-300">0</button>
+                            </div>
+                            <div class="text-3xl font-bold">AND</div>
+                            <div class="flex flex-col items-center">
+                                <label class="mb-2">输入 B</label>
+                                <button id="inputB" class="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center text-xl font-bold hover:bg-gray-400 transition-all-300">0</button>
+                            </div>
+                            <div class="text-3xl font-bold">→</div>
+                            <div class="flex flex-col items-center">
+                                <label class="mb-2">输出</label>
+                                <div id="andOutput" class="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center text-xl font-bold">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-primary/5 rounded-xl p-6 border border-primary/20">
+                    <h3 class="font-bold text-xl mb-3 flex items-center">
+                        <i class="fa fa-lightbulb-o text-primary mr-2"></i> 关键概念
+                    </h3>
+                    <p>现代计算机中，一个CPU可能包含数十亿个晶体管，它们通过复杂的组合形成了能够执行各种计算任务的电路。所有的计算，无论多么复杂，最终都依赖于这些基本的电子元件状态的变化。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 二进制世界部分 -->
+        <section id="binary" class="mb-24 scroll-mt-24">
+            <div class="max-w-5xl mx-auto">
+                <div class="flex items-center mb-8">
+                    <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mr-4">
+                        <i class="fa fa-calculator text-primary text-xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold">二进制世界：计算机的语言</h2>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                    <p class="mb-6">人类通常使用十进制（0-9）计数，但计算机只理解二进制——一种只使用0和1的计数系统。这是由电子元件的特性决定的，它们最容易表示两种状态（导通/截止）。</p>
+                    
+                    <div class="grid md:grid-cols-2 gap-8 mb-8">
+                        <div>
+                            <h3 class="font-bold text-xl mb-3">十进制 vs 二进制</h3>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full border-collapse">
+                                    <thead>
+                                        <tr class="bg-gray-100">
+                                            <th class="border border-gray-300 px-4 py-2 text-left">十进制</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">二进制</th>
+                                            <th class="border border-gray-300 px-4 py-2 text-left">含义</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="border border-gray-300 px-4 py-2">0</td>
+                                            <td class="border border-gray-300 px-4 py-2">0</td>
+                                            <td class="border border-gray-300 px-4 py-2">0</td>
+                                        </tr>
+                                        <tr class="bg-gray-50">
+                                            <td class="border border-gray-300 px-4 py-2">1</td>
+                                            <td class="border border-gray-300 px-4 py-2">1</td>
+                                            <td class="border border-gray-300 px-4 py-2">1</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="border border-gray-300 px-4 py-2">2</td>
+                                            <td class="border border-gray-300 px-4 py-2">10</td>
+                                            <td class="border border-gray-300 px-4 py-2">1×2¹ + 0×2⁰</td>
+                                        </tr>
+                                        <tr class="bg-gray-50">
+                                            <td class="border border-gray-300 px-4 py-2">3</td>
+                                            <td class="border border-gray-300 px-4 py-2">11</td>
+                                            <td class="border border-gray-300 px-4 py-2">1×2¹ + 1×2⁰</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="border border-gray-300 px-4 py-2">4</td>
+                                            <td class="border border-gray-300 px-4 py-2">100</td>
+                                            <td class="border border-gray-300 px-4 py-2">1×2² + 0×2¹ + 0×2⁰</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 class="font-bold text-xl mb-3">信息的表示</h3>
+                            <p class="mb-3">在计算机中，所有信息都用二进制表示：</p>
+                            <ul class="space-y-2">
+                                <li class="flex items-start">
+                                    <i class="fa fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                    <span><strong>数字</strong>：直接转换为二进制形式</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                    <span><strong>字符</strong>：通过编码表（如ASCII、Unicode）映射到二进制</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                    <span><strong>图像</strong>：每个像素的颜色值用二进制存储</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                    <span><strong>指令</strong>：CPU执行的操作也用二进制编码</span>
+                                </li>
+                            </ul>
+                            
+                            <div class="mt-4 p-3 bg-gray-50 rounded border border-gray-200">
+                                <p class="text-sm"><strong>例：</strong>字母 'A' 在ASCII编码中是 65，二进制表示为 1000001</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- ASCII码演示 -->
+                    <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                        <h4 class="font-bold mb-4">字符到二进制的转换</h4>
+                        <div class="flex flex-col md:flex-row gap-4">
+                            <input type="text" id="charInput" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50" placeholder="输入一个字符" maxlength="1">
+                            <button id="convertBtn" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-all-300">转换</button>
+                        </div>
+                        <div id="binaryResult" class="mt-4 p-4 bg-dark text-white rounded-lg font-mono hidden">
+                            <!-- 结果将在这里显示 -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-primary/5 rounded-xl p-6 border border-primary/20">
+                    <h3 class="font-bold text-xl mb-3 flex items-center">
+                        <i class="fa fa-lightbulb-o text-primary mr-2"></i> 关键概念
+                    </h3>
+                    <p>位(bit)是计算机中最小的信息单位，代表一个二进制数字（0或1）。8位组成一个字节(byte)，这是计算机存储的基本单位。现代计算机通常以字节为单位处理和存储数据。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CPU工作原理部分 -->
+        <section id="cpu" class="mb-24 scroll-mt-24">
+            <div class="max-w-5xl mx-auto">
+                <div class="flex items-center mb-8">
+                    <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mr-4">
+                        <i class="fa fa-microchip text-primary text-xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold">CPU工作原理：计算机的大脑</h2>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                    <p class="mb-6">中央处理器(CPU)是计算机的核心，负责执行指令和处理数据。它的工作可以概括为"取指-译码-执行"的循环过程。</p>
+                    
+                    <div class="mb-8">
+                        <h3 class="font-bold text-xl mb-4">CPU的主要组成部分</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-light p-4 rounded-lg border border-gray-200">
+                                <h4 class="font-bold mb-2 text-center">控制单元</h4>
+                                <p class="text-sm">负责控制指令的读取和执行顺序，协调CPU各部分工作</p>
+                            </div>
+                            <div class="bg-light p-4 rounded-lg border border-gray-200">
+                                <h4 class="font-bold mb-2 text-center">算术逻辑单元</h4>
+                                <p class="text-sm">执行算术运算(加、减等)和逻辑运算(与、或等)</p>
+                            </div>
+                            <div class="bg-light p-4 rounded-lg border border-gray-200">
+                                <h4 class="font-bold mb-2 text-center">寄存器</h4>
+                                <p class="text-sm">CPU内部的高速存储单元，用于临时存放数据和指令</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-8">
+                        <h3 class="font-bold text-xl mb-4">CPU的工作循环：冯·诺依曼架构</h3>
+                        <div class="relative">
+                            <!-- 流程图 -->
+                            <div class="hidden md:block absolute top-1/2 left-0 right-0 h-1 bg-gray-300 -translate-y-1/2 z-0"></div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 relative z-10">
+                                <div class="bg-primary/10 p-4 rounded-lg border border-primary/30 text-center">
+                                    <div class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-2">1</div>
+                                    <h4 class="font-bold mb-1">取指令</h4>
+                                    <p class="text-sm">从内存中读取要执行的指令</p>
+                                </div>
+                                
+                                <div class="bg-primary/10 p-4 rounded-lg border border-primary/30 text-center">
+                                    <div class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-2">2</div>
+                                    <h4 class="font-bold mb-1">译码</h4>
+                                    <p class="text-sm">解析指令，确定要执行的操作</p>
+                                </div>
+                                
+                                <div class="bg-primary/10 p-4 rounded-lg border border-primary/30 text-center">
+                                    <div class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-2">3</div>
+                                    <h4 class="font-bold mb-1">执行</h4>
+                                    <p class="text-sm">执行指令指定的操作</p>
+                                </div>
+                                
+                                <div class="bg-primary/10 p-4 rounded-lg border border-primary/30 text-center">
+                                    <div class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-2">4</div>
+                                    <h4 class="font-bold mb-1">存储结果</h4>
+                                    <p class="text-sm">将结果写回寄存器或内存</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4 text-center text-sm text-gray-500 md:hidden">
+                                <p>这是一个循环过程，CPU不断重复这四个步骤</p>
+                            </div>
+                            <div class="hidden md:flex justify-center mt-4">
+                                <i class="fa fa-refresh text-gray-400 animate-spin-slow" style="animation: spin 3s linear infinite;"></i>
+                                <span class="ml-2 text-gray-500">循环重复</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- CPU执行演示 -->
+                    <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                        <h4 class="font-bold mb-4">CPU执行过程演示</h4>
+                        <div class="mb-4">
+                            <p class="mb-2"><strong>示例：执行 2 + 3 的过程</strong></p>
+                            <div id="cpuSimulation" class="space-y-4">
+                                <div class="p-3 bg-white border border-gray-200 rounded-lg">
+                                    <div class="font-bold mb-1">步骤 1: 取指令</div>
+                                    <p>从内存中读取指令：<span class="font-mono bg-gray-100 px-1">ADD A, B</span>（将A和B相加）</p>
+                                </div>
+                                <div class="p-3 bg-white border border-gray-200 rounded-lg opacity-50" id="step2">
+                                    <div class="font-bold mb-1">步骤 2: 译码</div>
+                                    <p>解析指令：需要从寄存器A和B中取数，然后执行加法操作</p>
+                                </div>
+                                <div class="p-3 bg-white border border-gray-200 rounded-lg opacity-50" id="step3">
+                                    <div class="font-bold mb-1">步骤 3: 执行</div>
+                                    <p>ALU执行加法：<span class="font-mono bg-gray-100 px-1">2 + 3 = 5</span></p>
+                                </div>
+                                <div class="p-3 bg-white border border-gray-200 rounded-lg opacity-50" id="step4">
+                                    <div class="font-bold mb-1">步骤 4: 存储结果</div>
+                                    <p>将结果5存储到寄存器C中</p>
+                                </div>
+                            </div>
+                        </div>
+                        <button id="simulateBtn" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-all-300">
+                            开始演示
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="bg-primary/5 rounded-xl p-6 border border-primary/20">
+                    <h3 class="font-bold text-xl mb-3 flex items-center">
+                        <i class="fa fa-lightbulb-o text-primary mr-2"></i> 关键概念
+                    </h3>
+                    <p>CPU的时钟频率(如3.5GHz)表示它每秒可以执行多少个基本操作周期。频率越高，理论上处理速度越快。但现代CPU通过流水线、多核等技术，可以在一个周期内处理多个指令，大大提高了效率。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 内存与存储部分 -->
+        <section id="memory" class="mb-24 scroll-mt-24">
+            <div class="max-w-5xl mx-auto">
+                <div class="flex items-center mb-8">
+                    <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mr-4">
+                        <i class="fa fa-memory text-primary text-xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold">内存与存储：数据的家园</h2>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                    <p class="mb-6">计算机需要存储数据和指令才能工作。不同类型的存储设备有不同的速度、容量和用途，共同构成了计算机的存储层次结构。</p>
+                    
+                    <div class="mb-8">
+                        <h3 class="font-bold text-xl mb-4">存储层次结构</h3>
+                        <div class="relative">
+                            <!-- 金字塔图 -->
+                            <div class="hidden md:block">
+                                <div class="w-full max-w-md mx-auto">
+                                    <!-- 寄存器 -->
+                                    <div class="bg-red-100 border border-red-200 p-3 text-center rounded-t-lg">
+                                        <div class="font-bold">寄存器</div>
+                                        <div class="text-sm">容量最小 (KB级)</div>
+                                        <div class="text-sm">速度最快 (纳秒级)</div>
+                                    </div>
+                                    <!-- CPU缓存 -->
+                                    <div class="bg-orange-100 border-x border-orange-200 p-3 text-center">
+                                        <div class="font-bold">CPU缓存 (L1, L2, L3)</div>
+                                        <div class="text-sm">容量小 (MB级)</div>
+                                        <div class="text-sm">速度快 (纳秒级)</div>
+                                    </div>
+                                    <!-- 内存 -->
+                                    <div class="bg-yellow-100 border-x border-yellow-200 p-3 text-center">
+                                        <div class="font-bold">内存 (RAM)</div>
+                                        <div class="text-sm">容量中等 (GB级)</div>
+                                        <div class="text-sm">速度中等 (微秒级)</div>
+                                    </div>
+                                    <!-- 硬盘 -->
+                                    <div class="bg-green-100 border-x border-green-200 p-3 text-center">
+                                        <div class="font-bold">硬盘 (SSD/HDD)</div>
+                                        <div class="text-sm">容量大 (TB级)</div>
+                                        <div class="text-sm">速度慢 (毫秒级)</div>
+                                    </div>
+                                    <!-- 外部存储 -->
+                                    <div class="bg-blue-100 border border-blue-200 p-3 text-center rounded-b-lg">
+                                        <div class="font-bold">外部存储 (U盘/云存储)</div>
+                                        <div class="text-sm">容量极大</div>
+                                        <div class="text-sm">速度最慢</div>
+                                    </div>
+                                    
+                                    <!-- 连接线 -->
+                                    <div class="absolute left-0 top-1/2 h-1 w-1/4 bg-gray-300 -translate-y-1/2"></div>
+                                    <div class="absolute right-0 top-1/2 h-1 w-1/4 bg-gray-300 -translate-y-1/2"></div>
+                                    <div class="absolute left-1/4 top-1/2 flex flex-col items-center -translate-y-1/2">
+                                        <span class="text-xs mb-1">速度 ↓</span>
+                                        <i class="fa fa-arrow-down text-gray-500"></i>
+                                    </div>
+                                    <div class="absolute right-1/4 top-1/2 flex flex-col items-center -translate-y-1/2">
+                                        <span class="text-xs mb-1">容量 ↑</span>
+                                        <i class="fa fa-arrow-up text-gray-500"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 移动端列表 -->
+                            <div class="md:hidden space-y-3 mt-4">
+                                <div class="bg-red-100 border border-red-200 p-3 rounded-lg">
+                                    <div class="font-bold">寄存器</div>
+                                    <div class="text-sm">容量最小 (KB级)，速度最快 (纳秒级)</div>
+                                </div>
+                                <div class="bg-orange-100 border border-orange-200 p-3 rounded-lg">
+                                    <div class="font-bold">CPU缓存 (L1, L2, L3)</div>
+                                    <div class="text-sm">容量小 (MB级)，速度快 (纳秒级)</div>
+                                </div>
+                                <div class="bg-yellow-100 border border-yellow-200 p-3 rounded-lg">
+                                    <div class="font-bold">内存 (RAM)</div>
+                                    <div class="text-sm">容量中等 (GB级)，速度中等 (微秒级)</div>
+                                </div>
+                                <div class="bg-green-100 border border-green-200 p-3 rounded-lg">
+                                    <div class="font-bold">硬盘 (SSD/HDD)</div>
+                                    <div class="text-sm">容量大 (TB级)，速度慢 (毫秒级)</div>
+                                </div>
+                                <div class="bg-blue-100 border border-blue-200 p-3 rounded-lg">
+                                    <div class="font-bold">外部存储 (U盘/云存储)</div>
+                                    <div class="text-sm">容量极大，速度最慢</div>
+                                </div>
+                                <div class="text-center text-sm mt-2">
+                                    <p>从上到下：速度降低，容量增加</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-8">
+                        <h3 class="font-bold text-xl mb-4">内存工作原理</h3>
+                        <p class="mb-4">内存(RAM)是计算机运行时临时存储数据和指令的地方，它可以被CPU快速访问。内存由大量存储单元组成，每个单元都有唯一的地址。</p>
+                        
+                        <!-- 内存模型 -->
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-4">
+                            <h4 class="font-bold mb-3 text-center">内存地址与数据存储</h4>
+                            <div class="grid grid-cols-4 gap-2 text-center text-sm">
+                                <div class="bg-white p-2 border border-gray-200 rounded">
+                                    <div class="text-gray-500">地址 0000</div>
+                                    <div id="mem0" class="font-mono font-bold">0000</div>
+                                </div>
+                                <div class="bg-white p-2 border border-gray-200 rounded">
+                                    <div class="text-gray-500">地址 0001</div>
+                                    <div id="mem1" class="font-mono font-bold">0000</div>
+                                </div>
+                                <div class="bg-white p-2 border border-gray-200 rounded">
+                                    <div class="text-gray-500">地址 0010</div>
+                                    <div id="mem2" class="font-mono font-bold">0000</div>
+                                </div>
+                                <div class="bg-white p-2 border border-gray-200 rounded">
+                                    <div class="text-gray-500">地址 0011</div>
+                                    <div id="mem3" class="font-mono font-bold">0000</div>
+                                </div>
+                                <div class="bg-white p-2 border border-gray-200 rounded">
+                                    <div class="text-gray-500">地址 0100</div>
+                                    <div id="mem4" class="font-mono font-bold">0000</div>
+                                </div>
+                                <div class="bg-white p-2 border border-gray-200 rounded">
+                                    <div class="text-gray-500">地址 0101</div>
+                                    <div id="mem5" class="font-mono font-bold">0000</div>
+                                </div>
+                                <div class="bg-white p-2 border border-gray-200 rounded">
+                                    <div class="text-gray-500">地址 0110</div>
+                                    <div id="mem6" class="font-mono font-bold">0000</div>
+                                </div>
+                                <div class="bg-white p-2 border border-gray-200 rounded">
+                                    <div class="text-gray-500">地址 0111</div>
+                                    <div id="mem7" class="font-mono font-bold">0000</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-col md:flex-row gap-4">
+                            <div class="flex-1">
+                                <label class="block mb-1 text-sm font-medium">内存地址 (0-7)</label>
+                                <input type="number" id="memAddress" min="0" max="7" value="0" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50">
+                            </div>
+                            <div class="flex-1">
+                                <label class="block mb-1 text-sm font-medium">数据 (4位二进制)</label>
+                                <input type="text" id="memData" pattern="[01]{4}" value="0000" maxlength="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50">
+                            </div>
+                            <div class="flex items-end">
+                                <button id="writeMemBtn" class="w-full md:w-auto px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-all-300">
+                                    写入内存
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-primary/5 rounded-xl p-6 border border-primary/20">
+                    <h3 class="font-bold text-xl mb-3 flex items-center">
+                        <i class="fa fa-lightbulb-o text-primary mr-2"></i> 关键概念
+                    </h3>
+                    <p>内存(RAM)是易失性的，断电后数据会丢失；而硬盘等存储设备是非易失性的，可以长期保存数据。计算机启动时，会将硬盘中的操作系统和程序加载到内存中，因为CPU访问内存的速度比访问硬盘快得多。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 程序执行部分 -->
+        <section id="execution" class="mb-16 scroll-mt-24">
+            <div class="max-w-5xl mx-auto">
+                <div class="flex items-center mb-8">
+                    <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mr-4">
+                        <i class="fa fa-code text-primary text-xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold">程序执行：从代码到运行</h2>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                    <p class="mb-6">我们编写的程序最终需要转换为CPU能够理解的二进制指令才能执行。这个过程涉及多个转换步骤，不同类型的编程语言有不同的执行方式。</p>
+                    
+                    <div class="mb-8">
+                        <h3 class="font-bold text-xl mb-4">程序的生命周期</h3>
+                        <div class="relative">
+                            <!-- 流程图 -->
+                            <div class="hidden md:block absolute top-1/2 left-0 right-0 h-1 bg-gray-300 -translate-y-1/2 z-0"></div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-5 gap-4 relative z-10">
+                                <div class="bg-light p-4 rounded-lg border border-gray-200 text-center">
+                                    <div class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-2 text-sm">1</div>
+                                    <h4 class="font-bold mb-1 text-sm">编写代码</h4>
+                                    <p class="text-xs">使用高级语言(如Python、Java)</p>
+                                </div>
+                                
+                                <div class="bg-light p-4 rounded-lg border border-gray-200 text-center">
+                                    <div class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-2 text-sm">2</div>
+                                    <h4 class="font-bold mb-1 text-sm">编译/解释</h4>
+                                    <p class="text-xs">转换为机器语言</p>
+                                </div>
+                                
+                                <div class="bg-light p-4 rounded-lg border border-gray-200 text-center">
+                                    <div class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-2 text-sm">3</div>
+                                    <h4 class="font-bold mb-1 text-sm">加载到内存</h4>
+                                    <p class="text-xs">程序和数据进入RAM</p>
+                                </div>
+                                
+                                <div class="bg-light p-4 rounded-lg border border-gray-200 text-center">
+                                    <div class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-2 text-sm">4</div>
+                                    <h4 class="font-bold mb-1 text-sm">CPU执行</h4>
+                                    <p class="text-xs">取指-译码-执行循环</p>
+                                </div>
+                                
+                                <div class="bg-light p-4 rounded-lg border border-gray-200 text-center">
+                                    <div class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-2 text-sm">5</div>
+                                    <h4 class="font-bold mb-1 text-sm">输出结果</h4>
+                                    <p class="text-xs">显示或存储结果</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-8">
+                        <h3 class="font-bold text-xl mb-4">从高级语言到机器码</h3>
+                        <div class="space-y-6">
+                            <div>
+                                <h4 class="font-bold mb-2">1. 高级语言代码 (Python)</h4>
+                                <div class="bg-code text-white p-4 rounded-lg font-mono text-sm overflow-x-auto">
+                                    <pre>a = 5
+b = 3
+c = a + b
+print(c)</pre>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h4 class="font-bold mb-2">2. 汇编语言 (接近机器码的低级语言)</h4>
+                                <div class="bg-code text-white p-4 rounded-lg font-mono text-sm overflow-x-auto">
+                                    <pre>mov eax, 5    ; 将5存入寄存器eax
+mov ebx, 3    ; 将3存入寄存器ebx
+add eax, ebx  ; eax = eax + ebx
+call print    ; 调用打印函数</pre>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h4 class="font-bold mb-2">3. 机器码 (CPU真正执行的二进制指令)</h4>
+                                <div class="bg-code text-white p-4 rounded-lg font-mono text-sm overflow-x-auto">
+                                    <pre>10110000 00000101 00000000 00000000  ; mov eax, 5
+10110011 00000011 00000000 00000000  ; mov ebx, 3
+00000011 00010001 00000000 00000000  ; add eax, ebx
+11101000 00000000 00000000 00001000  ; call print</pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 程序执行演示 -->
+                    <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                        <h4 class="font-bold mb-4">程序执行演示</h4>
+                        <div class="mb-4">
+                            <p>点击"运行程序"按钮，查看简单加法程序的执行过程：</p>
+                            <div id="programOutput" class="mt-4 p-4 bg-dark text-white rounded-lg font-mono hidden">
+                                <!-- 程序输出将在这里显示 -->
+                            </div>
+                        </div>
+                        <button id="runProgramBtn" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-all-300">
+                            运行程序
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="bg-primary/5 rounded-xl p-6 border border-primary/20">
+                    <h3 class="font-bold text-xl mb-3 flex items-center">
+                        <i class="fa fa-lightbulb-o text-primary mr-2"></i> 关键概念
+                    </h3>
+                    <p>编译型语言(如C、C++)在执行前会被完整编译为机器码，而解释型语言(如Python、JavaScript)则由解释器逐行转换为机器码并执行。无论哪种方式，最终CPU执行的都是二进制指令。操作系统负责管理程序的加载、执行和资源分配。</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 总结部分 -->
+    <section class="bg-primary/5 py-16">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-3xl font-bold mb-6">总结：计算机如何运行</h2>
+                <div class="bg-white rounded-xl shadow-sm p-8 text-left">
+                    <ol class="space-y-4">
+                        <li class="flex items-start">
+                            <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center mt-0.5 mr-3 flex-shrink-0">1</div>
+                            <p>计算机的基础是能够表示0和1的电子元件(晶体管)，它们组成逻辑门实现基本运算</p>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center mt-0.5 mr-3 flex-shrink-0">2</div>
+                            <p>所有信息(数字、字符、图像等)在计算机中都以二进制形式表示和存储</p>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center mt-0.5 mr-3 flex-shrink-0">3</div>
+                            <p>CPU通过"取指-译码-执行"的循环处理指令，完成计算任务</p>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center mt-0.5 mr-3 flex-shrink-0">4</div>
+                            <p>内存和存储设备提供数据和指令的临时和长期存储，形成层次结构</p>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center mt-0.5 mr-3 flex-shrink-0">5</div>
+                            <p>程序需要转换为机器码才能被CPU执行，这个过程可能是编译或解释</p>
+                        </li>
+                    </ol>
+                    
+                    <div class="mt-8 p-4 bg-primary/10 rounded-lg border border-primary/20">
+                        <p class="italic">从电子脉冲到复杂应用，计算机的运行是一个将复杂任务不断分解为简单二进制操作的过程。理解这个底层原理，能帮助我们更好地理解计算机的工作方式。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="max-w-5xl mx-auto">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="mb-6 md:mb-0">
+                        <div class="flex items-center space-x-2">
+                            <i class="fa fa-microchip text-primary text-2xl"></i>
+                            <span class="font-bold text-xl">计算机运行原理</span>
+                        </div>
+                        <p class="text-gray-400 mt-2">从底层出发理解计算机</p>
+                    </div>
+                    
+                    <div class="flex space-x-6">
+                        <a href="#hardware" class="text-gray-400 hover:text-white transition-all-300">硬件基础</a>
+                        <a href="#binary" class="text-gray-400 hover:text-white transition-all-300">二进制世界</a>
+                        <a href="#cpu" class="text-gray-400 hover:text-white transition-all-300">CPU工作原理</a>
+                        <a href="#memory" class="text-gray-400 hover:text-white transition-all-300">内存与存储</a>
+                        <a href="#execution" class="text-gray-400 hover:text-white transition-all-300">程序执行</a>
+                    </div>
+                </div>
+                
+                <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-500">
+                    <p>© 2023 计算机运行原理讲解 | 从底层出发</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 导航栏滚动效果
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('py-2', 'shadow');
+                navbar.classList.remove('py-3');
+            } else {
+                navbar.classList.add('py-3');
+                navbar.classList.remove('py-2', 'shadow');
+            }
+        });
+        
+        // 移动端菜单切换
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // 逻辑门演示
+        const inputA = document.getElementById('inputA');
+        const inputB = document.getElementById('inputB');
+        const andOutput = document.getElementById('andOutput');
+        
+        let aState = 0;
+        let bState = 0;
+        
+        inputA.addEventListener('click', function() {
+            aState = 1 - aState;
+            inputA.textContent = aState;
+            inputA.className = `w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold transition-all-300 ${aState ? 'bg-green-500 text-white' : 'bg-gray-300'}`;
+            updateAndOutput();
+        });
+        
+        inputB.addEventListener('click', function() {
+            bState = 1 - bState;
+            inputB.textContent = bState;
+            inputB.className = `w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold transition-all-300 ${bState ? 'bg-green-500 text-white' : 'bg-gray-300'}`;
+            updateAndOutput();
+        });
+        
+        function updateAndOutput() {
+            const result = aState & bState; // AND运算
+            andOutput.textContent = result;
+            andOutput.className = `w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold transition-all-300 ${result ? 'bg-green-500 text-white' : 'bg-gray-300'}`;
+        }
+        
+        // 字符到二进制转换
+        document.getElementById('convertBtn').addEventListener('click', function() {
+            const char = document.getElementById('charInput').value;
+            const resultDiv = document.getElementById('binaryResult');
+            
+            if (char) {
+                const code = char.charCodeAt(0);
+                const binary = code.toString(2).padStart(8, '0'); // 转换为8位二进制
+                resultDiv.textContent = `字符 '${char}' 的ASCII码是 ${code}，二进制表示为 ${binary}`;
+                resultDiv.classList.remove('hidden');
+            } else {
+                resultDiv.classList.add('hidden');
+            }
+        });
+        
+        // CPU执行演示
+        document.getElementById('simulateBtn').addEventListener('click', function() {
+            const step2 = document.getElementById('step2');
+            const step3 = document.getElementById('step3');
+            const step4 = document.getElementById('step4');
+            
+            // 重置所有步骤
+            step2.classList.add('opacity-50');
+            step3.classList.add('opacity-50');
+            step4.classList.add('opacity-50');
+            
+            // 分步显示
+            setTimeout(() => {
+                step2.classList.remove('opacity-50');
+                setTimeout(() => {
+                    step3.classList.remove('opacity-50');
+                    setTimeout(() => {
+                        step4.classList.remove('opacity-50');
+                    }, 1000);
+                }, 1000);
+            }, 500);
+        });
+        
+        // 内存写入演示
+        document.getElementById('writeMemBtn').addEventListener('click', function() {
+            const address = document.getElementById('memAddress').value;
+            const data = document.getElementById('memData').value;
+            
+            // 验证输入
+            if (address < 0 || address > 7) {
+                alert('地址必须在0-7之间');
+                return;
+            }
+            
+            if (!/^[01]{4}$/.test(data)) {
+                alert('数据必须是4位二进制数(0和1)');
+                return;
+            }
+            
+            // 写入内存
+            document.getElementById(`mem${address}`).textContent = data;
+            
+            // 显示成功提示
+            const btn = document.getElementById('writeMemBtn');
+            const originalText = btn.textContent;
+            btn.textContent = '写入成功!';
+            btn.classList.add('bg-green-500');
+            
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.classList.remove('bg-green-500');
+            }, 1000);
+        });
+        
+        // 程序执行演示
+        document.getElementById('runProgramBtn').addEventListener('click', function() {
+            const outputDiv = document.getElementById('programOutput');
+            outputDiv.classList.remove('hidden');
+            outputDiv.innerHTML = '';
+            
+            // 模拟程序执行过程
+            const steps = [
+                "加载程序到内存...",
+                "执行第1行: a = 5 (将5存入内存地址0010)",
+                "执行第2行: b = 3 (将3存入内存地址0011)",
+                "执行第3行: c = a + b",
+                "  - 从内存读取a的值: 5",
+                "  - 从内存读取b的值: 3",
+                "  - CPU执行加法运算: 5 + 3 = 8",
+                "  - 将结果存入内存地址0100",
+                "执行第4行: print(c)",
+                "输出结果: 8"
+            ];
+            
+            let index = 0;
+            const interval = setInterval(() => {
+                if (index < steps.length) {
+                    outputDiv.innerHTML += steps[index] + '<br>';
+                    outputDiv.scrollTop = outputDiv.scrollHeight;
+                    index++;
+                } else {
+                    clearInterval(interval);
+                }
+            }, 600);
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                // 关闭移动菜单(如果打开)
+                document.getElementById('mobileMenu').classList.add('hidden');
+                
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+

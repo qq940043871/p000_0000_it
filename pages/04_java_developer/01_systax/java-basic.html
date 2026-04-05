@@ -1,0 +1,234 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java基础 - 架构师学习笔记</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-4xl mx-auto p-6">
+        <div class="bg-white rounded-xl shadow-md p-8 mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-book text-orange-600 mr-3"></i>Java基础语法
+            </h1>
+            
+            <div class="prose max-w-none">
+                <p class="text-gray-600 mb-6">
+                    Java基础语法是学习Java编程的第一步，掌握好基础知识对于后续深入学习至关重要。本章将介绍Java的基本语法元素，包括数据类型、变量、运算符、控制流程等。
+                </p>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">数据类型</h2>
+                <p class="text-gray-600 mb-4">
+                    Java是一种强类型语言，每个变量都必须声明其数据类型。Java的数据类型分为两大类：
+                </p>
+                
+                <h3 class="text-xl font-bold text-gray-800 mb-3">基本数据类型</h3>
+                <div class="overflow-x-auto mb-6">
+                    <table class="min-w-full bg-white border border-gray-200">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="py-2 px-4 border-b text-left">数据类型</th>
+                                <th class="py-2 px-4 border-b text-left">大小</th>
+                                <th class="py-2 px-4 border-b text-left">默认值</th>
+                                <th class="py-2 px-4 border-b text-left">取值范围</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="py-2 px-4 border-b">byte</td>
+                                <td class="py-2 px-4 border-b">8位</td>
+                                <td class="py-2 px-4 border-b">0</td>
+                                <td class="py-2 px-4 border-b">-128 ~ 127</td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="py-2 px-4 border-b">short</td>
+                                <td class="py-2 px-4 border-b">16位</td>
+                                <td class="py-2 px-4 border-b">0</td>
+                                <td class="py-2 px-4 border-b">-32,768 ~ 32,767</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 px-4 border-b">int</td>
+                                <td class="py-2 px-4 border-b">32位</td>
+                                <td class="py-2 px-4 border-b">0</td>
+                                <td class="py-2 px-4 border-b">-2,147,483,648 ~ 2,147,483,647</td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="py-2 px-4 border-b">long</td>
+                                <td class="py-2 px-4 border-b">64位</td>
+                                <td class="py-2 px-4 border-b">0L</td>
+                                <td class="py-2 px-4 border-b">-9,223,372,036,854,775,808 ~ 9,223,372,036,854,775,807</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 px-4 border-b">float</td>
+                                <td class="py-2 px-4 border-b">32位</td>
+                                <td class="py-2 px-4 border-b">0.0f</td>
+                                <td class="py-2 px-4 border-b">±3.40282347E+38F</td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="py-2 px-4 border-b">double</td>
+                                <td class="py-2 px-4 border-b">64位</td>
+                                <td class="py-2 px-4 border-b">0.0d</td>
+                                <td class="py-2 px-4 border-b">±1.79769313486231570E+308</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 px-4 border-b">char</td>
+                                <td class="py-2 px-4 border-b">16位</td>
+                                <td class="py-2 px-4 border-b">'\u0000'</td>
+                                <td class="py-2 px-4 border-b">0 ~ 65,535</td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="py-2 px-4 border-b">boolean</td>
+                                <td class="py-2 px-4 border-b">未明确规定</td>
+                                <td class="py-2 px-4 border-b">false</td>
+                                <td class="py-2 px-4 border-b">true 或 false</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <h3 class="text-xl font-bold text-gray-800 mb-3">引用数据类型</h3>
+                <p class="text-gray-600 mb-4">
+                    引用数据类型包括类、接口、数组等。它们的默认值为null。
+                </p>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">变量</h2>
+                <p class="text-gray-600 mb-4">
+                    变量是存储数据的容器。在Java中，变量必须先声明后使用。
+                </p>
+                
+                <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6 overflow-x-auto">
+// 变量声明和初始化
+int age;           // 声明变量
+age = 25;          // 赋值
+
+// 声明并初始化
+int score = 95;
+
+// 常量声明
+final double PI = 3.14159;</pre>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">运算符</h2>
+                <p class="text-gray-600 mb-4">
+                    Java提供了丰富的运算符，用于执行各种数学和逻辑操作。
+                </p>
+                
+                <h3 class="text-xl font-bold text-gray-800 mb-3">算术运算符</h3>
+                <div class="overflow-x-auto mb-6">
+                    <table class="min-w-full bg-white border border-gray-200">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="py-2 px-4 border-b text-left">运算符</th>
+                                <th class="py-2 px-4 border-b text-left">描述</th>
+                                <th class="py-2 px-4 border-b text-left">示例</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="py-2 px-4 border-b">+</td>
+                                <td class="py-2 px-4 border-b">加法</td>
+                                <td class="py-2 px-4 border-b">a + b</td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="py-2 px-4 border-b">-</td>
+                                <td class="py-2 px-4 border-b">减法</td>
+                                <td class="py-2 px-4 border-b">a - b</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 px-4 border-b">*</td>
+                                <td class="py-2 px-4 border-b">乘法</td>
+                                <td class="py-2 px-4 border-b">a * b</td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="py-2 px-4 border-b">/</td>
+                                <td class="py-2 px-4 border-b">除法</td>
+                                <td class="py-2 px-4 border-b">a / b</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 px-4 border-b">%</td>
+                                <td class="py-2 px-4 border-b">取模</td>
+                                <td class="py-2 px-4 border-b">a % b</td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="py-2 px-4 border-b">++</td>
+                                <td class="py-2 px-4 border-b">自增</td>
+                                <td class="py-2 px-4 border-b">++a 或 a++</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 px-4 border-b">--</td>
+                                <td class="py-2 px-4 border-b">自减</td>
+                                <td class="py-2 px-4 border-b">--a 或 a--</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">控制流程</h2>
+                <p class="text-gray-600 mb-4">
+                    控制流程语句用于控制程序的执行顺序。
+                </p>
+                
+                <h3 class="text-xl font-bold text-gray-800 mb-3">条件语句</h3>
+                <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6 overflow-x-auto">
+// if-else语句
+if (age >= 18) {
+    System.out.println("成年人");
+} else {
+    System.out.println("未成年人");
+}
+
+// switch语句
+switch (grade) {
+    case 'A':
+        System.out.println("优秀");
+        break;
+    case 'B':
+        System.out.println("良好");
+        break;
+    case 'C':
+        System.out.println("及格");
+        break;
+    default:
+        System.out.println("不及格");
+}</pre>
+                
+                <h3 class="text-xl font-bold text-gray-800 mb-3">循环语句</h3>
+                <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6 overflow-x-auto">
+// for循环
+for (int i = 0; i < 10; i++) {
+    System.out.println("数字: " + i);
+}
+
+// while循环
+int j = 0;
+while (j < 5) {
+    System.out.println("j = " + j);
+    j++;
+}
+
+// do-while循环
+int k = 0;
+do {
+    System.out.println("k = " + k);
+    k++;
+} while (k < 3);</pre>
+                
+                <div class="bg-blue-50 rounded-lg p-6 mt-8">
+                    <h3 class="text-lg font-bold text-gray-800 mb-3">实践练习</h3>
+                    <p class="text-gray-600 mb-3">
+                        尝试编写一个简单的Java程序，实现以下功能：
+                    </p>
+                    <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                        <li>声明几个不同类型的变量并赋值</li>
+                        <li>使用各种运算符进行计算</li>
+                        <li>使用条件语句判断数值范围</li>
+                        <li>使用循环语句输出数列</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

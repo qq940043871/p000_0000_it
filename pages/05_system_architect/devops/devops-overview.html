@@ -1,0 +1,133 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>运维技巧 - 架构师学习笔记</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-4xl mx-auto p-6">
+        <div class="bg-white rounded-lg shadow-md p-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-server mr-3 text-primary"></i>运维技巧概述
+            </h1>
+            
+            <div class="prose max-w-none">
+                <p class="text-gray-600 mb-6">
+                    运维技巧是架构师必备的重要技能之一。现代系统的复杂性要求架构师不仅要设计出优秀的系统架构，还要了解如何部署、监控和维护这些系统。
+                </p>
+                
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+                    <p class="text-blue-700">
+                        运维不仅仅是处理故障，更是通过自动化和监控来预防问题的发生，确保系统的高可用性和稳定性。
+                    </p>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">核心运维技能</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-terminal mr-2 text-primary"></i>Linux系统管理
+                        </h3>
+                        <p class="text-gray-600">
+                            掌握Linux常用命令、系统调优、日志分析等技能，能够快速定位和解决问题。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-cube mr-2 text-primary"></i>容器化技术
+                        </h3>
+                        <p class="text-gray-600">
+                            熟练使用Docker和Kubernetes进行应用部署和管理，实现基础设施即代码。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-chart-line mr-2 text-primary"></i>监控与告警
+                        </h3>
+                        <p class="text-gray-600">
+                            建立完善的监控体系，及时发现系统异常，通过告警机制快速响应问题。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-sync mr-2 text-primary"></i>自动化运维
+                        </h3>
+                        <p class="text-gray-600">
+                            使用Ansible、Terraform等工具实现基础设施的自动化部署和管理。
+                        </p>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">学习路径</h2>
+                
+                <div class="space-y-4">
+                    <div class="flex items-start">
+                        <div class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 flex-shrink-0">1</div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800">Linux常用命令</h3>
+                            <p class="text-gray-600">掌握系统管理、文件操作、网络诊断等基础命令。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 flex-shrink-0">2</div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800">Docker实战</h3>
+                            <p class="text-gray-600">学习容器化技术，掌握镜像构建、容器编排等技能。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 flex-shrink-0">3</div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800">Kubernetes实战</h3>
+                            <p class="text-gray-600">深入理解容器编排平台，掌握服务部署和管理。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 flex-shrink-0">4</div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800">监控与告警</h3>
+                            <p class="text-gray-600">建立完善的监控体系，确保系统稳定运行。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-green-50 border-l-4 border-green-500 p-4 mt-8">
+                    <h3 class="text-lg font-semibold text-green-700 mb-2">运维最佳实践</h3>
+                    <ul class="list-disc pl-8 space-y-1 text-green-700">
+                        <li>建立标准化的操作流程和文档</li>
+                        <li>实施基础设施即代码，确保环境一致性</li>
+                        <li>定期进行系统备份和灾难恢复演练</li>
+                        <li>持续优化系统性能，关注资源利用率</li>
+                        <li>建立完善的监控和告警机制</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 添加导航菜单交互
+        document.addEventListener('DOMContentLoaded', function() {
+            // 运维技巧
+            const devopsLink = document.querySelector('a[href="#"][onclick*="devops-overview"]');
+            if (devopsLink) {
+                devopsLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    toggleMainMenu('devops');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+

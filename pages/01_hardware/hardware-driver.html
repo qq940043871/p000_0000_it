@@ -1,0 +1,1038 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>硬件驱动操作系统 - 架构师学习笔记</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            color: #e2e8f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* 主板样式 */
+        .motherboard {
+            background: linear-gradient(145deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 
+                0 25px 50px rgba(0,0,0,0.5),
+                inset 0 1px 0 rgba(255,255,255,0.1),
+                inset 0 -1px 0 rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+            border: 2px solid #2d3748;
+        }
+        
+        /* 主板纹理 */
+        .motherboard::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                repeating-linear-gradient(45deg, transparent, transparent 30px, rgba(255,255,255,0.02) 30px, rgba(255,255,255,0.02) 60px),
+                repeating-linear-gradient(-45deg, transparent, transparent 30px, rgba(255,255,255,0.02) 30px, rgba(255,255,255,0.02) 60px);
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        /* 硬件组件基础样式 */
+        .component {
+            background: linear-gradient(145deg, #2d3748 0%, #1a202c 100%);
+            border: 2px solid #4a5568;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease;
+            box-shadow: 
+                0 4px 6px rgba(0,0,0,0.3),
+                inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+        
+        .component:hover {
+            transform: translateY(-3px);
+            box-shadow: 
+                0 8px 12px rgba(0,0,0,0.4),
+                inset 0 1px 0 rgba(255,255,255,0.1);
+            border-color: #718096;
+        }
+        
+        .component.active {
+            background: linear-gradient(145deg, #10b981 0%, #059669 100%);
+            border-color: #34d399;
+            box-shadow: 
+                0 0 20px rgba(16, 185, 129, 0.6),
+                inset 0 1px 0 rgba(255,255,255,0.2);
+            transform: scale(1.02);
+        }
+        
+        .component.processing {
+            background: linear-gradient(145deg, #3b82f6 0%, #2563eb 100%);
+            border-color: #60a5fa;
+            box-shadow: 
+                0 0 20px rgba(59, 130, 246, 0.6),
+                inset 0 1px 0 rgba(255,255,255,0.2);
+        }
+        
+        /* CPU样式 */
+        .cpu {
+            background: linear-gradient(145deg, #f59e0b 0%, #d97706 100%);
+            border-color: #fbbf24;
+            grid-column: span 2;
+        }
+        
+        /* 内存样式 */
+        .memory {
+            background: linear-gradient(145deg, #3b82f6 0%, #2563eb 100%);
+            border-color: #60a5fa;
+        }
+        
+        /* 芯片组样式 */
+        .chipset {
+            background: linear-gradient(145deg, #8b5cf6 0%, #7c3aed 100%);
+            border-color: #a78bfa;
+        }
+        
+        /* BIOS样式 */
+        .bios {
+            background: linear-gradient(145deg, #ef4444 0%, #dc2626 100%);
+            border-color: #f87171;
+        }
+        
+        /* 电源样式 */
+        .power {
+            background: linear-gradient(145deg, #22c55e 0%, #16a34a 100%);
+            border-color: #4ade80;
+        }
+        
+        /* 时钟样式 */
+        .clock {
+            background: linear-gradient(145deg, #ec4899 0%, #db2777 100%);
+            border-color: #f472b6;
+        }
+        
+        /* 组件图标 */
+        .component i {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .component h3 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #e2e8f0;
+        }
+        
+        .component p {
+            font-size: 0.75rem;
+            color: #a0aec0;
+        }
+        
+        /* 总线样式 */
+        .bus {
+            position: absolute;
+            background: linear-gradient(to right, #4a5568, #718096, #4a5568);
+            z-index: 0;
+            border-radius: 2px;
+        }
+        
+        .bus.horizontal {
+            height: 4px;
+            width: 100%;
+        }
+        
+        .bus.vertical {
+            width: 4px;
+            height: 100%;
+        }
+        
+        /* 数据流动画 */
+        .data-flow {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.8);
+            z-index: 2;
+            opacity: 0;
+        }
+        
+        .data-flow.active {
+            animation: flow 1s linear infinite;
+        }
+        
+        @keyframes flow {
+            0% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+        }
+        
+        /* LED指示灯 */
+        .led {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ef4444;
+            box-shadow: 0 0 8px rgba(239, 68, 68, 0.8);
+            top: 8px;
+            right: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .led.on {
+            background: #10b981;
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.8);
+        }
+        
+        /* 控制面板 */
+        .control-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+            margin: 5px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(59, 130, 246, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn.power-btn {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            box-shadow: 0 4px 6px rgba(34, 197, 94, 0.3);
+        }
+        
+        .btn.power-btn:hover {
+            box-shadow: 0 6px 12px rgba(34, 197, 94, 0.4);
+        }
+        
+        .btn.app-btn {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            box-shadow: 0 4px 6px rgba(245, 158, 11, 0.3);
+        }
+        
+        .btn.app-btn:hover {
+            box-shadow: 0 6px 12px rgba(245, 158, 11, 0.4);
+        }
+        
+        /* 终端样式 */
+        .terminal {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #10b981;
+            overflow-y: auto;
+            max-height: 200px;
+            border: 1px solid #334155;
+            margin-top: 15px;
+        }
+        
+        .terminal-line {
+            margin-bottom: 5px;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* 进度条 */
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #374151;
+            border-radius: 3px;
+            margin: 8px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #10b981, #059669);
+            width: 0%;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
+        }
+        
+        /* 主板布局网格 */
+        .motherboard-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            gap: 15px;
+            position: relative;
+            min-height: 500px;
+        }
+        
+        /* 标题样式 */
+        h1, h2, h3 {
+            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* 信息面板 */
+        .info-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
+        
+        .step {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #d1d5db;
+            transition: all 0.3s ease;
+        }
+        
+        .step.active {
+            background: #10b981;
+            transform: scale(1.3);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
+        }
+        
+        /* 接口样式 */
+        .interface {
+            background: linear-gradient(145deg, #4a5568 0%, #2d3748 100%);
+            border: 2px solid #718096;
+            border-radius: 4px;
+            padding: 8px;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #a0aec0;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1024px) {
+            .motherboard-grid {
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: repeat(6, 1fr);
+            }
+            
+            .cpu {
+                grid-column: span 1;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .motherboard-grid {
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: repeat(8, 1fr);
+            }
+            
+            .motherboard {
+                padding: 20px;
+            }
+            
+            .component {
+                padding: 10px;
+            }
+            
+            .component i {
+                font-size: 1.5rem;
+            }
+        }
+        
+        /* 状态指示器 */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        
+        .status-badge.offline {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .status-badge.online {
+            background: #10b981;
+            color: white;
+        }
+        
+        .status-badge.processing {
+            background: #3b82f6;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold mb-4">
+                <i class="fas fa-microchip mr-2"></i>硬件驱动操作系统
+            </h1>
+            <p class="text-gray-400 text-lg">真实主板布局模拟 - 硬件工作原理可视化</p>
+        </header>
+        
+        <!-- 控制面板 -->
+        <div class="control-panel">
+            <div class="text-center mb-4">
+                <h3 class="text-gray-800 font-semibold">系统控制面板</h3>
+            </div>
+            <div class="flex" style="justify-content: center; flex-wrap: wrap;">
+                <button class="btn power-btn" onclick="startPowerOn()">
+                    <i class="fas fa-power-off mr-2"></i>电源启动
+                </button>
+                <button class="btn app-btn" onclick="startAppLaunch()">
+                    <i class="fas fa-rocket mr-2"></i>启动应用
+                </button>
+                <button class="btn" onclick="resetSystem()">
+                    <i class="fas fa-redo mr-2"></i>重置系统
+                </button>
+                <button class="btn" onclick="toggleSpeed()">
+                    <i class="fas fa-tachometer-alt mr-2"></i>速度: <span id="speedDisplay">正常</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 系统状态面板 -->
+        <div class="info-panel">
+            <div class="step-indicator" id="stepIndicator">
+                <div class="step active" data-step="0"></div>
+                <div class="step" data-step="1"></div>
+                <div class="step" data-step="2"></div>
+                <div class="step" data-step="3"></div>
+                <div class="step" data-step="4"></div>
+                <div class="step" data-step="5"></div>
+            </div>
+            
+            <div class="text-center mb-4">
+                <h3 class="text-gray-800 font-semibold" id="currentStepTitle">系统待机</h3>
+                <p class="text-gray-600 text-sm" id="currentStepDescription">等待用户操作</p>
+            </div>
+            
+            <div class="terminal" id="terminal">
+                <div class="terminal-line">[系统] 等待电源启动...</div>
+            </div>
+        </div>
+        
+        <!-- 主板视图 -->
+        <div class="motherboard">
+            <div class="motherboard-grid">
+                <!-- 电源接口 -->
+                <div class="component power" id="powerSupply" style="grid-column: 1; grid-row: 1;">
+                    <div class="led" id="powerLed"></div>
+                    <i class="fas fa-bolt"></i>
+                    <h3>电源供应</h3>
+                    <p>ATX 24Pin</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="powerProgress"></div>
+                    </div>
+                </div>
+                
+                <!-- BIOS芯片 -->
+                <div class="component bios" id="biosChip" style="grid-column: 2; grid-row: 1;">
+                    <div class="led" id="biosLed"></div>
+                    <i class="fas fa-microchip"></i>
+                    <h3>BIOS芯片</h3>
+                    <p>UEFI固件</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="biosProgress"></div>
+                    </div>
+                </div>
+                
+                <!-- 时钟发生器 -->
+                <div class="component clock" id="clockGenerator" style="grid-column: 3; grid-row: 1;">
+                    <div class="led" id="clockLed"></div>
+                    <i class="fas fa-clock"></i>
+                    <h3>时钟发生器</h3>
+                    <p>4.0 GHz</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="clockProgress"></div>
+                    </div>
+                </div>
+                
+                <!-- 北桥芯片 -->
+                <div class="component chipset" id="northbridge" style="grid-column: 4; grid-row: 1;">
+                    <div class="led" id="northbridgeLed"></div>
+                    <i class="fas fa-server"></i>
+                    <h3>北桥芯片</h3>
+                    <p>内存控制器</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="northbridgeProgress"></div>
+                    </div>
+                </div>
+                
+                <!-- CPU -->
+                <div class="component cpu" id="cpu" style="grid-column: 5-6; grid-row: 1-2;">
+                    <div class="led" id="cpuLed"></div>
+                    <i class="fas fa-microchip"></i>
+                    <h3>CPU</h3>
+                    <p>8核心处理器</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="cpuProgress"></div>
+                    </div>
+                    <div class="text-xs text-gray-300 mt-1">
+                        状态: <span id="cpuStatus">待机</span>
+                    </div>
+                </div>
+                
+                <!-- 内存插槽1 -->
+                <div class="component memory" id="memory1" style="grid-column: 1; grid-row: 2;">
+                    <div class="led" id="memory1Led"></div>
+                    <i class="fas fa-memory"></i>
+                    <h3>内存插槽1</h3>
+                    <p>DDR4 8GB</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="memory1Progress"></div>
+                    </div>
+                </div>
+                
+                <!-- 内存插槽2 -->
+                <div class="component memory" id="memory2" style="grid-column: 2; grid-row: 2;">
+                    <div class="led" id="memory2Led"></div>
+                    <i class="fas fa-memory"></i>
+                    <h3>内存插槽2</h3>
+                    <p>DDR4 8GB</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="memory2Progress"></div>
+                    </div>
+                </div>
+                
+                <!-- 南桥芯片 -->
+                <div class="component chipset" id="southbridge" style="grid-column: 3; grid-row: 2;">
+                    <div class="led" id="southbridgeLed"></div>
+                    <i class="fas fa-server"></i>
+                    <h3>南桥芯片</h3>
+                    <p>I/O控制器</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="southbridgeProgress"></div>
+                    </div>
+                </div>
+                
+                <!-- 存储控制器 -->
+                <div class="component" id="storageController" style="grid-column: 4; grid-row: 2;">
+                    <div class="led" id="storageLed"></div>
+                    <i class="fas fa-hdd"></i>
+                    <h3>存储控制器</h3>
+                    <p>SATA/NVMe</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="storageProgress"></div>
+                    </div>
+                </div>
+                
+                <!-- GPU -->
+                <div class="component" id="gpu" style="grid-column: 1-2; grid-row: 3;">
+                    <div class="led" id="gpuLed"></div>
+                    <i class="fas fa-tv"></i>
+                    <h3>显卡</h3>
+                    <p>PCIe x16</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="gpuProgress"></div>
+                    </div>
+                </div>
+                
+                <!-- 网卡 -->
+                <div class="component" id="networkCard" style="grid-column: 3; grid-row: 3;">
+                    <div class="led" id="networkLed"></div>
+                    <i class="fas fa-wifi"></i>
+                    <h3>网卡</h3>
+                    <p>PCIe x1</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="networkProgress"></div>
+                    </div>
+                </div>
+                
+                <!-- USB控制器 -->
+                <div class="component" id="usbController" style="grid-column: 4; grid-row: 3;">
+                    <div class="led" id="usbLed"></div>
+                    <i class="fas fa-usb"></i>
+                    <h3>USB控制器</h3>
+                    <p>USB 3.2</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="usbProgress"></div>
+                    </div>
+                </div>
+                
+                <!-- 操作系统内核 -->
+                <div class="component" id="osKernel" style="grid-column: 5-6; grid-row: 3;">
+                    <div class="led" id="osLed"></div>
+                    <i class="fas fa-server"></i>
+                    <h3>操作系统内核</h3>
+                    <p>Linux Kernel</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="osProgress"></div>
+                    </div>
+                    <div class="text-xs text-gray-300 mt-1">
+                        内存: <span id="osMemory">0%</span>
+                    </div>
+                </div>
+                
+                <!-- 应用程序 -->
+                <div class="component" id="application" style="grid-column: 1-3; grid-row: 4;">
+                    <div class="led" id="appLed"></div>
+                    <i class="fas fa-code"></i>
+                    <h3>应用程序</h3>
+                    <p>用户进程</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="appProgress"></div>
+                    </div>
+                </div>
+                
+                <!-- 显示输出 -->
+                <div class="component" id="displayOutput" style="grid-column: 4-6; grid-row: 4;">
+                    <div class="led" id="displayLed"></div>
+                    <i class="fas fa-desktop"></i>
+                    <h3>显示输出</h3>
+                    <p>显示器</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="displayProgress"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 总线连接 -->
+            <div class="bus horizontal" style="top: 50%; left: 0; width: 100%;"></div>
+            <div class="bus vertical" style="left: 50%; top: 0; height: 100%;"></div>
+        </div>
+        
+        <!-- 流程说明 -->
+        <div class="info-panel mt-8">
+            <h2 class="text-2xl font-bold mb-4">工作流程说明</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="font-semibold mb-3 text-gray-800">
+                        <i class="fas fa-power-off text-green-500 mr-2"></i>电源启动流程
+                    </h3>
+                    <ol class="text-gray-600 space-y-2 text-sm">
+                        <li>1. 电源供应器提供电力</li>
+                        <li>2. BIOS芯片进行硬件自检</li>
+                        <li>3. 时钟发生器启动系统时钟</li>
+                        <li>4. 北桥芯片初始化内存控制器</li>
+                        <li>5. CPU开始执行引导程序</li>
+                        <li>6. 操作系统内核加载到内存</li>
+                    </ol>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold mb-3 text-gray-800">
+                        <i class="fas fa-rocket text-orange-500 mr-2"></i>应用启动流程
+                    </h3>
+                    <ol class="text-gray-600 space-y-2 text-sm">
+                        <li>1. 用户双击应用程序图标</li>
+                        <li>2. 操作系统创建新进程</li>
+                        <li>3. 分配内存空间</li>
+                        <li>4. 加载程序代码到内存</li>
+                        <li>5. CPU开始执行程序指令</li>
+                        <li>6. 显示输出到屏幕</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 系统状态
+        let systemState = {
+            isPoweredOn: false,
+            isAnimating: false,
+            currentStep: 0,
+            animationSpeed: 1000,
+            memoryUsage: 0
+        };
+        
+        // 电源启动步骤
+        const powerOnSteps = [
+            {
+                title: "电源供应",
+                description: "电源供应器开始供电，主板各组件获得电力",
+                component: "powerSupply",
+                duration: 1500,
+                terminal: "[电源] ATX电源供应器启动，提供+12V、+5V、+3.3V电压"
+            },
+            {
+                title: "BIOS自检",
+                description: "BIOS芯片进行硬件自检和初始化",
+                component: "biosChip",
+                duration: 2000,
+                terminal: "[BIOS] 系统自检开始... 检测CPU、内存、存储设备"
+            },
+            {
+                title: "时钟启动",
+                description: "时钟发生器开始产生系统时钟信号",
+                component: "clockGenerator",
+                duration: 1000,
+                terminal: "[时钟] 系统时钟启动，频率: 4.0 GHz"
+            },
+            {
+                title: "芯片组初始化",
+                description: "北桥和南桥芯片组初始化",
+                component: "northbridge",
+                duration: 1500,
+                terminal: "[芯片组] 北桥芯片初始化内存控制器，南桥芯片初始化I/O控制器"
+            },
+            {
+                title: "CPU启动",
+                description: "CPU开始执行引导程序",
+                component: "cpu",
+                duration: 2000,
+                terminal: "[CPU] 处理器启动，开始执行引导程序"
+            },
+            {
+                title: "系统加载",
+                description: "操作系统内核加载到内存",
+                component: "osKernel",
+                duration: 2500,
+                terminal: "[系统] 操作系统内核加载完成，系统启动成功"
+            }
+        ];
+        
+        // 应用启动步骤
+        const appLaunchSteps = [
+            {
+                title: "用户操作",
+                description: "用户双击应用程序图标",
+                component: "application",
+                duration: 1000,
+                terminal: "[用户] 双击应用程序图标"
+            },
+            {
+                title: "进程创建",
+                description: "操作系统创建新进程",
+                component: "osKernel",
+                duration: 1500,
+                terminal: "[系统] 创建新进程，分配进程ID"
+            },
+            {
+                title: "内存分配",
+                description: "为应用程序分配内存空间",
+                component: "memory1",
+                duration: 1500,
+                terminal: "[内存] 分配内存空间，加载程序代码"
+            },
+            {
+                title: "程序加载",
+                description: "应用程序代码加载到内存",
+                component: "storageController",
+                duration: 2000,
+                terminal: "[存储] 从磁盘读取程序文件到内存"
+            },
+            {
+                title: "CPU执行",
+                description: "CPU开始执行应用程序指令",
+                component: "cpu",
+                duration: 2000,
+                terminal: "[CPU] 开始执行应用程序指令"
+            },
+            {
+                title: "显示输出",
+                description: "应用程序界面显示到屏幕",
+                component: "displayOutput",
+                duration: 1500,
+                terminal: "[显示] 应用程序界面渲染完成"
+            }
+        ];
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStepDisplay();
+            startClockAnimation();
+        });
+        
+        // 时钟动画
+        function startClockAnimation() {
+            const clockProgress = document.getElementById('clockProgress');
+            
+            setInterval(() => {
+                if (systemState.isPoweredOn) {
+                    clockProgress.style.width = '100%';
+                    setTimeout(() => {
+                        clockProgress.style.width = '0%';
+                    }, 500);
+                }
+            }, systemState.animationSpeed);
+        }
+        
+        // 电源启动
+        function startPowerOn() {
+            if (systemState.isAnimating) return;
+            
+            systemState.isAnimating = true;
+            systemState.isPoweredOn = true;
+            systemState.currentStep = 0;
+            
+            clearTerminal();
+            addTerminalLine("[系统] 开始电源启动流程...");
+            
+            // 逐步执行电源启动步骤
+            let delay = 0;
+            powerOnSteps.forEach((step, index) => {
+                setTimeout(() => {
+                    executeStep(step, index, powerOnSteps);
+                }, delay);
+                delay += step.duration;
+            });
+            
+            // 启动完成
+            setTimeout(() => {
+                systemState.isAnimating = false;
+                addTerminalLine("[系统] 电源启动完成，系统正常运行");
+                activateComponent('powerLed');
+            }, delay);
+        }
+        
+        // 应用启动
+        function startAppLaunch() {
+            if (!systemState.isPoweredOn) {
+                addTerminalLine("[错误] 系统未启动，请先启动电源");
+                return;
+            }
+            
+            if (systemState.isAnimating) return;
+            
+            systemState.isAnimating = true;
+            systemState.currentStep = 0;
+            
+            addTerminalLine("[系统] 开始应用程序启动流程...");
+            
+            // 逐步执行应用启动步骤
+            let delay = 0;
+            appLaunchSteps.forEach((step, index) => {
+                setTimeout(() => {
+                    executeStep(step, index, appLaunchSteps);
+                }, delay);
+                delay += step.duration;
+            });
+            
+            // 启动完成
+            setTimeout(() => {
+                systemState.isAnimating = false;
+                addTerminalLine("[系统] 应用程序启动完成");
+            }, delay);
+        }
+        
+        // 执行步骤
+        function executeStep(step, index, steps) {
+            systemState.currentStep = index;
+            updateStepDisplay();
+            
+            // 更新标题和描述
+            document.getElementById('currentStepTitle').textContent = step.title;
+            document.getElementById('currentStepDescription').textContent = step.description;
+            
+            // 激活组件
+            activateComponent(step.component);
+            
+            // 更新进度条
+            updateProgress(step.component, 100);
+            
+            // 添加终端信息
+            addTerminalLine(step.terminal);
+            
+            // 激活LED
+            const ledId = step.component.replace('Component', 'Led');
+            const led = document.getElementById(ledId);
+            if (led) {
+                led.classList.add('on');
+            }
+            
+            // 闪烁CPU
+            if (step.component === 'cpu') {
+                flashCpu();
+            }
+        }
+        
+        // 激活组件
+        function activateComponent(componentId) {
+            const component = document.getElementById(componentId);
+            if (component) {
+                component.classList.add('active');
+                setTimeout(() => {
+                    component.classList.remove('active');
+                }, 1000);
+            }
+        }
+        
+        // 更新进度条
+        function updateProgress(componentId, value) {
+            const progressId = componentId + 'Progress';
+            const progress = document.getElementById(progressId);
+            if (progress) {
+                progress.style.width = value + '%';
+            }
+        }
+        
+        // CPU闪烁
+        function flashCpu() {
+            const cpu = document.getElementById('cpu');
+            const cpuLed = document.getElementById('cpuLed');
+            
+            if (cpu && cpuLed) {
+                cpu.classList.add('processing');
+                cpuLed.classList.add('on');
+                
+                setTimeout(() => {
+                    cpu.classList.remove('processing');
+                    cpuLed.classList.remove('on');
+                }, 2000);
+            }
+        }
+        
+        // 更新步骤显示
+        function updateStepDisplay() {
+            const steps = document.querySelectorAll('.step');
+            steps.forEach((step, index) => {
+                if (index <= systemState.currentStep) {
+                    step.classList.add('active');
+                } else {
+                    step.classList.remove('active');
+                }
+            });
+        }
+        
+        // 添加终端行
+        function addTerminalLine(text) {
+            const terminal = document.getElementById('terminal');
+            const line = document.createElement('div');
+            line.className = 'terminal-line';
+            line.textContent = `[${new Date().toLocaleTimeString()}] ${text}`;
+            terminal.appendChild(line);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+        
+        // 清空终端
+        function clearTerminal() {
+            const terminal = document.getElementById('terminal');
+            terminal.innerHTML = '';
+        }
+        
+        // 重置系统
+        function resetSystem() {
+            systemState.isPoweredOn = false;
+            systemState.isAnimating = false;
+            systemState.currentStep = 0;
+            
+            // 重置所有组件
+            document.querySelectorAll('.component').forEach(component => {
+                component.classList.remove('active', 'processing');
+            });
+            
+            // 重置所有LED
+            document.querySelectorAll('.led').forEach(led => {
+                led.classList.remove('on');
+            });
+            
+            // 重置所有进度条
+            document.querySelectorAll('.progress-fill').forEach(progress => {
+                progress.style.width = '0%';
+            });
+            
+            // 重置步骤指示器
+            updateStepDisplay();
+            
+            // 重置终端
+            clearTerminal();
+            addTerminalLine("[系统] 系统已重置，等待电源启动...");
+            
+            // 重置标题
+            document.getElementById('currentStepTitle').textContent = "系统待机";
+            document.getElementById('currentStepDescription').textContent = "等待用户操作";
+        }
+        
+        // 切换速度
+        function toggleSpeed() {
+            const speedDisplay = document.getElementById('speedDisplay');
+            
+            if (systemState.animationSpeed === 1000) {
+                systemState.animationSpeed = 500;
+                speedDisplay.textContent = "快速";
+            } else if (systemState.animationSpeed === 500) {
+                systemState.animationSpeed = 200;
+                speedDisplay.textContent = "极速";
+            } else {
+                systemState.animationSpeed = 1000;
+                speedDisplay.textContent = "正常";
+            }
+        }
+        
+        // 键盘快捷键
+        document.addEventListener('keydown', function(event) {
+            if (event.code === 'Space') {
+                event.preventDefault();
+                if (!systemState.isPoweredOn) {
+                    startPowerOn();
+                } else {
+                    startAppLaunch();
+                }
+            } else if (event.code === 'KeyR') {
+                resetSystem();
+            }
+        });
+    </script>
+</body>
+</html>
+

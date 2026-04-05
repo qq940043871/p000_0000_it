@@ -1,0 +1,921 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>最小计算机 — 数字电路仿真</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #080a0f; color: #e2e8f0; font-family: 'JetBrains Mono', 'Courier New', monospace; overflow-x: hidden; }
+
+/* Layout */
+.app { display: grid; grid-template-columns: 280px 1fr 260px; grid-template-rows: 50px 1fr 180px; height: 100vh; gap: 1px; background: #1a1f2e; }
+.topbar { grid-column: 1/-1; background: #0d1117; display: flex; align-items: center; padding: 0 16px; gap: 16px; border-bottom: 1px solid #1a1f2e; }
+.topbar h1 { font-size: 13px; color: #58a6ff; letter-spacing: 2px; }
+.topbar .badge { font-size: 9px; padding: 2px 8px; border-radius: 10px; background: rgba(88,166,255,.1); color: #58a6ff; border: 1px solid rgba(88,166,255,.2); }
+.btn { font-size: 11px; padding: 5px 14px; border-radius: 4px; border: none; cursor: pointer; font-family: inherit; letter-spacing: 1px; transition: all .15s; }
+.btn-run { background: #238636; color: #fff; }
+.btn-run:hover { background: #2ea043; }
+.btn-run.running { background: #da3633; }
+.btn-step { background: #1f6feb; color: #fff; }
+.btn-step:hover { background: #388bfd; }
+.btn-reset { background: #21262d; color: #8b949e; border: 1px solid #30363d; }
+.btn-reset:hover { background: #30363d; }
+.speed-wrap { display: flex; align-items: center; gap: 8px; margin-left: auto; font-size: 10px; color: #8b949e; }
+.speed-wrap input { width: 80px; accent-color: #58a6ff; }
+
+/* Panels */
+.panel { background: #0d1117; overflow: hidden; display: flex; flex-direction: column; }
+.panel-hd { padding: 8px 12px; font-size: 9px; letter-spacing: 2px; color: #8b949e; border-bottom: 1px solid #1a1f2e; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.panel-hd .dot { width: 6px; height: 6px; border-radius: 50%; }
+.panel-body { flex: 1; overflow-y: auto; padding: 10px; }
+
+/* CPU Panel */
+.cpu-panel { }
+.reg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.reg { background: #161b22; border: 1px solid #21262d; border-radius: 6px; padding: 8px 10px; }
+.reg-name { font-size: 9px; color: #8b949e; letter-spacing: 1px; margin-bottom: 4px; }
+.reg-val { font-size: 16px; font-weight: 700; color: #58a6ff; letter-spacing: 2px; }
+.reg-bin { font-size: 8px; color: #30363d; margin-top: 2px; word-break: break-all; }
+.reg.active { border-color: #58a6ff; background: rgba(88,166,255,.05); }
+.reg.active .reg-val { color: #79c0ff; }
+
+.flags-row { display: flex; gap: 6px; margin-top: 8px; }
+.flag { flex: 1; background: #161b22; border: 1px solid #21262d; border-radius: 4px; padding: 5px; text-align: center; }
+.flag-name { font-size: 8px; color: #8b949e; }
+.flag-val { font-size: 14px; font-weight: 700; }
+.flag.on { border-color: #3fb950; background: rgba(63,185,80,.1); }
+.flag.on .flag-val { color: #3fb950; }
+.flag.off .flag-val { color: #30363d; }
+
+.alu-vis { margin-top: 10px; background: #161b22; border: 1px solid #21262d; border-radius: 6px; padding: 10px; }
+.alu-title { font-size: 9px; color: #8b949e; margin-bottom: 8px; }
+.alu-op { font-size: 11px; color: #d2a8ff; text-align: center; padding: 4px; background: rgba(210,168,255,.05); border-radius: 4px; }
+
+/* Canvas area */
+.canvas-panel { position: relative; }
+#circuit-canvas { width: 100%; height: 100%; display: block; }
+
+/* Memory Panel */
+.mem-panel { }
+.mem-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; }
+.mem-cell { background: #161b22; border: 1px solid #21262d; border-radius: 3px; padding: 4px 2px; text-align: center; font-size: 9px; cursor: pointer; transition: all .1s; }
+.mem-cell:hover { border-color: #58a6ff; }
+.mem-cell .addr { color: #8b949e; font-size: 7px; }
+.mem-cell .val { color: #e6edf3; font-weight: 700; }
+.mem-cell.pc { border-color: #f78166; background: rgba(247,129,102,.1); }
+.mem-cell.pc .val { color: #f78166; }
+.mem-cell.active { border-color: #3fb950; background: rgba(63,185,80,.1); }
+.mem-cell.active .val { color: #3fb950; }
+
+/* Bottom: Console + Bus */
+.bottom-panel { grid-column: 1/-1; background: #0d1117; border-top: 1px solid #1a1f2e; display: flex; }
+.console { flex: 1; padding: 8px 12px; overflow-y: auto; font-size: 11px; }
+.console-hd { font-size: 9px; color: #8b949e; letter-spacing: 2px; margin-bottom: 6px; }
+.log-line { padding: 1px 0; border-bottom: 1px solid rgba(255,255,255,.02); }
+.log-line .ts { color: #30363d; margin-right: 8px; }
+.log-line .msg { }
+.log-line.info .msg { color: #58a6ff; }
+.log-line.ok .msg { color: #3fb950; }
+.log-line.warn .msg { color: #d29922; }
+.log-line.exec .msg { color: #d2a8ff; }
+.log-line.mem .msg { color: #79c0ff; }
+
+.bus-vis { width: 320px; padding: 8px 12px; border-left: 1px solid #1a1f2e; }
+.bus-hd { font-size: 9px; color: #8b949e; letter-spacing: 2px; margin-bottom: 8px; }
+.bus-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.bus-label { font-size: 9px; color: #8b949e; width: 60px; flex-shrink: 0; }
+.bus-bits { display: flex; gap: 2px; flex: 1; }
+.bus-bit { width: 10px; height: 16px; border-radius: 2px; background: #161b22; border: 1px solid #21262d; transition: all .1s; }
+.bus-bit.hi { background: #58a6ff; border-color: #58a6ff; box-shadow: 0 0 4px rgba(88,166,255,.5); }
+.bus-val { font-size: 9px; color: #8b949e; width: 40px; text-align: right; }
+
+/* Program editor */
+.prog-panel { width: 260px; border-left: 1px solid #1a1f2e; display: flex; flex-direction: column; }
+.prog-hd { padding: 8px 12px; font-size: 9px; letter-spacing: 2px; color: #8b949e; border-bottom: 1px solid #1a1f2e; }
+.prog-list { flex: 1; overflow-y: auto; padding: 6px; }
+.prog-line { display: flex; align-items: center; gap: 6px; padding: 4px 6px; border-radius: 4px; font-size: 10px; cursor: pointer; border: 1px solid transparent; }
+.prog-line:hover { background: #161b22; }
+.prog-line.current { background: rgba(88,166,255,.1); border-color: rgba(88,166,255,.3); }
+.prog-line .laddr { color: #30363d; width: 28px; flex-shrink: 0; }
+.prog-line .lhex { color: #8b949e; width: 20px; flex-shrink: 0; }
+.prog-line .lasm { color: #e6edf3; flex: 1; }
+.prog-line .lasm .op { color: #79c0ff; }
+.prog-line .lasm .arg { color: #d2a8ff; }
+.prog-line.current .lasm .op { color: #58a6ff; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #21262d; border-radius: 2px; }
+
+/* Clock indicator */
+.clk-ind { display: flex; align-items: center; gap: 6px; font-size: 10px; color: #8b949e; }
+.clk-dot { width: 8px; height: 8px; border-radius: 50%; background: #21262d; transition: background .05s; }
+.clk-dot.tick { background: #3fb950; box-shadow: 0 0 6px #3fb950; }
+.cycle-count { font-size: 10px; color: #58a6ff; }
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- Top Bar -->
+<div class="topbar">
+  <h1>⚡ MINIMAL COMPUTER SIM</h1>
+  <span class="badge">8-BIT CPU · 16B RAM · 数字电路仿真</span>
+  <button class="btn btn-run" id="btnRun" onclick="toggleRun()">▶ 运行</button>
+  <button class="btn btn-step" onclick="stepOnce()">⏭ 单步</button>
+  <button class="btn btn-reset" onclick="resetCPU()">↺ 复位</button>
+  <div class="speed-wrap">
+    <span>速度</span>
+    <input type="range" id="speedSlider" min="1" max="20" value="5" oninput="updateSpeed()">
+    <span id="speedLabel">5 Hz</span>
+  </div>
+  <div class="clk-ind">
+    <div class="clk-dot" id="clkDot"></div>
+    <span>CLK</span>
+    <span class="cycle-count" id="cycleCount">0 cycles</span>
+  </div>
+</div>
+
+<!-- Left: CPU Registers -->
+<div class="panel cpu-panel">
+  <div class="panel-hd"><div class="dot" style="background:#f78166"></div>CPU 寄存器</div>
+  <div class="panel-body">
+    <div class="reg-grid">
+      <div class="reg" id="reg-A">
+        <div class="reg-name">A — 累加器</div>
+        <div class="reg-val" id="rv-A">00</div>
+        <div class="reg-bin" id="rb-A">00000000</div>
+      </div>
+      <div class="reg" id="reg-B">
+        <div class="reg-name">B — 通用</div>
+        <div class="reg-val" id="rv-B">00</div>
+        <div class="reg-bin" id="rb-B">00000000</div>
+      </div>
+      <div class="reg" id="reg-PC">
+        <div class="reg-name">PC — 程序计数器</div>
+        <div class="reg-val" id="rv-PC">00</div>
+        <div class="reg-bin" id="rb-PC">00000000</div>
+      </div>
+      <div class="reg" id="reg-SP">
+        <div class="reg-name">SP — 栈指针</div>
+        <div class="reg-val" id="rv-SP">0F</div>
+        <div class="reg-bin" id="rb-SP">00001111</div>
+      </div>
+      <div class="reg" id="reg-IR">
+        <div class="reg-name">IR — 指令寄存器</div>
+        <div class="reg-val" id="rv-IR">00</div>
+        <div class="reg-bin" id="rb-IR">00000000</div>
+      </div>
+      <div class="reg" id="reg-MAR">
+        <div class="reg-name">MAR — 内存地址</div>
+        <div class="reg-val" id="rv-MAR">00</div>
+        <div class="reg-bin" id="rb-MAR">00000000</div>
+      </div>
+    </div>
+
+    <div class="flags-row">
+      <div class="flag off" id="flag-Z">
+        <div class="flag-name">Z</div>
+        <div class="flag-val" id="fv-Z">0</div>
+      </div>
+      <div class="flag off" id="flag-C">
+        <div class="flag-name">C</div>
+        <div class="flag-val" id="fv-C">0</div>
+      </div>
+      <div class="flag off" id="flag-N">
+        <div class="flag-name">N</div>
+        <div class="flag-val" id="fv-N">0</div>
+      </div>
+      <div class="flag off" id="flag-V">
+        <div class="flag-name">V</div>
+        <div class="flag-val" id="fv-V">0</div>
+      </div>
+    </div>
+
+    <div class="alu-vis">
+      <div class="alu-title">ALU — 算术逻辑单元</div>
+      <div class="alu-op" id="aluOp">待机</div>
+    </div>
+
+    <div style="margin-top:10px;background:#161b22;border:1px solid #21262d;border-radius:6px;padding:10px;">
+      <div style="font-size:9px;color:#8b949e;margin-bottom:8px;">指令集 (ISA)</div>
+      <div style="font-size:9px;color:#8b949e;line-height:1.9;">
+        <span style="color:#79c0ff">LDA</span> #n — 加载立即数到A<br>
+        <span style="color:#79c0ff">LDB</span> #n — 加载立即数到B<br>
+        <span style="color:#79c0ff">ADD</span> — A = A + B<br>
+        <span style="color:#79c0ff">SUB</span> — A = A - B<br>
+        <span style="color:#79c0ff">AND</span> — A = A &amp; B<br>
+        <span style="color:#79c0ff">OR</span>  — A = A | B<br>
+        <span style="color:#79c0ff">STA</span> addr — 存A到内存<br>
+        <span style="color:#79c0ff">LDA</span> addr — 从内存加载A<br>
+        <span style="color:#79c0ff">JMP</span> addr — 无条件跳转<br>
+        <span style="color:#79c0ff">JZ</span>  addr — 零则跳转<br>
+        <span style="color:#79c0ff">HLT</span> — 停机
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Center: Circuit Canvas -->
+<div class="panel canvas-panel">
+  <div class="panel-hd"><div class="dot" style="background:#58a6ff"></div>电路可视化 — 实时信号流</div>
+  <canvas id="circuit-canvas"></canvas>
+</div>
+
+<!-- Right: Memory -->
+<div class="panel mem-panel">
+  <div class="panel-hd"><div class="dot" style="background:#3fb950"></div>内存 (16 字节 RAM)</div>
+  <div class="panel-body">
+    <div class="mem-grid" id="memGrid"></div>
+    <div style="margin-top:12px;background:#161b22;border:1px solid #21262d;border-radius:6px;padding:10px;">
+      <div style="font-size:9px;color:#8b949e;margin-bottom:8px;">程序 (点击加载)</div>
+      <div style="display:flex;flex-direction:column;gap:4px;" id="progBtns"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom: Console + Bus -->
+<div class="bottom-panel">
+  <div class="console" id="console">
+    <div class="console-hd">// 系统日志</div>
+  </div>
+  <div class="bus-vis">
+    <div class="bus-hd">// 总线状态</div>
+    <div class="bus-row">
+      <div class="bus-label">地址总线</div>
+      <div class="bus-bits" id="addrBus"></div>
+      <div class="bus-val" id="addrVal">0x00</div>
+    </div>
+    <div class="bus-row">
+      <div class="bus-label">数据总线</div>
+      <div class="bus-bits" id="dataBus"></div>
+      <div class="bus-val" id="dataVal">0x00</div>
+    </div>
+    <div class="bus-row">
+      <div class="bus-label">控制总线</div>
+      <div class="bus-bits" id="ctrlBus"></div>
+      <div class="bus-val" id="ctrlVal">IDLE</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+// ============================================================
+// CPU 状态
+// ============================================================
+const cpu = {
+  A: 0, B: 0, PC: 0, SP: 15, IR: 0, MAR: 0,
+  flagZ: 0, flagC: 0, flagN: 0, flagV: 0,
+  halted: false, cycles: 0,
+  lastReg: null, lastOp: ''
+};
+
+const RAM = new Uint8Array(16);
+
+// 指令集
+const OP = {
+  LDA_IMM: 0x01, LDB_IMM: 0x02,
+  ADD: 0x10, SUB: 0x11, AND: 0x12, OR: 0x13, XOR: 0x14, NOT: 0x15,
+  STA: 0x20, LDA_MEM: 0x21,
+  JMP: 0x30, JZ: 0x31, JNZ: 0x32, JC: 0x33,
+  PUSH: 0x40, POP: 0x41,
+  NOP: 0x00, HLT: 0xFF
+};
+
+// 预设程序
+const PROGRAMS = [
+  {
+    name: '1+2=3 加法演示',
+    code: [
+      { op: OP.LDA_IMM, arg: 1,  asm: 'LDA #01' },
+      { op: OP.LDB_IMM, arg: 2,  asm: 'LDB #02' },
+      { op: OP.ADD,     arg: null, asm: 'ADD' },
+      { op: OP.STA,     arg: 8,  asm: 'STA 08' },
+      { op: OP.HLT,     arg: null, asm: 'HLT' },
+    ]
+  },
+  {
+    name: '10-3=7 减法演示',
+    code: [
+      { op: OP.LDA_IMM, arg: 10, asm: 'LDA #0A' },
+      { op: OP.LDB_IMM, arg: 3,  asm: 'LDB #03' },
+      { op: OP.SUB,     arg: null, asm: 'SUB' },
+      { op: OP.STA,     arg: 8,  asm: 'STA 08' },
+      { op: OP.HLT,     arg: null, asm: 'HLT' },
+    ]
+  },
+  {
+    name: '循环计数 (0→5)',
+    code: [
+      { op: OP.LDA_IMM, arg: 0,  asm: 'LDA #00' },  // 0: A=0
+      { op: OP.LDB_IMM, arg: 1,  asm: 'LDB #01' },  // 2: B=1
+      { op: OP.ADD,     arg: null, asm: 'ADD' },      // 4: A=A+B
+      { op: OP.STA,     arg: 14, asm: 'STA 0E' },    // 5: 存结果
+      { op: OP.LDB_IMM, arg: 5,  asm: 'LDB #05' },  // 7: B=5
+      { op: OP.SUB,     arg: null, asm: 'SUB' },      // 9: A-5
+      { op: OP.JZ,      arg: 12, asm: 'JZ 0C' },     // 10: 等于5则跳
+      { op: OP.LDA_MEM, arg: 14, asm: 'LDA 0E' },   // 12: 重新加载A
+      { op: OP.LDB_IMM, arg: 1,  asm: 'LDB #01' },  // 14: B=1
+      { op: OP.JMP,     arg: 4,  asm: 'JMP 04' },    // 16: 跳回ADD
+      { op: OP.HLT,     arg: null, asm: 'HLT' },     // 18: 停机
+    ]
+  },
+  {
+    name: 'AND 位运算',
+    code: [
+      { op: OP.LDA_IMM, arg: 0b11001100, asm: 'LDA #CC' },
+      { op: OP.LDB_IMM, arg: 0b10101010, asm: 'LDB #AA' },
+      { op: OP.AND,     arg: null, asm: 'AND' },
+      { op: OP.STA,     arg: 8,  asm: 'STA 08' },
+      { op: OP.HLT,     arg: null, asm: 'HLT' },
+    ]
+  }
+];
+
+let currentProg = 0;
+let runInterval = null;
+let isRunning = false;
+let clockHz = 5;
+let clockTick = false;
+
+// ============================================================
+// 加载程序到内存
+// ============================================================
+function loadProgram(idx) {
+  resetCPU();
+  currentProg = idx;
+  RAM.fill(0);
+  let addr = 0;
+  const prog = PROGRAMS[idx];
+  for (const instr of prog.code) {
+    RAM[addr++] = instr.op;
+    if (instr.arg !== null) RAM[addr++] = instr.arg & 0xFF;
+  }
+  renderMemory();
+  renderProgList();
+  log(`加载程序: ${prog.name}`, 'ok');
+  log(`写入 ${addr} 字节到 RAM[0x00..0x${(addr-1).toString(16).padStart(2,'0')}]`, 'mem');
+}
+
+// ============================================================
+// CPU 执行一步
+// ============================================================
+function stepOnce() {
+  if (cpu.halted) { log('CPU 已停机，请复位', 'warn'); return; }
+
+  // 时钟闪烁
+  clockTick = !clockTick;
+  document.getElementById('clkDot').className = 'clk-dot' + (clockTick ? ' tick' : '');
+  cpu.cycles++;
+  document.getElementById('cycleCount').textContent = cpu.cycles + ' cycles';
+
+  // 取指 (Fetch)
+  cpu.MAR = cpu.PC;
+  cpu.IR = RAM[cpu.PC];
+  cpu.lastReg = 'IR';
+  updateBus(cpu.PC, cpu.IR, 'READ');
+
+  const opcode = cpu.IR;
+  cpu.PC++;
+
+  // 译码 & 执行 (Decode & Execute)
+  let arg = 0;
+  if (needsArg(opcode)) {
+    arg = RAM[cpu.PC];
+    cpu.PC++;
+  }
+
+  executeOp(opcode, arg);
+  cpu.cycles++;
+
+  renderAll();
+  renderProgList();
+}
+
+function needsArg(op) {
+  return [OP.LDA_IMM, OP.LDB_IMM, OP.STA, OP.LDA_MEM, OP.JMP, OP.JZ, OP.JNZ, OP.JC].includes(op);
+}
+
+function executeOp(op, arg) {
+  switch(op) {
+    case OP.NOP:
+      cpu.lastOp = 'NOP';
+      log(`[${hex(cpu.PC-1)}] NOP`, 'exec');
+      break;
+
+    case OP.LDA_IMM:
+      cpu.A = arg;
+      cpu.lastReg = 'A'; cpu.lastOp = 'LDA';
+      setFlags(cpu.A);
+      updateBus(cpu.PC-1, arg, 'READ');
+      log(`[${hex(cpu.PC-2)}] LDA #${hex(arg)} → A=${hex(cpu.A)}`, 'exec');
+      document.getElementById('aluOp').textContent = `LOAD → A = 0x${hex(arg)}`;
+      break;
+
+    case OP.LDB_IMM:
+      cpu.B = arg;
+      cpu.lastReg = 'B'; cpu.lastOp = 'LDB';
+      updateBus(cpu.PC-1, arg, 'READ');
+      log(`[${hex(cpu.PC-2)}] LDB #${hex(arg)} → B=${hex(cpu.B)}`, 'exec');
+      document.getElementById('aluOp').textContent = `LOAD → B = 0x${hex(arg)}`;
+      break;
+
+    case OP.ADD: {
+      const prev = cpu.A;
+      const result = cpu.A + cpu.B;
+      cpu.flagC = result > 255 ? 1 : 0;
+      cpu.flagV = ((prev ^ result) & (cpu.B ^ result) & 0x80) ? 1 : 0;
+      cpu.A = result & 0xFF;
+      cpu.lastReg = 'A'; cpu.lastOp = 'ADD';
+      setFlags(cpu.A);
+      updateBus(0, cpu.A, 'ALU');
+      log(`[${hex(cpu.PC-1)}] ADD → ${hex(prev)} + ${hex(cpu.B)} = ${hex(cpu.A)} ${cpu.flagC?'(进位)':''}`, 'exec');
+      document.getElementById('aluOp').textContent = `ADD: 0x${hex(prev)} + 0x${hex(cpu.B)} = 0x${hex(cpu.A)}`;
+      break;
+    }
+
+    case OP.SUB: {
+      const prev = cpu.A;
+      const result = cpu.A - cpu.B;
+      cpu.flagC = result < 0 ? 1 : 0;
+      cpu.A = ((result & 0xFF) + 256) & 0xFF;
+      cpu.lastReg = 'A'; cpu.lastOp = 'SUB';
+      setFlags(cpu.A);
+      updateBus(0, cpu.A, 'ALU');
+      log(`[${hex(cpu.PC-1)}] SUB → ${hex(prev)} - ${hex(cpu.B)} = ${hex(cpu.A)} ${cpu.flagC?'(借位)':''}`, 'exec');
+      document.getElementById('aluOp').textContent = `SUB: 0x${hex(prev)} - 0x${hex(cpu.B)} = 0x${hex(cpu.A)}`;
+      break;
+    }
+
+    case OP.AND:
+      cpu.A = cpu.A & cpu.B;
+      cpu.lastReg = 'A'; cpu.lastOp = 'AND';
+      setFlags(cpu.A);
+      log(`[${hex(cpu.PC-1)}] AND → A=${hex(cpu.A)}`, 'exec');
+      document.getElementById('aluOp').textContent = `AND: A & B = 0x${hex(cpu.A)}`;
+      break;
+
+    case OP.OR:
+      cpu.A = cpu.A | cpu.B;
+      cpu.lastReg = 'A'; cpu.lastOp = 'OR';
+      setFlags(cpu.A);
+      log(`[${hex(cpu.PC-1)}] OR → A=${hex(cpu.A)}`, 'exec');
+      document.getElementById('aluOp').textContent = `OR: A | B = 0x${hex(cpu.A)}`;
+      break;
+
+    case OP.XOR:
+      cpu.A = cpu.A ^ cpu.B;
+      cpu.lastReg = 'A'; cpu.lastOp = 'XOR';
+      setFlags(cpu.A);
+      log(`[${hex(cpu.PC-1)}] XOR → A=${hex(cpu.A)}`, 'exec');
+      document.getElementById('aluOp').textContent = `XOR: A ^ B = 0x${hex(cpu.A)}`;
+      break;
+
+    case OP.STA:
+      RAM[arg] = cpu.A;
+      cpu.MAR = arg;
+      cpu.lastReg = 'MAR'; cpu.lastOp = 'STA';
+      updateBus(arg, cpu.A, 'WRITE');
+      log(`[${hex(cpu.PC-2)}] STA → RAM[${hex(arg)}] = ${hex(cpu.A)}`, 'mem');
+      document.getElementById('aluOp').textContent = `STORE: RAM[0x${hex(arg)}] ← 0x${hex(cpu.A)}`;
+      renderMemory();
+      break;
+
+    case OP.LDA_MEM:
+      cpu.MAR = arg;
+      cpu.A = RAM[arg];
+      cpu.lastReg = 'A'; cpu.lastOp = 'LDA';
+      setFlags(cpu.A);
+      updateBus(arg, cpu.A, 'READ');
+      log(`[${hex(cpu.PC-2)}] LDA [${hex(arg)}] → A=${hex(cpu.A)}`, 'mem');
+      document.getElementById('aluOp').textContent = `LOAD: A ← RAM[0x${hex(arg)}] = 0x${hex(cpu.A)}`;
+      break;
+
+    case OP.JMP:
+      log(`[${hex(cpu.PC-2)}] JMP → PC=${hex(arg)}`, 'exec');
+      cpu.PC = arg;
+      cpu.lastReg = 'PC'; cpu.lastOp = 'JMP';
+      document.getElementById('aluOp').textContent = `JMP → PC = 0x${hex(arg)}`;
+      break;
+
+    case OP.JZ:
+      if (cpu.flagZ) {
+        log(`[${hex(cpu.PC-2)}] JZ → 跳转到 ${hex(arg)} (Z=1)`, 'exec');
+        cpu.PC = arg;
+      } else {
+        log(`[${hex(cpu.PC-2)}] JZ → 不跳转 (Z=0)`, 'exec');
+      }
+      cpu.lastReg = 'PC'; cpu.lastOp = 'JZ';
+      document.getElementById('aluOp').textContent = `JZ: Z=${cpu.flagZ} → PC=0x${hex(cpu.PC)}`;
+      break;
+
+    case OP.JNZ:
+      if (!cpu.flagZ) { cpu.PC = arg; }
+      log(`[${hex(cpu.PC-2)}] JNZ → ${cpu.flagZ?'不跳转':'跳转到'+hex(arg)}`, 'exec');
+      break;
+
+    case OP.HLT:
+      cpu.halted = true;
+      if (isRunning) toggleRun();
+      log(`[${hex(cpu.PC-1)}] HLT — CPU 停机`, 'warn');
+      document.getElementById('aluOp').textContent = '⏹ HALTED';
+      break;
+
+    default:
+      log(`未知指令: 0x${hex(op)}`, 'warn');
+  }
+}
+
+function setFlags(val) {
+  cpu.flagZ = val === 0 ? 1 : 0;
+  cpu.flagN = (val & 0x80) ? 1 : 0;
+}
+
+// ============================================================
+// 渲染
+// ============================================================
+function renderAll() {
+  const regs = ['A','B','PC','SP','IR','MAR'];
+  regs.forEach(r => {
+    const val = cpu[r];
+    document.getElementById(`rv-${r}`).textContent = hex(val);
+    document.getElementById(`rb-${r}`).textContent = bin8(val);
+    const el = document.getElementById(`reg-${r}`);
+    el.className = 'reg' + (cpu.lastReg === r ? ' active' : '');
+  });
+
+  const flags = ['Z','C','N','V'];
+  flags.forEach(f => {
+    const v = cpu[`flag${f}`];
+    document.getElementById(`fv-${f}`).textContent = v;
+    document.getElementById(`flag-${f}`).className = `flag ${v ? 'on' : 'off'}`;
+  });
+}
+
+function renderMemory() {
+  const grid = document.getElementById('memGrid');
+  grid.innerHTML = '';
+  for (let i = 0; i < 16; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'mem-cell' + (i === cpu.PC ? ' pc' : '') + (i === cpu.MAR && cpu.lastOp !== '' ? ' active' : '');
+    cell.innerHTML = `<div class="addr">${hex(i)}</div><div class="val">${hex(RAM[i])}</div>`;
+    cell.title = `地址 0x${hex(i)} = 0x${hex(RAM[i])} (${RAM[i]})`;
+    grid.appendChild(cell);
+  }
+}
+
+function renderProgList() {
+  // rebuild prog list with current PC highlighted
+  const list = document.getElementById('progList');
+  if (!list) return;
+  const prog = PROGRAMS[currentProg];
+  let addr = 0;
+  list.innerHTML = '';
+  for (const instr of prog.code) {
+    const line = document.createElement('div');
+    const isCurrent = addr === cpu.PC || (addr < cpu.PC && addr + (instr.arg !== null ? 2 : 1) > cpu.PC);
+    line.className = 'prog-line' + (isCurrent ? ' current' : '');
+    const parts = instr.asm.split(' ');
+    line.innerHTML = `<span class="laddr">${hex(addr)}</span><span class="lhex">${hex(instr.op)}</span><span class="lasm"><span class="op">${parts[0]}</span>${parts[1] ? ' <span class="arg">'+parts[1]+'</span>' : ''}</span>`;
+    list.appendChild(line);
+    addr += instr.arg !== null ? 2 : 1;
+  }
+}
+
+function updateBus(addr, data, ctrl) {
+  // Address bus (8 bits)
+  const ab = document.getElementById('addrBus');
+  ab.innerHTML = '';
+  for (let i = 7; i >= 0; i--) {
+    const b = document.createElement('div');
+    b.className = 'bus-bit' + ((addr >> i) & 1 ? ' hi' : '');
+    ab.appendChild(b);
+  }
+  document.getElementById('addrVal').textContent = '0x'+hex(addr);
+
+  // Data bus (8 bits)
+  const db = document.getElementById('dataBus');
+  db.innerHTML = '';
+  for (let i = 7; i >= 0; i--) {
+    const b = document.createElement('div');
+    b.className = 'bus-bit' + ((data >> i) & 1 ? ' hi' : '');
+    db.appendChild(b);
+  }
+  document.getElementById('dataVal').textContent = '0x'+hex(data);
+
+  // Control bus
+  const cb = document.getElementById('ctrlBus');
+  cb.innerHTML = '';
+  const ctrlMap = { 'READ': 0b00000001, 'WRITE': 0b00000010, 'ALU': 0b00000100, 'IDLE': 0 };
+  const ctrlVal = ctrlMap[ctrl] || 0;
+  for (let i = 7; i >= 0; i--) {
+    const b = document.createElement('div');
+    b.className = 'bus-bit' + ((ctrlVal >> i) & 1 ? ' hi' : '');
+    cb.appendChild(b);
+  }
+  document.getElementById('ctrlVal').textContent = ctrl;
+}
+
+// ============================================================
+// Canvas 电路图
+// ============================================================
+const canvas = document.getElementById('circuit-canvas');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+  const parent = canvas.parentElement;
+  canvas.width = parent.clientWidth;
+  canvas.height = parent.clientHeight;
+  drawCircuit();
+}
+
+function drawCircuit() {
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  const cx = W / 2, cy = H / 2;
+  const cpuX = cx, cpuY = cy;
+  const cpuW = 140, cpuH = 100;
+
+  // Background grid
+  ctx.strokeStyle = 'rgba(30,34,53,0.5)';
+  ctx.lineWidth = 1;
+  for (let x = 0; x < W; x += 20) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+  for (let y = 0; y < H; y += 20) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+  // === CPU Box ===
+  drawBox(cpuX - cpuW/2, cpuY - cpuH/2, cpuW, cpuH, '#f78166', 'CPU', cpu.halted ? '#f78166' : '#58a6ff');
+
+  // Internal CPU labels
+  ctx.font = '9px JetBrains Mono, monospace';
+  ctx.fillStyle = '#8b949e';
+  ctx.textAlign = 'center';
+  ctx.fillText('ALU', cpuX - 30, cpuY - 10);
+  ctx.fillText('REG', cpuX + 30, cpuY - 10);
+  ctx.fillText('CTRL', cpuX, cpuY + 20);
+
+  // Dividers inside CPU
+  ctx.strokeStyle = 'rgba(88,166,255,0.2)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(cpuX, cpuY - cpuH/2 + 20); ctx.lineTo(cpuX, cpuY + cpuH/2 - 10); ctx.stroke();
+
+  // === RAM Box ===
+  const ramX = cx - 200, ramY = cy;
+  drawBox(ramX - 50, ramY - 40, 100, 80, '#3fb950', 'RAM\n16B');
+
+  // === ROM Box ===
+  const romX = cx + 200, romY = cy - 60;
+  drawBox(romX - 45, romY - 30, 90, 60, '#d29922', 'ROM\nBIOS');
+
+  // === Clock Box ===
+  const clkX = cx, clkY = cy - 160;
+  drawBox(clkX - 40, clkY - 25, 80, 50, '#fbbf24', 'CLK\n晶振');
+
+  // === IO Box ===
+  const ioX = cx + 200, ioY = cy + 60;
+  drawBox(ioX - 45, ioY - 30, 90, 60, '#a78bfa', 'I/O\n键盘/鼠标');
+
+  // === ALU detail ===
+  const aluX = cx - 200, aluY = cy - 100;
+  drawBox(aluX - 40, aluY - 25, 80, 50, '#58a6ff', 'ALU');
+
+  // === Buses ===
+  // Address bus (CPU → RAM)
+  const abActive = cpu.lastOp !== '';
+  drawBus(cpuX - cpuW/2, cpuY, ramX + 50, ramY, '#58a6ff', '地址总线', abActive);
+
+  // Data bus (CPU ↔ RAM)
+  drawBus(cpuX - cpuW/2, cpuY + 15, ramX + 50, ramY + 15, '#3fb950', '数据总线', abActive, true);
+
+  // Clock line (CLK → CPU)
+  drawBus(clkX, clkY + 25, cpuX, cpuY - cpuH/2, '#fbbf24', 'CLK', clockTick);
+
+  // ROM → CPU
+  drawBus(romX - 45, romY, cpuX + cpuW/2, cpuY - 20, '#d29922', 'BIOS', false);
+
+  // IO → CPU (interrupt)
+  drawBus(ioX - 45, ioY, cpuX + cpuW/2, cpuY + 20, '#a78bfa', 'IRQ', false);
+
+  // ALU → CPU
+  drawBus(aluX + 40, aluY, cpuX - cpuW/2, cpuY - 20, '#58a6ff', '', cpu.lastOp !== '');
+
+  // === Signal dots on buses ===
+  if (abActive) {
+    animateDot(cpuX - cpuW/2, cpuY, ramX + 50, ramY, '#58a6ff');
+  }
+
+  // === PC indicator ===
+  ctx.font = 'bold 10px JetBrains Mono, monospace';
+  ctx.fillStyle = '#f78166';
+  ctx.textAlign = 'center';
+  ctx.fillText(`PC: 0x${hex(cpu.PC)}`, cpuX, cpuY - 5);
+  ctx.fillStyle = '#58a6ff';
+  ctx.fillText(`A: 0x${hex(cpu.A)}`, cpuX - 30, cpuY + 10);
+  ctx.fillStyle = '#d2a8ff';
+  ctx.fillText(`B: 0x${hex(cpu.B)}`, cpuX + 30, cpuY + 10);
+
+  // === Halted overlay ===
+  if (cpu.halted) {
+    ctx.fillStyle = 'rgba(247,129,102,0.08)';
+    ctx.fillRect(0, 0, W, H);
+    ctx.font = 'bold 24px JetBrains Mono, monospace';
+    ctx.fillStyle = '#f78166';
+    ctx.textAlign = 'center';
+    ctx.fillText('⏹ HALTED', cx, 30);
+  }
+}
+
+function drawBox(x, y, w, h, color, label, textColor) {
+  // Shadow
+  ctx.shadowColor = color;
+  ctx.shadowBlur = 8;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(x, y, w, h);
+  ctx.shadowBlur = 0;
+
+  ctx.fillStyle = `${color}10`;
+  ctx.fillRect(x, y, w, h);
+
+  // Label
+  ctx.font = 'bold 10px JetBrains Mono, monospace';
+  ctx.fillStyle = textColor || color;
+  ctx.textAlign = 'center';
+  const lines = label.split('\n');
+  lines.forEach((l, i) => {
+    ctx.fillText(l, x + w/2, y + h/2 + (i - (lines.length-1)/2) * 14);
+  });
+}
+
+function drawBus(x1, y1, x2, y2, color, label, active, bidirectional) {
+  ctx.strokeStyle = active ? color : `${color}30`;
+  ctx.lineWidth = active ? 2 : 1;
+  if (active) { ctx.shadowColor = color; ctx.shadowBlur = 4; }
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  // Orthogonal routing
+  const mx = (x1 + x2) / 2;
+  ctx.lineTo(mx, y1);
+  ctx.lineTo(mx, y2);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // Arrow
+  if (active) {
+    drawArrow(mx, y2, x2, y2, color);
+    if (bidirectional) drawArrow(mx, y1, x1, y1, color);
+  }
+
+  // Label
+  if (label) {
+    ctx.font = '8px JetBrains Mono, monospace';
+    ctx.fillStyle = active ? color : `${color}50`;
+    ctx.textAlign = 'center';
+    ctx.fillText(label, mx, Math.min(y1, y2) - 4);
+  }
+}
+
+function drawArrow(fromX, fromY, toX, toY, color) {
+  const angle = Math.atan2(toY - fromY, toX - fromX);
+  const len = 8;
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.moveTo(toX, toY);
+  ctx.lineTo(toX - len * Math.cos(angle - 0.4), toY - len * Math.sin(angle - 0.4));
+  ctx.lineTo(toX - len * Math.cos(angle + 0.4), toY - len * Math.sin(angle + 0.4));
+  ctx.closePath();
+  ctx.fill();
+}
+
+function animateDot(x1, y1, x2, y2, color) {
+  // Simple static dot at midpoint for now
+  const mx = (x1 + x2) / 2;
+  ctx.fillStyle = color;
+  ctx.shadowColor = color;
+  ctx.shadowBlur = 10;
+  ctx.beginPath();
+  ctx.arc(mx, y1, 4, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+}
+
+// ============================================================
+// Controls
+// ============================================================
+function toggleRun() {
+  if (cpu.halted) { log('CPU 已停机，请先复位', 'warn'); return; }
+  isRunning = !isRunning;
+  const btn = document.getElementById('btnRun');
+  if (isRunning) {
+    btn.textContent = '⏸ 暂停';
+    btn.className = 'btn btn-run running';
+    runInterval = setInterval(() => { stepOnce(); drawCircuit(); }, 1000 / clockHz);
+    log('CPU 开始运行...', 'ok');
+  } else {
+    btn.textContent = '▶ 运行';
+    btn.className = 'btn btn-run';
+    clearInterval(runInterval);
+    log('CPU 暂停', 'warn');
+  }
+}
+
+function resetCPU() {
+  if (isRunning) toggleRun();
+  cpu.A = 0; cpu.B = 0; cpu.PC = 0; cpu.SP = 15;
+  cpu.IR = 0; cpu.MAR = 0;
+  cpu.flagZ = 0; cpu.flagC = 0; cpu.flagN = 0; cpu.flagV = 0;
+  cpu.halted = false; cpu.cycles = 0;
+  cpu.lastReg = null; cpu.lastOp = '';
+  document.getElementById('cycleCount').textContent = '0 cycles';
+  document.getElementById('aluOp').textContent = '待机';
+  updateBus(0, 0, 'IDLE');
+  renderAll();
+  renderMemory();
+  renderProgList();
+  drawCircuit();
+  log('CPU 复位完成', 'ok');
+}
+
+function updateSpeed() {
+  clockHz = parseInt(document.getElementById('speedSlider').value);
+  document.getElementById('speedLabel').textContent = clockHz + ' Hz';
+  if (isRunning) {
+    clearInterval(runInterval);
+    runInterval = setInterval(() => { stepOnce(); drawCircuit(); }, 1000 / clockHz);
+  }
+}
+
+// ============================================================
+// Log
+// ============================================================
+let logCount = 0;
+function log(msg, type = 'info') {
+  const con = document.getElementById('console');
+  const line = document.createElement('div');
+  line.className = `log-line ${type}`;
+  line.innerHTML = `<span class="ts">[${String(logCount++).padStart(4,'0')}]</span><span class="msg">${msg}</span>`;
+  con.appendChild(line);
+  con.scrollTop = con.scrollHeight;
+  if (con.children.length > 200) con.removeChild(con.children[1]);
+}
+
+// ============================================================
+// Helpers
+// ============================================================
+function hex(n) { return (n & 0xFF).toString(16).toUpperCase().padStart(2, '0'); }
+function bin8(n) { return (n & 0xFF).toString(2).padStart(8, '0'); }
+
+// ============================================================
+// Init
+// ============================================================
+function init() {
+  // Build program buttons
+  const btns = document.getElementById('progBtns');
+  PROGRAMS.forEach((p, i) => {
+    const b = document.createElement('button');
+    b.className = 'btn btn-reset';
+    b.style.cssText = 'font-size:10px;padding:5px 8px;text-align:left;width:100%;';
+    b.textContent = p.name;
+    b.onclick = () => loadProgram(i);
+    btns.appendChild(b);
+  });
+
+  // Build prog list container
+  const memPanel = document.querySelector('.mem-panel .panel-body');
+  const progListDiv = document.createElement('div');
+  progListDiv.style.cssText = 'margin-top:10px;background:#161b22;border:1px solid #21262d;border-radius:6px;padding:8px;';
+  progListDiv.innerHTML = '<div style="font-size:9px;color:#8b949e;margin-bottom:6px;letter-spacing:1px;">当前程序反汇编</div><div id="progList"></div>';
+  memPanel.appendChild(progListDiv);
+
+  // Init bus display
+  for (let i = 0; i < 8; i++) {
+    ['addrBus','dataBus','ctrlBus'].forEach(id => {
+      const b = document.createElement('div');
+      b.className = 'bus-bit';
+      document.getElementById(id).appendChild(b);
+    });
+  }
+
+  loadProgram(0);
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  // Animate canvas periodically
+  setInterval(() => { if (!isRunning) drawCircuit(); }, 500);
+
+  log('系统初始化完成', 'ok');
+  log('8位 CPU · 16字节 RAM · 11条指令', 'info');
+  log('点击 ▶运行 或 ⏭单步 开始仿真', 'info');
+}
+
+window.onload = init;
+</script>
+</body>
+</html>
+
+

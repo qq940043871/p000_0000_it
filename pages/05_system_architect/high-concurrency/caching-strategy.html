@@ -1,0 +1,425 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>缓存策略 - 架构师学习笔记</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-4xl mx-auto p-6">
+        <div class="bg-white rounded-xl shadow-md p-8 mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-bolt text-yellow-500 mr-3"></i>缓存策略
+            </h1>
+            
+            <div class="prose max-w-none">
+                <p class="text-gray-600 mb-6">
+                    缓存是一种存储技术，通过将数据存储在高速访问的介质中，减少数据获取时间，提高系统性能。在高并发系统中，合理使用缓存可以显著降低数据库压力，提高响应速度和系统吞吐量。
+                </p>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">缓存的作用</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-tachometer-alt text-blue-500 mr-2"></i>
+                            提高访问速度
+                        </h3>
+                        <p class="text-gray-600">
+                            缓存数据存储在内存中，访问速度远超磁盘数据库。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-database text-blue-500 mr-2"></i>
+                            减轻数据库压力
+                        </h3>
+                        <p class="text-gray-600">
+                            大部分请求从缓存获取数据，减少数据库访问次数。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-chart-line text-blue-500 mr-2"></i>
+                            提升系统性能
+                        </h3>
+                        <p class="text-gray-600">
+                            通过缓存热点数据，提高系统整体吞吐量。
+                        </p>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">缓存分类</h2>
+                
+                <div class="border border-gray-200 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">按存储位置分类</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div class="bg-blue-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">客户端缓存</h4>
+                            <p class="text-gray-600 text-sm">
+                                浏览器缓存、APP缓存等，减少网络请求。
+                            </p>
+                            <ul class="list-disc pl-5 text-gray-600 text-xs mt-2">
+                                <li>浏览器缓存</li>
+                                <li>本地存储</li>
+                                <li>内存缓存</li>
+                            </ul>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">服务端缓存</h4>
+                            <p class="text-gray-600 text-sm">
+                                应用服务器内部缓存，提高处理速度。
+                            </p>
+                            <ul class="list-disc pl-5 text-gray-600 text-xs mt-2">
+                                <li>进程内缓存</li>
+                                <li>分布式缓存</li>
+                                <li>CDN缓存</li>
+                            </ul>
+                        </div>
+                        <div class="bg-purple-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">数据库缓存</h4>
+                            <p class="text-gray-600 text-sm">
+                                数据库内置缓存机制，加速查询操作。
+                            </p>
+                            <ul class="list-disc pl-5 text-gray-600 text-xs mt-2">
+                                <li>查询缓存</li>
+                                <li>缓冲池</li>
+                                <li>索引缓存</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">按缓存策略分类</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white border border-gray-200">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="py-2 px-4 border-b text-left">策略</th>
+                                    <th class="py-2 px-4 border-b text-left">特点</th>
+                                    <th class="py-2 px-4 border-b text-left">适用场景</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="py-2 px-4 border-b">Cache-Aside</td>
+                                    <td class="py-2 px-4 border-b">应用代码维护缓存</td>
+                                    <td class="py-2 px-4 border-b">读多写少场景</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 border-b">Read-Through</td>
+                                    <td class="py-2 px-4 border-b">缓存层负责加载数据</td>
+                                    <td class="py-2 px-4 border-b">简化应用逻辑</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-4 border-b">Write-Through</td>
+                                    <td class="py-2 px-4 border-b">数据同时写入缓存和存储</td>
+                                    <td class="py-2 px-4 border-b">强一致性要求</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 border-b">Write-Behind</td>
+                                    <td class="py-2 px-4 border-b">先写缓存，异步写存储</td>
+                                    <td class="py-2 px-4 border-b">高写入性能要求</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">缓存模式</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-sync-alt text-green-500 mr-2"></i>
+                            Cache-Aside Pattern
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            应用代码负责维护缓存，是最常用的缓存模式。
+                        </p>
+                        <pre class="bg-gray-800 text-white p-3 rounded text-xs overflow-x-auto">
+// 读操作
+String value = cache.get(key);
+if (value == null) {
+    value = database.get(key);
+    cache.put(key, value, expireTime);
+}
+return value;
+
+// 写操作
+database.update(key, value);
+cache.delete(key);</pre>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-redo text-green-500 mr-2"></i>
+                            Write-Through Pattern
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            数据同时写入缓存和数据库，保证数据一致性。
+                        </p>
+                        <pre class="bg-gray-800 text-white p-3 rounded text-xs overflow-x-auto">
+// 写操作
+cache.put(key, value);
+database.update(key, value);</pre>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-clock text-green-500 mr-2"></i>
+                            Write-Behind Pattern
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            先写缓存，异步批量写入数据库，提高写入性能。
+                        </p>
+                        <pre class="bg-gray-800 text-white p-3 rounded text-xs overflow-x-auto">
+// 写操作
+cache.put(key, value);
+// 异步批量写入数据库
+asyncWriteToDatabase(batch);</pre>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-refresh text-green-500 mr-2"></i>
+                            Refresh-Ahead Pattern
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            在缓存过期前主动刷新，避免缓存失效时的性能抖动。
+                        </p>
+                        <pre class="bg-gray-800 text-white p-3 rounded text-xs overflow-x-auto">
+// 定时刷新热点数据
+scheduler.scheduleAtFixedRate(() -> {
+    for (String key : hotKeys) {
+        Object value = database.get(key);
+        cache.put(key, value, expireTime);
+    }
+}, 0, refreshInterval, TimeUnit.SECONDS);</pre>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">缓存淘汰策略</h2>
+                
+                <div class="border border-gray-200 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">常见淘汰算法</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div class="bg-blue-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">LRU (Least Recently Used)</h4>
+                            <p class="text-gray-600 text-sm">
+                                淘汰最近最少使用的数据
+                            </p>
+                            <ul class="list-disc pl-5 text-gray-600 text-xs mt-2">
+                                <li>实现简单</li>
+                                <li>符合局部性原理</li>
+                                <li>可能存在缓存污染</li>
+                            </ul>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">LFU (Least Frequently Used)</h4>
+                            <p class="text-gray-600 text-sm">
+                                淘汰访问频率最低的数据
+                            </p>
+                            <ul class="list-disc pl-5 text-gray-600 text-xs mt-2">
+                                <li>考虑访问频率</li>
+                                <li>实现复杂</li>
+                                <li>可能淘汰新热点数据</li>
+                            </ul>
+                        </div>
+                        <div class="bg-yellow-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">FIFO (First In First Out)</h4>
+                            <p class="text-gray-600 text-sm">
+                                淘汰最早进入缓存的数据
+                            </p>
+                            <ul class="list-disc pl-5 text-gray-600 text-xs mt-2">
+                                <li>实现简单</li>
+                                <li>不考虑访问模式</li>
+                                <li>性能较差</li>
+                            </ul>
+                        </div>
+                        <div class="bg-purple-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">TTL (Time To Live)</h4>
+                            <p class="text-gray-600 text-sm">
+                                按过期时间淘汰数据
+                            </p>
+                            <ul class="list-disc pl-5 text-gray-600 text-xs mt-2">
+                                <li>简单有效</li>
+                                <li>需要合理设置过期时间</li>
+                                <li>可能造成缓存雪崩</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <h4 class="font-bold text-gray-800">Redis淘汰策略</h4>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white border border-gray-200 text-sm">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="py-2 px-4 border-b text-left">策略</th>
+                                    <th class="py-2 px-4 border-b text-left">说明</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="py-2 px-4 border-b">noeviction</td>
+                                    <td class="py-2 px-4 border-b">不淘汰数据，内存满时返回错误</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 border-b">allkeys-lru</td>
+                                    <td class="py-2 px-4 border-b">从所有key中淘汰最近最少使用的</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-4 border-b">allkeys-lfu</td>
+                                    <td class="py-2 px-4 border-b">从所有key中淘汰最不经常使用的</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 border-b">allkeys-random</td>
+                                    <td class="py-2 px-4 border-b">从所有key中随机淘汰</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-4 border-b">volatile-lru</td>
+                                    <td class="py-2 px-4 border-b">从设置了过期时间的key中淘汰最近最少使用的</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">缓存一致性</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-sync text-purple-500 mr-2"></i>
+                            强一致性
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            保证缓存和数据库数据完全一致。
+                        </p>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li>Write-Through模式</li>
+                            <li>双写一致性</li>
+                            <li>分布式事务</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-clock text-purple-500 mr-2"></i>
+                            最终一致性
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            允许短暂不一致，但最终会达到一致状态。
+                        </p>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li>Cache-Aside模式</li>
+                            <li>延迟双删</li>
+                            <li>异步更新</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">缓存常见问题</h2>
+                
+                <div class="border border-gray-200 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">典型问题及解决方案</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-red-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">缓存雪崩</h4>
+                            <p class="text-gray-600 text-sm">
+                                大量缓存同时失效，导致数据库压力骤增
+                            </p>
+                            <ul class="list-disc pl-5 text-gray-600 text-xs mt-2">
+                                <li>设置不同的过期时间</li>
+                                <li>使用互斥锁重建缓存</li>
+                                <li>永不过期策略</li>
+                            </ul>
+                        </div>
+                        <div class="bg-orange-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">缓存穿透</h4>
+                            <p class="text-gray-600 text-sm">
+                                查询不存在的数据，直接访问数据库
+                            </p>
+                            <ul class="list-disc pl-5 text-gray-600 text-xs mt-2">
+                                <li>布隆过滤器过滤无效请求</li>
+                                <li>缓存空值</li>
+                                <li>参数校验</li>
+                            </ul>
+                        </div>
+                        <div class="bg-yellow-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">缓存击穿</h4>
+                            <p class="text-gray-600 text-sm">
+                                热点数据过期时大量请求直接访问数据库
+                            </p>
+                            <ul class="list-disc pl-5 text-gray-600 text-xs mt-2">
+                                <li>热点数据永不过期</li>
+                                <li>互斥锁重建缓存</li>
+                                <li>预热热点数据</li>
+                            </ul>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">缓存预热</h4>
+                            <p class="text-gray-600 text-sm">
+                                系统启动时加载热点数据到缓存
+                            </p>
+                            <ul class="list-disc pl-5 text-gray-600 text-xs mt-2">
+                                <li>启动时加载热点数据</li>
+                                <li>定时刷新缓存</li>
+                                <li>手动触发预热</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">缓存监控与优化</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-chart-bar text-yellow-500 mr-2"></i>
+                            关键监控指标
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li><strong>命中率：</strong>缓存命中请求占总请求数的比例</li>
+                            <li><strong>平均响应时间：</strong>缓存访问的平均耗时</li>
+                            <li><strong>内存使用率：</strong>缓存内存占用情况</li>
+                            <li><strong>QPS：</strong>每秒缓存请求数</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-cogs text-yellow-500 mr-2"></i>
+                            性能优化建议
+                        </h3>
+                        <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                            <li>合理设置缓存大小和过期时间</li>
+                            <li>选择合适的缓存淘汰策略</li>
+                            <li>压缩大value</li>
+                            <li>使用Pipeline批量操作</li>
+                            <li>定期清理无用缓存</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">缓存策略最佳实践</h2>
+                <div class="bg-green-50 rounded-lg p-6">
+                    <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                        <li>根据业务特点选择合适的缓存模式</li>
+                        <li>合理设计缓存key命名规范</li>
+                        <li>设置合适的过期时间和淘汰策略</li>
+                        <li>实施监控和告警机制</li>
+                        <li>定期分析缓存使用情况</li>
+                        <li>制定缓存失效应急预案</li>
+                        <li>做好缓存数据一致性处理</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

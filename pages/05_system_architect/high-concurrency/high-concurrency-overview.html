@@ -1,0 +1,232 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高并发架构 - 架构师学习笔记</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-4xl mx-auto p-6">
+        <div class="bg-white rounded-xl shadow-md p-8 mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-bolt text-yellow-500 mr-3"></i>高并发架构
+            </h1>
+            
+            <div class="prose max-w-none">
+                <p class="text-gray-600 mb-6">
+                    高并发架构是指系统能够同时处理大量并发请求的能力。随着互联网应用用户规模的快速增长，高并发已成为现代系统架构设计中的重要挑战。构建高并发系统需要从多个维度进行优化，包括负载均衡、缓存策略、数据库优化、异步处理等。
+                </p>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">高并发系统特点</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-tachometer-alt text-yellow-500 mr-2"></i>
+                            高性能
+                        </h3>
+                        <p class="text-gray-600">
+                            系统需要在短时间内处理大量请求，响应时间要尽可能短。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-shield-alt text-yellow-500 mr-2"></i>
+                            高可用
+                        </h3>
+                        <p class="text-gray-600">
+                            系统需要具备容错能力，即使部分组件故障也能正常提供服务。
+                        </p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-expand-alt text-yellow-500 mr-2"></i>
+                            可扩展
+                        </h3>
+                        <p class="text-gray-600">
+                            系统能够根据业务需求灵活扩展，支持水平和垂直扩展。
+                        </p>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">高并发设计原则</h2>
+                
+                <div class="bg-blue-50 rounded-lg p-6 mb-8">
+                    <h3 class="text-lg font-bold text-gray-800 mb-3">设计要点</h3>
+                    <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                        <li><strong>缓存优先：</strong>合理使用缓存减少数据库压力</li>
+                        <li><strong>异步处理：</strong>将耗时操作异步化，提高响应速度</li>
+                        <li><strong>负载均衡：</strong>分散请求压力，提高系统吞吐量</li>
+                        <li><strong>限流降级：</strong>保护系统不被突发流量冲垮</li>
+                        <li><strong>数据库优化：</strong>合理设计数据库和SQL语句</li>
+                        <li><strong>无状态设计：</strong>便于水平扩展和故障恢复</li>
+                    </ul>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">核心优化策略</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-balance-scale text-green-500 mr-2"></i>
+                            负载均衡
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            通过负载均衡器将请求分发到多个服务器实例，提高系统处理能力和可用性。
+                        </p>
+                        <a href="load-balancing.html" class="text-blue-500 font-medium flex items-center">
+                            查看详情
+                            <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-bolt text-green-500 mr-2"></i>
+                            缓存策略
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            利用缓存减少数据库访问，提高响应速度和系统吞吐量。
+                        </p>
+                        <a href="caching-strategy.html" class="text-blue-500 font-medium flex items-center">
+                            查看详情
+                            <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-divide text-green-500 mr-2"></i>
+                            数据库分片
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            将数据分散到多个数据库实例，解决单库性能瓶颈。
+                        </p>
+                        <a href="database-sharding.html" class="text-blue-500 font-medium flex items-center">
+                            查看详情
+                            <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-cloud-download-alt text-green-500 mr-2"></i>
+                            CDN加速
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            利用CDN分发静态资源，减少网络延迟，提高用户访问速度。
+                        </p>
+                        <a href="cdn.html" class="text-blue-500 font-medium flex items-center">
+                            查看详情
+                            <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">性能指标</h2>
+                
+                <div class="overflow-x-auto mb-8">
+                    <table class="min-w-full bg-white border border-gray-200">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="py-2 px-4 border-b text-left">指标</th>
+                                <th class="py-2 px-4 border-b text-left">说明</th>
+                                <th class="py-2 px-4 border-b text-left">优化目标</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="py-2 px-4 border-b">QPS（每秒查询数）</td>
+                                <td class="py-2 px-4 border-b">系统每秒处理的请求数量</td>
+                                <td class="py-2 px-4 border-b">根据业务需求确定</td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="py-2 px-4 border-b">RT（响应时间）</td>
+                                <td class="py-2 px-4 border-b">系统处理请求的平均时间</td>
+                                <td class="py-2 px-4 border-b">通常要求在毫秒级</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 px-4 border-b">并发用户数</td>
+                                <td class="py-2 px-4 border-b">系统同时能处理的用户请求数</td>
+                                <td class="py-2 px-4 border-b">根据业务峰值确定</td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="py-2 px-4 border-b">吞吐量</td>
+                                <td class="py-2 px-4 border-b">单位时间内处理的请求数量</td>
+                                <td class="py-2 px-4 border-b">越大越好</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">常见问题与解决方案</h2>
+                
+                <div class="border border-gray-200 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">典型挑战</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-red-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">缓存雪崩</h4>
+                            <p class="text-gray-600 text-sm">
+                                大量缓存同时失效，导致数据库压力骤增
+                            </p>
+                            <ul class="list-disc pl-5 text-gray-600 text-xs mt-2">
+                                <li>设置不同的过期时间</li>
+                                <li>使用互斥锁重建缓存</li>
+                            </ul>
+                        </div>
+                        <div class="bg-orange-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">缓存穿透</h4>
+                            <p class="text-gray-600 text-sm">
+                                查询不存在的数据，直接访问数据库
+                            </p>
+                            <ul class="list-disc pl-5 text-gray-600 text-xs mt-2">
+                                <li>布隆过滤器过滤无效请求</li>
+                                <li>缓存空值</li>
+                            </ul>
+                        </div>
+                        <div class="bg-yellow-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">缓存击穿</h4>
+                            <p class="text-gray-600 text-sm">
+                                热点数据过期时大量请求直接访问数据库
+                            </p>
+                            <ul class="list-disc pl-5 text-gray-600 text-xs mt-2">
+                                <li>热点数据永不过期</li>
+                                <li>互斥锁重建缓存</li>
+                            </ul>
+                        </div>
+                        <div class="bg-purple-50 p-4 rounded">
+                            <h4 class="font-bold text-gray-800 mb-2">限流策略</h4>
+                            <p class="text-gray-600 text-sm">
+                                控制请求流量，保护系统稳定性
+                            </p>
+                            <ul class="list-disc pl-5 text-gray-600 text-xs mt-2">
+                                <li>令牌桶算法</li>
+                                <li>漏桶算法</li>
+                                <li>计数器算法</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">高并发架构最佳实践</h2>
+                <div class="bg-green-50 rounded-lg p-6">
+                    <ul class="list-disc pl-8 text-gray-600 space-y-2">
+                        <li>分层设计，职责分离</li>
+                        <li>无状态服务，便于扩展</li>
+                        <li>合理使用缓存，减少数据库压力</li>
+                        <li>异步处理，提高响应速度</li>
+                        <li>实施监控和告警机制</li>
+                        <li>定期进行压力测试和性能优化</li>
+                        <li>制定完善的容灾和恢复方案</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

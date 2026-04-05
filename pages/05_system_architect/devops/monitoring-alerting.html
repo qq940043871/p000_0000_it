@@ -1,0 +1,307 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>监控与告警 - 架构师学习笔记</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-4xl mx-auto p-6">
+        <div class="bg-white rounded-lg shadow-md p-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-bell mr-3 text-primary"></i>监控与告警
+            </h1>
+            
+            <div class="prose max-w-none">
+                <p class="text-gray-600 mb-6">
+                    监控与告警是保障系统稳定运行的关键环节。通过建立完善的监控体系，我们可以及时发现系统异常，预防故障发生。
+                </p>
+                
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+                    <p class="text-blue-700">
+                        好的监控系统应该具备全面性、实时性、可操作性和可扩展性，能够帮助团队快速定位和解决问题。
+                    </p>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">监控体系架构</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-chart-bar mr-2 text-primary"></i>指标监控(Metrics)
+                        </h3>
+                        <p class="text-gray-600">
+                            收集系统、应用和服务的性能指标，如CPU使用率、内存占用、请求延迟等。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-file-alt mr-2 text-primary"></i>日志监控(Logs)
+                        </h3>
+                        <p class="text-gray-600">
+                            收集和分析应用日志、系统日志，用于故障排查和安全审计。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-link mr-2 text-primary"></i>链路追踪(Traces)
+                        </h3>
+                        <p class="text-gray-600">
+                            追踪请求在分布式系统中的完整调用链路，帮助定位性能瓶颈。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-exclamation-triangle mr-2 text-primary"></i>告警系统(Alerting)
+                        </h3>
+                        <p class="text-gray-600">
+                            基于监控数据设置告警规则，及时通知相关人员处理异常情况。
+                        </p>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">Prometheus监控</h2>
+                
+                <div class="space-y-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Prometheus配置</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# prometheus.yml
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+      
+  - job_name: 'node'
+    static_configs:
+      - targets: ['localhost:9100']
+      
+  - job_name: 'springboot-app'
+    static_configs:
+      - targets: ['app:8080']</pre>
+                        <p class="text-gray-600">Prometheus配置文件定义了监控目标和抓取间隔。</p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Spring Boot集成Micrometer</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+// pom.xml
+<dependency>
+    <groupId>io.micrometer</groupId>
+    <artifactId>micrometer-core</artifactId>
+</dependency>
+<dependency>
+    <groupId>io.micrometer</groupId>
+    <artifactId>micrometer-registry-prometheus</artifactId>
+</dependency>
+
+// application.yml
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name}</pre>
+                        <p class="text-gray-600">通过Micrometer将Spring Boot应用指标暴露给Prometheus。</p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">自定义指标</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+@Component
+public class CustomMetrics {
+    
+    private final Counter requestCounter;
+    private final Timer requestTimer;
+    
+    public CustomMetrics(MeterRegistry meterRegistry) {
+        requestCounter = Counter.builder("http.requests")
+            .description("HTTP请求计数")
+            .register(meterRegistry);
+            
+        requestTimer = Timer.builder("http.requests.duration")
+            .description("HTTP请求耗时")
+            .register(meterRegistry);
+    }
+    
+    public void recordRequest() {
+        requestCounter.increment();
+    }
+    
+    public Timer.Sample startTimer() {
+        return Timer.Sample.start();
+    }
+    
+    public void stopTimer(Timer.Sample sample) {
+        sample.stop(requestTimer);
+    }
+}</pre>
+                        <p class="text-gray-600">通过Micrometer创建自定义业务指标。</p>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">Grafana可视化</h2>
+                
+                <div class="space-y-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Docker部署Grafana</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+version: '3.8'
+services:
+  grafana:
+    image: grafana/grafana-enterprise
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+
+volumes:
+  grafana-storage:</pre>
+                        <p class="text-gray-600">使用Docker Compose部署Grafana。</p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">常用监控面板查询</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# JVM内存使用情况
+jvm_memory_used_bytes{application="$application", instance="$instance"}
+
+# HTTP请求速率
+rate(http_requests_total{application="$application", instance="$instance"}[5m])
+
+# HTTP请求延迟(95th percentile)
+histogram_quantile(0.95, rate(http_requests_duration_seconds_bucket[5m]))
+
+# 系统CPU使用率
+100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)</pre>
+                        <p class="text-gray-600">常用的PromQL查询语句，用于创建监控面板。</p>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">告警规则配置</h2>
+                
+                <div class="space-y-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Prometheus告警规则</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+groups:
+- name: example
+  rules:
+  # 实例是否存活
+  - alert: InstanceDown
+    expr: up == 0
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: "实例 {{ $labels.instance }} 已停止运行"
+      
+  # 高CPU使用率
+  - alert: HighCPUUsage
+    expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: "实例 {{ $labels.instance }} CPU使用率过高 ({{ $value }}%)"
+      
+  # 高内存使用率
+  - alert: HighMemoryUsage
+    expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100 > 85
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: "实例 {{ $labels.instance }} 内存使用率过高 ({{ $value }}%)"</pre>
+                        <p class="text-gray-600">Prometheus告警规则定义了触发告警的条件。</p>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Alertmanager配置</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+# alertmanager.yml
+global:
+  smtp_smarthost: 'smtp.example.com:587'
+  smtp_from: 'alert@example.com'
+  smtp_auth_username: 'alert@example.com'
+  smtp_auth_password: 'password'
+
+route:
+  group_by: ['alertname']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 1h
+  receiver: 'team-X'
+
+receivers:
+- name: 'team-X'
+  email_configs:
+  - to: 'team-X@example.com'
+    send_resolved: true</pre>
+                        <p class="text-gray-600">Alertmanager负责处理告警通知，支持邮件、Slack等多种通知方式。</p>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">日志收集与分析</h2>
+                
+                <div class="space-y-6 mb-8">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">ELK Stack配置</h3>
+                        <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-3">
+version: '3.8'
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
+    environment:
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+      
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.17.0
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+      
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.17.0
+    ports:
+      - "5044:5044"
+    volumes:
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    depends_on:
+      - elasticsearch</pre>
+                        <p class="text-gray-600">使用Docker Compose部署ELK Stack进行日志收集和分析。</p>
+                    </div>
+                </div>
+                
+                <div class="bg-green-50 border-l-4 border-green-500 p-4 mt-8">
+                    <h3 class="text-lg font-semibold text-green-700 mb-2">监控与告警最佳实践</h3>
+                    <ul class="list-disc pl-8 space-y-1 text-green-700">
+                        <li>建立分层监控体系，覆盖基础设施、应用和服务层面</li>
+                        <li>设置合理的告警阈值，避免告警风暴</li>
+                        <li>定期审查和优化告警规则</li>
+                        <li>建立完善的监控面板，直观展示系统状态</li>
+                        <li>实施日志标准化，便于分析和排查问题</li>
+                        <li>定期进行故障演练，验证监控告警有效性</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
