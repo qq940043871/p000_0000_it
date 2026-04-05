@@ -24,6 +24,7 @@
             height: 100%;
             margin: 0;
             padding: 0;
+            overflow: hidden;
         }
         .portal-container {
             height: calc(100vh - 64px);
@@ -40,7 +41,7 @@
             width: 100%;
             height: 100%;
             border: 0;
-            overflow: hidden;
+            overflow: auto;
         }
         .submenu {
             max-height: 0;
@@ -131,266 +132,293 @@
         </div>
     </header>
 
-    <div class="flex">
-        <div id="sidebar-overlay" class="sidebar-overlay"></div>
-        <aside id="sidebar" class="w-64 bg-white shadow-md h-screen sticky top-16 overflow-y-auto md:block hidden">
-            <nav class="py-4">
-                <div class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">计算机原理</div>
-                
-                <div class="nav-item">
-                    <a href="#" onclick="toggleMainMenu('overview')" class="flex items-center justify-between px-4 py-3 text-gray-700 hover:text-primary">
-                        <div class="flex items-center">
-                            <i class="fas fa-book-open mr-3"></i>
-                            <span>技术概览</span>
+    <div class="flex flex-col min-h-screen">
+        <div class="flex flex-1">
+            <div id="sidebar-overlay" class="sidebar-overlay"></div>
+            <aside id="sidebar" class="w-64 bg-white shadow-md h-screen sticky top-16 overflow-y-auto md:block hidden">
+                <nav class="py-4">
+                    <div class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">自我介绍</div>
+                    
+                    <div class="nav-item">
+                        <a href="#" onclick="toggleMainMenu('overview')" class="flex items-center justify-between px-4 py-3 text-gray-700 hover:text-primary">
+                            <div class="flex items-center">
+                                <i class="fas fa-book-open mr-3"></i>
+                                <span>技术概览</span>
+                            </div>
+                            <i class="fas fa-chevron-right transition-transform duration-200" id="overview-chevron"></i>
+                        </a>
+                        <div class="submenu ml-8" id="overview-submenu">
+                            <a href="#" onclick="loadPage('pages/00_overview/advanced-dev-questions.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">高级开发问题清单</a>
+                            <a href="#" onclick="loadPage('pages/00_overview/computer-boot-process.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">计算机启动流程</a>
+                            <a href="#" onclick="loadPage('pages/00_overview/operating-system-essence.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">操作系统本质</a>
+                            <a href="#" onclick="loadPage('pages/00_overview/high-level-language-hardware-interaction.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">高级语言与硬件交互</a>
+                            <a href="#" onclick="loadPage('pages/00_overview/java-runtime-mechanism.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">Java程序运行机制</a>
+                            <a href="#" onclick="loadPage('pages/00_overview/web-rendering-principle.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">网页渲染原理</a>
+                            <a href="#" onclick="loadPage('pages/00_overview/network-communication-principle.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">网络通信原理</a>
                         </div>
-                        <i class="fas fa-chevron-right transition-transform duration-200" id="overview-chevron"></i>
-                    </a>
-                    <div class="submenu ml-8" id="overview-submenu">
-                        <a href="#" onclick="loadPage('pages/00_overview/advanced-dev-questions.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">高级开发问题清单</a>
-                        <a href="#" onclick="loadPage('pages/00_overview/computer-boot-process.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">计算机启动流程</a>
-                        <a href="#" onclick="loadPage('pages/00_overview/operating-system-essence.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">操作系统本质</a>
-                        <a href="#" onclick="loadPage('pages/00_overview/high-level-language-hardware-interaction.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">高级语言与硬件交互</a>
-                        <a href="#" onclick="loadPage('pages/00_overview/java-runtime-mechanism.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">Java程序运行机制</a>
-                        <a href="#" onclick="loadPage('pages/00_overview/web-rendering-principle.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">网页渲染原理</a>
-                        <a href="#" onclick="loadPage('pages/00_overview/network-communication-principle.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">网络通信原理</a>
                     </div>
-                </div>
-                
-                <div class="nav-item">
-                    <a href="#" onclick="toggleMainMenu('hardware')" class="flex items-center justify-between px-4 py-3 text-gray-700 hover:text-primary">
-                        <div class="flex items-center">
-                            <i class="fas fa-microchip mr-3"></i>
-                            <span>硬件基础</span>
+                </nav>
+                <nav class="py-4">
+                    <div class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">计算机原理</div>
+                    
+                    <div class="nav-item">
+                        <a href="#" onclick="toggleMainMenu('hardware')" class="flex items-center justify-between px-4 py-3 text-gray-700 hover:text-primary">
+                            <div class="flex items-center">
+                                <i class="fas fa-microchip mr-3"></i>
+                                <span>硬件基础</span>
+                            </div>
+                            <i class="fas fa-chevron-right transition-transform duration-200" id="hardware-chevron"></i>
+                        </a>
+                        <div class="submenu ml-8" id="hardware-submenu">
+                            <a href="#" onclick="loadPage('pages/01_hardware/computer-fundamentals.html')" class="block px-4 py-2 text-gray-600 hover:text-primary">计算机基础</a>
+                            <a href="#" onclick="loadPage('pages/01_hardware/hardware-operation.html')" class="block px-4 py-2 text-gray-600 hover:text-primary">硬件运行原理</a>   
+                            <a href="#" onclick="loadPage('pages/01_hardware/hardware-driver.html')" class="block px-4 py-2 text-gray-600 hover:text-primary">硬件驱动</a>
+                            <a href="#" onclick="loadPage('pages/01_hardware/4bit-computer.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">4位计算机</a>
                         </div>
-                        <i class="fas fa-chevron-right transition-transform duration-200" id="hardware-chevron"></i>
-                    </a>
-                    <div class="submenu ml-8" id="hardware-submenu">
-                        <a href="#" onclick="loadPage('pages/01_hardware/computer-fundamentals.html')" class="block px-4 py-2 text-gray-600 hover:text-primary">计算机基础</a>
-                        <a href="#" onclick="loadPage('pages/01_hardware/hardware-operation.html')" class="block px-4 py-2 text-gray-600 hover:text-primary">硬件运行原理</a>   
-                        <a href="#" onclick="loadPage('pages/01_hardware/hardware-driver.html')" class="block px-4 py-2 text-gray-600 hover:text-primary">硬件驱动</a>
-                        <a href="#" onclick="loadPage('pages/01_hardware/4bit-computer.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">4位计算机</a>
-                        <a href="#" onclick="loadPage('pages/01_hardware/program-run.html')" class="block px-4 py-2 text-gray-600 hover:text-primary">程序运行</a>
-                        <a href="#" onclick="loadPage('pages/01_hardware/linux-work.html')" class="block px-4 py-2 text-gray-600 hover:text-primary">Linux工作原理</a>
-                        <a href="#" onclick="loadPage('pages/01_hardware/network-connect.html')" class="block px-4 py-2 text-gray-600 hover:text-primary">网络连接</a>
                     </div>
-                </div>
-                
-                <div class="nav-item">
-                    <a href="#" onclick="toggleMainMenu('java')" class="flex items-center justify-between px-4 py-3 text-gray-700 hover:text-primary">
-                        <div class="flex items-center">
-                            <i class="fas fa-java mr-3"></i>
-                            <span>Java学习之旅</span>
-                        </div>
-                        <i class="fas fa-chevron-right transition-transform duration-200" id="java-chevron"></i>
-                    </a>
-                    <div class="submenu ml-8" id="java-submenu">
-                        <a href="#" onclick="loadPage('pages/04_java_developer/01_systax/java-overview.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">Java基础</a>
-                        <a href="#" onclick="loadPage('pages/04_java_developer/01_systax/java-oop.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">面向对象</a>
-                        <a href="#" onclick="loadPage('pages/04_java_developer/01_systax/java-collections.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">集合框架</a>
-                        <a href="#" onclick="loadPage('pages/04_java_developer/01_systax/java-concurrent.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">并发编程</a>
-                        <a href="#" onclick="loadPage('pages/04_java_developer/01_systax/java-jvm.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">JVM原理</a>
-                        <a href="#" onclick="loadPage('pages/04_java_developer/01_systax/jvm-practice.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">JVM实战</a>
-                    </div>
-                </div>
-                
-                <div class="nav-item">
-                    <a href="#" onclick="toggleMainMenu('database')" class="flex items-center justify-between px-4 py-3 text-gray-700 hover:text-primary">
-                        <div class="flex items-center">
-                            <i class="fas fa-database mr-3"></i>
-                            <span>数据库设计</span>
-                        </div>
-                        <i class="fas fa-chevron-right transition-transform duration-200" id="database-chevron"></i>
-                    </a>
-                    <div class="submenu ml-8" id="database-submenu">
-                        <a href="#" onclick="loadPage('pages/05_system_architect/database/mysql.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">MySQL优化</a>
-                        <a href="#" onclick="loadPage('pages/05_system_architect/database/redis.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">Redis缓存</a>
-                        <a href="#" onclick="loadPage('pages/05_system_architect/database/mongodb.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">MongoDB</a>
-                        <a href="#" onclick="loadPage('pages/05_system_architect/database/elasticsearch.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">Elasticsearch</a>
-                        <a href="#" onclick="loadPage('pages/05_system_architect/database/database-sharding.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">数据库分片</a>
-                    </div>
-                </div>
-                
-                <div class="nav-item">
-                    <a href="#" onclick="toggleMainMenu('system-architect')" class="flex items-center justify-between px-4 py-3 text-gray-700 hover:text-primary">
-                        <div class="flex items-center">
-                            <i class="fas fa-sitemap mr-3"></i>
-                            <span>系统架构</span>
-                        </div>
-                        <i class="fas fa-chevron-right transition-transform duration-200" id="system-architect-chevron"></i>
-                    </a>
-                    <div class="submenu ml-8" id="system-architect-submenu">
-                        <div class="px-4 py-2 text-xs font-semibold text-gray-500">分布式系统</div>
-                        <a href="#" onclick="loadPage('pages/05_system_architect/distributed/distributed-overview.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">分布式系统概览</a>
-                        <a href="#" onclick="loadPage('pages/05_system_architect/distributed/microservices.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">微服务架构</a>
-                        <a href="#" onclick="loadPage('pages/05_system_architect/distributed/spring-cloud.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">Spring Cloud</a>
-                        <a href="#" onclick="loadPage('pages/05_system_architect/distributed/docker.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">Docker</a>
-                        <a href="#" onclick="loadPage('pages/05_system_architect/distributed/kubernetes.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">Kubernetes</a>
-                        <a href="#" onclick="loadPage('pages/05_system_architect/distributed/message-system.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">消息系统</a>
-                        <a href="#" onclick="loadPage('pages/05_system_architect/distributed/kafka.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">Kafka</a>
-                        <a href="#" onclick="loadPage('pages/05_system_architect/distributed/rabbitmq.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">RabbitMQ</a>
-                        <a href="#" onclick="loadPage('pages/05_system_architect/distributed/rocketmq.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">RocketMQ</a>
-                        <div class="px-4 py-2 text-xs font-semibold text-gray-500 mt-2">高并发</div>
-                        <a href="#" onclick="loadPage('pages/05_system_architect/high-concurrency/high-concurrency-overview.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">高并发概览</a>
-                        <a href="#" onclick="loadPage('pages/05_system_architect/high-concurrency/load-balancing.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">负载均衡</a>
-                        <a href="#" onclick="loadPage('pages/05_system_architect/high-concurrency/caching-strategy.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">缓存策略</a>
-                        <a href="#" onclick="loadPage('pages/05_system_architect/high-concurrency/cdn.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">CDN加速</a>
-                        <div class="px-4 py-2 text-xs font-semibold text-gray-500 mt-2">DevOps</div>
-                        <a href="#" onclick="loadPage('pages/05_system_architect/devops/devops-overview.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">DevOps概览</a>
-                        <a href="#" onclick="loadPage('pages/05_system_architect/devops/linux-commands.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">Linux常用命令</a>
-                        <a href="#" onclick="loadPage('pages/05_system_architect/devops/monitoring-alerting.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">监控与告警</a>
-                    </div>
-                </div>
-                
-                <div class="nav-item">
-                    <a href="#" onclick="toggleMainMenu('ai')" class="flex items-center justify-between px-4 py-3 text-gray-700 hover:text-primary">
-                        <div class="flex items-center">
-                            <i class="fas fa-brain mr-3"></i>
-                            <span>人工智能</span>
-                        </div>
-                        <i class="fas fa-chevron-right transition-transform duration-200" id="ai-chevron"></i>
-                    </a>
-                    <div class="submenu ml-8" id="ai-submenu">
-                        <a href="#" onclick="loadPage('pages/06_ai/ai-overview.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">AI概览</a>
-                        <a href="#" onclick="loadPage('pages/06_ai/machine-learning.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">机器学习</a>
-                        <a href="#" onclick="loadPage('pages/06_ai/neural-networks.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">神经网络</a>
-                        <a href="#" onclick="loadPage('pages/06_ai/nlp.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">自然语言处理</a>
-                        <a href="#" onclick="loadPage('pages/06_ai/computer-vision.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">计算机视觉</a>
-                    </div>
-                </div>
-                
-                <div class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider mt-4">系统设计</div>
-                
-                <div class="nav-item">
-                    <a href="#" onclick="toggleMainMenu('concurrency')" class="flex items-center justify-between px-4 py-3 text-gray-700 hover:text-primary">
-                        <div class="flex items-center">
-                            <i class="fas fa-bolt mr-3"></i>
-                            <span>高并发架构</span>
-                        </div>
-                        <i class="fas fa-chevron-right transition-transform duration-200" id="concurrency-chevron"></i>
-                    </a>
-                    <div class="submenu ml-8" id="concurrency-submenu">
-                        <a href="#" onclick="loadPage('pages/high-concurrency/load-balancing.html')" class="block px-4 py-2 text-gray-600 hover:text-primary">负载均衡</a>
-                        <a href="#" onclick="loadPage('pages/high-concurrency/caching-strategy.html')" class="block px-4 py-2 text-gray-600 hover:text-primary">缓存策略</a>
-                        <a href="#" onclick="loadPage('pages/high-concurrency/database-sharding.html')" class="block px-4 py-2 text-gray-600 hover:text-primary">数据库分片</a>
-                        <a href="#" onclick="loadPage('pages/high-concurrency/cdn.html')" class="block px-4 py-2 text-gray-600 hover:text-primary">CDN加速</a>
-                    </div>
-                </div>
-                
-                <div class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider mt-4">工作经历</div>
-                
-                <div class="nav-item">
-                    <a href="#" onclick="toggleMainMenu('ecommerce')" class="flex items-center justify-between px-4 py-3 text-gray-700 hover:text-primary">
-                        <div class="flex items-center">
-                            <i class="fas fa-shopping-cart mr-3"></i>
-                            <span>B2C电商系统</span>
-                        </div>
-                        <i class="fas fa-chevron-right transition-transform duration-200" id="ecommerce-chevron"></i>
-                    </a>
-                    <div class="submenu ml-8" id="ecommerce-submenu">
-                        <a href="#" onclick="loadPage('pages/work-experience/ecommerce/order-system.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">订单系统</a>
-                        <a href="#" onclick="loadPage('pages/work-experience/ecommerce/payment-system.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">支付系统</a>
-                        <a href="#" onclick="loadPage('pages/work-experience/ecommerce/inventory-system.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">库存系统</a>
-                        <a href="#" onclick="loadPage('pages/work-experience/ecommerce/promotion-system.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">促销系统</a>
-                    </div>
-                </div>
 
-                <div class="nav-item">
-                    <a href="#" onclick="toggleMainMenu('b2b-project')" class="flex items-center justify-between px-4 py-3 text-gray-700 hover:text-primary">
-                        <div class="flex items-center">
-                            <i class="fas fa-building mr-3"></i>
-                            <span>B2B大宗贸易</span>
+                    <div class="nav-item">
+                        <a href="#" onclick="toggleMainMenu('linux')" class="flex items-center justify-between px-4 py-3 text-gray-700 hover:text-primary">
+                            <div class="flex items-center">
+                                <i class="fas fa-microchip mr-3"></i>
+                                <span>操作系统</span>
+                            </div>
+                            <i class="fas fa-chevron-right transition-transform duration-200" id="linux-chevron"></i>
+                        </a>
+                        <div class="submenu ml-8" id="linux-submenu">
+                            <a href="#" onclick="loadPage('pages/02_linux/program-run.html')" class="block px-4 py-2 text-gray-600 hover:text-primary">程序运行</a>
+                            <a href="#" onclick="loadPage('pages/02_linux/linux-work.html')" class="block px-4 py-2 text-gray-600 hover:text-primary">Linux工作原理</a>
+                            <a href="#" onclick="loadPage('pages/02_linux/network-connect.html')" class="block px-4 py-2 text-gray-600 hover:text-primary">网络连接</a>
                         </div>
-                        <i class="fas fa-chevron-right transition-transform duration-200" id="b2b-project-chevron"></i>
-                    </a>
-                    <div class="submenu ml-8" id="b2b-project-submenu">
-                        <a href="#" onclick="loadPage('pages/work-experience/b2b-project/overview.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">项目概述</a>
-                        <a href="#" onclick="loadPage('pages/work-experience/b2b-project/data-exchange.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">数据交换中心</a>
-                        <a href="#" onclick="loadPage('pages/work-experience/b2b-project/middleware-gateway.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">中间件网关</a>
-                        <a href="#" onclick="loadPage('pages/work-experience/b2b-project/common-services.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">公共服务模块</a>
-                        <a href="#" onclick="loadPage('pages/work-experience/b2b-project/auth-module.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">认证模块</a>
-                        <a href="#" onclick="loadPage('pages/work-experience/b2b-project/business-modules.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">合同中心</a>
-                        <a href="#" onclick="loadPage('pages/work-experience/b2b-project/external-gateway.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">外联网关</a>
-                        <a href="#" onclick="loadPage('pages/work-experience/b2b-project/大宗贸易场景.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">大宗贸易场景</a>
-                        <a href="#" onclick="loadPage('pages/work-experience/b2b-project/付款发货场景.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">付款发货场景</a>
                     </div>
-                </div>
-                
-                <div class="nav-item">
-                    <a href="#" onclick="toggleMainMenu('video-surveillance')" class="flex items-center justify-between px-4 py-3 text-gray-700 hover:text-primary">
-                        <div class="flex items-center">
-                            <i class="fas fa-video mr-3"></i>
-                            <span>视频监控项目</span>
-                        </div>
-                        <i class="fas fa-chevron-right transition-transform duration-200" id="video-surveillance-chevron"></i>
-                    </a>
-                    <div class="submenu ml-8" id="video-surveillance-submenu">
-                        <a href="#" onclick="loadPage('pages/work-experience/video-surveillance/overview.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">项目概述</a>
-                        <a href="#" onclick="loadPage('pages/work-experience/video-surveillance/live-streaming.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">实时直播</a>
-                        <a href="#" onclick="loadPage('pages/work-experience/video-surveillance/playback.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">录像回放</a>
-                        <a href="#" onclick="loadPage('pages/work-experience/video-surveillance/download.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">视频下载</a>
-                    </div>
-                </div>
-                
-                <div class="nav-item">
-                    <a href="#" onclick="toggleMainMenu('customer-service')" class="flex items-center justify-between px-4 py-3 text-gray-700 hover:text-primary">
-                        <div class="flex items-center">
-                            <i class="fas fa-headset mr-3"></i>
-                            <span>客服聊天项目</span>
-                        </div>
-                        <i class="fas fa-chevron-right transition-transform duration-200" id="customer-service-chevron"></i>
-                    </a>
-                    <div class="submenu ml-8" id="customer-service-submenu">
-                        <a href="#" onclick="loadPage('pages/work-experience/customer-service/overview.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">项目概述</a>
-                        <a href="#" onclick="loadPage('pages/work-experience/customer-service/cs-management.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">客服管理</a>
-                        <a href="#" onclick="loadPage('pages/work-experience/customer-service/chat-reception.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">接待客户</a>
-                        <a href="#" onclick="loadPage('pages/work-experience/customer-service/queue-mechanism.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">排队机制</a>
-                    </div>
-                </div>
-                
-                <div class="nav-item">
-                    <a href="#" onclick="toggleMainMenu('daily-problems')" class="flex items-center justify-between px-4 py-3 text-gray-700 hover:text-primary">
-                        <div class="flex items-center">
-                            <i class="fas fa-search mr-3"></i>
-                            <span>日常问题排查</span>
-                        </div>
-                        <i class="fas fa-chevron-right transition-transform duration-200" id="daily-problems-chevron"></i>
-                    </a>
-                    <div class="submenu ml-8" id="daily-problems-submenu">
-                        <a href="#" onclick="loadPage('pages/work-experience/daily-problems/overview.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">总览</a>
-                        <a href="#" onclick="loadPage('pages/work-experience/daily-problems/common-problems.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">常见问题</a>
-                        <a href="#" onclick="loadPage('pages/work-experience/daily-problems/server-assessment.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">服务器资源评估</a>
-                        <a href="#" onclick="loadPage('pages/work-experience/daily-problems/stress-testing.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">压力测试</a>
-                        <a href="#" onclick="loadPage('pages/work-experience/daily-problems/network-jvm.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">JVM参数设置</a>
-                        <a href="#" onclick="loadPage('pages/work-experience/daily-problems/client-freeze.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">BS卡顿问题排查</a>
-                        <a href="#" onclick="loadPage('pages/work-experience/daily-problems/client-freeze-case.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">卡顿问题定位案例</a>
-                        <a href="#" onclick="loadPage('pages/work-experience/daily-problems/java-process-crash.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">Java进程突然消失</a>
-                        <a href="#" onclick="loadPage('pages/work-experience/daily-problems/minio-upload-issue.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">MinIO上传问题排查</a>
-                    </div>
-                </div>
 
-                 <div class="nav-item">
-                    <a href="#" onclick="toggleMainMenu('devops')" class="flex items-center justify-between px-4 py-3 text-gray-700 hover:text-primary">
-                        <div class="flex items-center">
-                            <i class="fas fa-server mr-3"></i>
-                            <span>常用运维脚本</span>
+                     <div class="nav-item">
+                        <a href="#" onclick="toggleMainMenu('data')" class="flex items-center justify-between px-4 py-3 text-gray-700 hover:text-primary">
+                            <div class="flex items-center">
+                                <i class="fas fa-microchip mr-3"></i>
+                                <span>数据结构</span>
+                            </div>
+                            <i class="fas fa-chevron-right transition-transform duration-200" id="data-chevron"></i>
+                        </a>
+                        <div class="submenu ml-8" id="data-submenu">
+                            <a href="#" onclick="loadPage('pages/03_data/data-structure.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">数据结构</a>
                         </div>
-                        <i class="fas fa-chevron-right transition-transform duration-200" id="devops-chevron"></i>
-                    </a>
-                    <div class="submenu ml-8" id="devops-submenu">
-                        <a href="#" onclick="loadPage('pages/05_system_architect/devops/linux-commands.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">Linux常用命令</a>
-                        <a href="#" onclick="loadPage('pages/05_system_architect/distributed/docker.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">Docker实战</a>
-                        <a href="#" onclick="loadPage('pages/05_system_architect/distributed/kubernetes.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">Kubernetes实战</a>
-                        <a href="#" onclick="loadPage('pages/05_system_architect/devops/monitoring-alerting.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">监控与告警</a>
-                        <a href="#" onclick="loadPage('pages/04_java_developer/01_systax/jvm-practice.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">JVM调优实战</a>
                     </div>
+                    
+                    <div class="nav-item">
+                        <a href="#" onclick="toggleMainMenu('java')" class="flex items-center justify-between px-4 py-3 text-gray-700 hover:text-primary">
+                            <div class="flex items-center">
+                                <i class="fas fa-java mr-3"></i>
+                                <span>Java语言</span>
+                            </div>
+                            <i class="fas fa-chevron-right transition-transform duration-200" id="java-chevron"></i>
+                        </a>
+                        <div class="submenu ml-8" id="java-submenu">
+                            <a href="#" onclick="loadPage('pages/04_java_developer/01_systax/java-overview.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">Java基础</a>
+                            <a href="#" onclick="loadPage('pages/04_java_developer/01_systax/java-oop.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">面向对象</a>
+                            <a href="#" onclick="loadPage('pages/04_java_developer/01_systax/java-collections.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">集合框架</a>
+                            <a href="#" onclick="loadPage('pages/04_java_developer/01_systax/java-concurrent.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">并发编程</a>
+                            <a href="#" onclick="loadPage('pages/04_java_developer/01_systax/java-jvm.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">JVM原理</a>
+                            <a href="#" onclick="loadPage('pages/04_java_developer/01_systax/jvm-practice.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">JVM实战</a>
+                        </div>
+                    </div>
+                    
+                    <div class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider mt-4">系统设计</div>
+                    
+                     <div class="nav-item">
+                        <a href="#" onclick="toggleMainMenu('system-architect')" class="flex items-center justify-between px-4 py-3 text-gray-700 hover:text-primary">
+                            <div class="flex items-center">
+                                <i class="fas fa-sitemap mr-3"></i>
+                                <span>系统架构</span>
+                            </div>
+                            <i class="fas fa-chevron-right transition-transform duration-200" id="system-architect-chevron"></i>
+                        </a>
+                        <div class="submenu ml-8" id="system-architect-submenu">
+                            <div class="px-4 py-2 text-xs font-semibold text-gray-500">分布式系统</div>
+                            <a href="#" onclick="loadPage('pages/05_system_architect/distributed/distributed-overview.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">分布式系统概览</a>
+                            <a href="#" onclick="loadPage('pages/05_system_architect/distributed/microservices.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">微服务架构</a>
+                            <a href="#" onclick="loadPage('pages/05_system_architect/distributed/spring-cloud.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">Spring Cloud</a>
+                            <a href="#" onclick="loadPage('pages/05_system_architect/distributed/docker.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">Docker</a>
+                            <a href="#" onclick="loadPage('pages/05_system_architect/distributed/kubernetes.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">Kubernetes</a>
+                            <a href="#" onclick="loadPage('pages/05_system_architect/distributed/message-system.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">消息系统</a>
+                            <a href="#" onclick="loadPage('pages/05_system_architect/distributed/kafka.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">Kafka</a>
+                            <a href="#" onclick="loadPage('pages/05_system_architect/distributed/rabbitmq.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">RabbitMQ</a>
+                            <a href="#" onclick="loadPage('pages/05_system_architect/distributed/rocketmq.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">RocketMQ</a>
+                            <div class="px-4 py-2 text-xs font-semibold text-gray-500 mt-2">高并发</div>
+                            <a href="#" onclick="loadPage('pages/05_system_architect/high-concurrency/high-concurrency-overview.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">高并发概览</a>
+                            <a href="#" onclick="loadPage('pages/05_system_architect/high-concurrency/load-balancing.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">负载均衡</a>
+                            <a href="#" onclick="loadPage('pages/05_system_architect/high-concurrency/caching-strategy.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">缓存策略</a>
+                            <a href="#" onclick="loadPage('pages/05_system_architect/high-concurrency/cdn.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">CDN加速</a>
+                            <div class="px-4 py-2 text-xs font-semibold text-gray-500 mt-2">DevOps</div>
+                            <a href="#" onclick="loadPage('pages/05_system_architect/devops/devops-overview.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">DevOps概览</a>
+                            <a href="#" onclick="loadPage('pages/05_system_architect/devops/linux-commands.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">Linux常用命令</a>
+                            <a href="#" onclick="loadPage('pages/05_system_architect/devops/monitoring-alerting.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">监控与告警</a>
+                        </div>
+                    </div>
+                    
+                     <div class="nav-item">
+                        <a href="#" onclick="toggleMainMenu('database')" class="flex items-center justify-between px-4 py-3 text-gray-700 hover:text-primary">
+                            <div class="flex items-center">
+                                <i class="fas fa-database mr-3"></i>
+                                <span>数据库设计</span>
+                            </div>
+                            <i class="fas fa-chevron-right transition-transform duration-200" id="database-chevron"></i>
+                        </a>
+                        <div class="submenu ml-8" id="database-submenu">
+                            <a href="#" onclick="loadPage('pages/05_system_architect/database/mysql.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">MySQL优化</a>
+                            <a href="#" onclick="loadPage('pages/05_system_architect/database/redis.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">Redis缓存</a>
+                            <a href="#" onclick="loadPage('pages/05_system_architect/database/mongodb.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">MongoDB</a>
+                            <a href="#" onclick="loadPage('pages/05_system_architect/database/elasticsearch.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">Elasticsearch</a>
+                            <a href="#" onclick="loadPage('pages/05_system_architect/database/database-sharding.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">数据库分片</a>
+                        </div>
+                    </div>
+                    
+                    <div class="nav-item">
+                        <a href="#" onclick="toggleMainMenu('ai')" class="flex items-center justify-between px-4 py-3 text-gray-700 hover:text-primary">
+                            <div class="flex items-center">
+                                <i class="fas fa-brain mr-3"></i>
+                                <span>人工智能</span>
+                            </div>
+                            <i class="fas fa-chevron-right transition-transform duration-200" id="ai-chevron"></i>
+                        </a>
+                        <div class="submenu ml-8" id="ai-submenu">
+                            <a href="#" onclick="loadPage('pages/06_ai/ai-overview.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">AI概览</a>
+                            <a href="#" onclick="loadPage('pages/06_ai/machine-learning.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">机器学习</a>
+                            <a href="#" onclick="loadPage('pages/06_ai/neural-networks.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">神经网络</a>
+                            <a href="#" onclick="loadPage('pages/06_ai/nlp.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">自然语言处理</a>
+                            <a href="#" onclick="loadPage('pages/06_ai/computer-vision.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">计算机视觉</a>
+                        </div>
+                    </div>
+
+                    <div class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider mt-4">工作经历</div>
+                    
+                    <div class="nav-item">
+                        <a href="#" onclick="toggleMainMenu('ecommerce')" class="flex items-center justify-between px-4 py-3 text-gray-700 hover:text-primary">
+                            <div class="flex items-center">
+                                <i class="fas fa-shopping-cart mr-3"></i>
+                                <span>B2C电商系统</span>
+                            </div>
+                            <i class="fas fa-chevron-right transition-transform duration-200" id="ecommerce-chevron"></i>
+                        </a>
+                        <div class="submenu ml-8" id="ecommerce-submenu">
+                            <a href="#" onclick="loadPage('pages/work-experience/ecommerce/order-system.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">订单系统</a>
+                            <a href="#" onclick="loadPage('pages/work-experience/ecommerce/payment-system.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">支付系统</a>
+                            <a href="#" onclick="loadPage('pages/work-experience/ecommerce/inventory-system.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">库存系统</a>
+                            <a href="#" onclick="loadPage('pages/work-experience/ecommerce/promotion-system.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">促销系统</a>
+                        </div>
+                    </div>
+
+                    <div class="nav-item">
+                        <a href="#" onclick="toggleMainMenu('b2b-project')" class="flex items-center justify-between px-4 py-3 text-gray-700 hover:text-primary">
+                            <div class="flex items-center">
+                                <i class="fas fa-building mr-3"></i>
+                                <span>B2B大宗贸易</span>
+                            </div>
+                            <i class="fas fa-chevron-right transition-transform duration-200" id="b2b-project-chevron"></i>
+                        </a>
+                        <div class="submenu ml-8" id="b2b-project-submenu">
+                            <a href="#" onclick="loadPage('pages/work-experience/b2b-project/overview.html')" class="block px-4 py-2 text-gray-600 hover:text-primary">项目概述</a>
+                            <a href="#" onclick="loadPage('pages/work-experience/b2b-project/data-exchange.html')" class="block px-4 py-2 text-gray-600 hover:text-primary">数据交换中心</a>
+                            <a href="#" onclick="loadPage('pages/work-experience/b2b-project/middleware-gateway.html')" class="block px-4 py-2 text-gray-600 hover:text-primary">中间件网关</a>
+                            <a href="#" onclick="loadPage('pages/work-experience/b2b-project/common-services.html')" class="block px-4 py-2 text-gray-600 hover:text-primary">公共服务模块</a>
+                            <a href="#" onclick="loadPage('pages/work-experience/b2b-project/auth-module.html')" class="block px-4 py-2 text-gray-600 hover:text-primary">认证模块</a>
+                            <a href="#" onclick="loadPage('pages/work-experience/b2b-project/business-modules.html')" class="block px-4 py-2 text-gray-600 hover:text-primary">合同中心</a>
+                            <a href="#" onclick="loadPage('pages/work-experience/b2b-project/external-gateway.html')" class="block px-4 py-2 text-gray-600 hover:text-primary">外联网关</a>
+                            <a href="#" onclick="loadPage('pages/work-experience/b2b-project/大宗贸易场景.html')" class="block px-4 py-2 text-gray-600 hover:text-primary">大宗贸易场景</a>
+                            <a href="#" onclick="loadPage('pages/work-experience/b2b-project/付款发货场景.html')" class="block px-4 py-2 text-gray-600 hover:text-primary">付款发货场景</a>
+                        </div>
+                    </div>
+                    
+                    <div class="nav-item">
+                        <a href="#" onclick="toggleMainMenu('video-surveillance')" class="flex items-center justify-between px-4 py-3 text-gray-700 hover:text-primary">
+                            <div class="flex items-center">
+                                <i class="fas fa-video mr-3"></i>
+                                <span>视频监控项目</span>
+                            </div>
+                            <i class="fas fa-chevron-right transition-transform duration-200" id="video-surveillance-chevron"></i>
+                        </a>
+                        <div class="submenu ml-8" id="video-surveillance-submenu">
+                            <a href="#" onclick="loadPage('pages/work-experience/video-surveillance/overview.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">项目概述</a>
+                            <a href="#" onclick="loadPage('pages/work-experience/video-surveillance/live-streaming.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">实时直播</a>
+                            <a href="#" onclick="loadPage('pages/work-experience/video-surveillance/playback.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">录像回放</a>
+                            <a href="#" onclick="loadPage('pages/work-experience/video-surveillance/download.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">视频下载</a>
+                        </div>
+                    </div>
+                    
+                    <div class="nav-item">
+                        <a href="#" onclick="toggleMainMenu('customer-service')" class="flex items-center justify-between px-4 py-3 text-gray-700 hover:text-primary">
+                            <div class="flex items-center">
+                                <i class="fas fa-headset mr-3"></i>
+                                <span>客服聊天项目</span>
+                            </div>
+                            <i class="fas fa-chevron-right transition-transform duration-200" id="customer-service-chevron"></i>
+                        </a>
+                        <div class="submenu ml-8" id="customer-service-submenu">
+                            <a href="#" onclick="loadPage('pages/work-experience/customer-service/overview.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">项目概述</a>
+                            <a href="#" onclick="loadPage('pages/work-experience/customer-service/cs-management.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">客服管理</a>
+                            <a href="#" onclick="loadPage('pages/work-experience/customer-service/chat-reception.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">接待客户</a>
+                            <a href="#" onclick="loadPage('pages/work-experience/customer-service/queue-mechanism.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">排队机制</a>
+                        </div>
+                    </div>
+                    
+                    <div class="nav-item">
+                        <a href="#" onclick="toggleMainMenu('daily-problems')" class="flex items-center justify-between px-4 py-3 text-gray-700 hover:text-primary">
+                            <div class="flex items-center">
+                                <i class="fas fa-search mr-3"></i>
+                                <span>日常问题排查</span>
+                            </div>
+                            <i class="fas fa-chevron-right transition-transform duration-200" id="daily-problems-chevron"></i>
+                        </a>
+                        <div class="submenu ml-8" id="daily-problems-submenu">
+                            <a href="#" onclick="loadPage('pages/work-experience/daily-problems/overview.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">总览</a>
+                            <a href="#" onclick="loadPage('pages/work-experience/daily-problems/common-problems.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">常见问题</a>
+                            <a href="#" onclick="loadPage('pages/work-experience/daily-problems/server-assessment.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">服务器资源评估</a>
+                            <a href="#" onclick="loadPage('pages/work-experience/daily-problems/stress-testing.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">压力测试</a>
+                            <a href="#" onclick="loadPage('pages/work-experience/daily-problems/network-jvm.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">JVM参数设置</a>
+                            <a href="#" onclick="loadPage('pages/work-experience/daily-problems/client-freeze.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">BS卡顿问题排查</a>
+                            <a href="#" onclick="loadPage('pages/work-experience/daily-problems/client-freeze-case.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">卡顿问题定位案例</a>
+                            <a href="#" onclick="loadPage('pages/work-experience/daily-problems/java-process-crash.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">Java进程突然消失</a>
+                            <a href="#" onclick="loadPage('pages/work-experience/daily-problems/minio-upload-issue.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">MinIO上传问题排查</a>
+                        </div>
+                    </div>
+
+                     <div class="nav-item">
+                        <a href="#" onclick="toggleMainMenu('devops')" class="flex items-center justify-between px-4 py-3 text-gray-700 hover:text-primary">
+                            <div class="flex items-center">
+                                <i class="fas fa-server mr-3"></i>
+                                <span>常用运维脚本</span>
+                            </div>
+                            <i class="fas fa-chevron-right transition-transform duration-200" id="devops-chevron"></i>
+                        </a>
+                        <div class="submenu ml-8" id="devops-submenu">
+                            <a href="#" onclick="loadPage('pages/05_system_architect/devops/linux-commands.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">Linux常用命令</a>
+                            <a href="#" onclick="loadPage('pages/05_system_architect/distributed/docker.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">Docker实战</a>
+                            <a href="#" onclick="loadPage('pages/05_system_architect/distributed/kubernetes.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">Kubernetes实战</a>
+                            <a href="#" onclick="loadPage('pages/05_system_architect/devops/monitoring-alerting.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">监控与告警</a>
+                            <a href="#" onclick="loadPage('pages/04_java_developer/01_systax/jvm-practice.md')" class="block px-4 py-2 text-gray-600 hover:text-primary">JVM调优实战</a>
+                        </div>
+                    </div>
+
+                </nav>
+            </aside>
+
+            <main class="flex-1 p-6 portal-container">
+                <iframe id="mainFrame" src="pages/home.html" class="w-full h-full border-0 rounded-lg shadow"></iframe>
+            </main>
+        </div>
+        
+        <footer class="bg-white border-t border-gray-200 py-4 px-6">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center">
+                <div class="text-gray-600 text-sm mb-2 md:mb-0">
+                    © 2026 架构师学习笔记. 保留所有权利.
                 </div>
-
-            </nav>
-        </aside>
-
-        <main class="flex-1 p-6 portal-container">
-            <iframe id="mainFrame" src="pages/home.html" class="w-full h-full border-0 rounded-lg shadow"></iframe>
-        </main>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-600 hover:text-primary text-sm">关于我们</a>
+                    <a href="#" class="text-gray-600 hover:text-primary text-sm">隐私政策</a>
+                    <a href="#" class="text-gray-600 hover:text-primary text-sm">联系方式</a>
+                </div>
+            </div>
+        </footer>
     </div>
 
     <script>
