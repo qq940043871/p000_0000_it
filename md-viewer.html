@@ -73,21 +73,21 @@
             font-size: 2rem;
             font-weight: bold;
             margin-bottom: 1rem;
-            scroll-margin-top: 3rem;
+            scroll-margin-top: 5rem;
         }
         .markdown-content h2 {
             font-size: 1.5rem;
             font-weight: bold;
             margin-top: 1.5rem;
             margin-bottom: 1rem;
-            scroll-margin-top: 3rem;
+            scroll-margin-top: 5rem;
         }
         .markdown-content h3 {
             font-size: 1.25rem;
             font-weight: bold;
             margin-top: 1.25rem;
             margin-bottom: 0.75rem;
-            scroll-margin-top: 3rem;
+            scroll-margin-top: 5rem;
         }
         .markdown-content p {
             margin-bottom: 1rem;
@@ -197,14 +197,14 @@
                 a.textContent = item.title;
                 
                 // 添加点击事件，实现平滑滚动
-                a.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const targetId = this.getAttribute('href').substring(1);
-                    const targetElement = document.getElementById(targetId);
-                    if (targetElement) {
-                        targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }
-                });
+                    a.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const targetId = this.getAttribute('href').substring(1);
+                        const targetElement = document.getElementById(targetId);
+                        if (targetElement) {
+                            targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                    });
                 
                 li.appendChild(a);
                 tocElement.appendChild(li);
